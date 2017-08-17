@@ -10,20 +10,20 @@
     public sealed class CompositionTests
     {
         [Fact]
-        public void ContextGraph_WhenCreatingAnGraph_ThenItIsSuccessfullyInjectingAllDependencies()
+        public void ContextGraph_WhenCreatingAGraph_ThenItIsSuccessfullyInjectingAllDependencies()
         {
             var customObjectsCache = new Dictionary<string, object>();
             var container = new Container(customObjectsCache);
             var graph = new ContextGraph(container);
 
-            var rootGuid = graph.AddRoot(typeof(ContextForTest));
-            graph.AddNode(typeof(ContextForTest2), rootGuid);
+            graph.AddRoot(typeof(ContextForTest), "node-1");
+            graph.AddNode(typeof(ContextForTest2), "node-2", "node-1");
 
             Assert.Equal(2, customObjectsCache.Count);
         }
 
         [Fact]
-        public void Execute_WhenExecutingAnGraph_ThenItSuccessfullyGetsNodeResponses()
+        public void Execute_WhenExecutingAGraph_ThenItSuccessfullyGetsNodeResponses()
         {
             /*
              * ActionForTestEventProducer 
@@ -38,9 +38,9 @@
             var container = new Container();
             var graph = new ContextGraph(container);
 
-            var contextForTestServiceGuid = graph.AddRoot(typeof(ContextForTest));
-            graph.AddNode(typeof(ContextForTest2), contextForTestServiceGuid);
-            graph.AddNode(typeof(ContextForTest3), contextForTestServiceGuid);
+            graph.AddRoot(typeof(ContextForTest), "node-1");
+            graph.AddNode(typeof(ContextForTest2), "node-2", "node-1");
+            graph.AddNode(typeof(ContextForTest3), "node-3", "node-1");
 
             var resultStacks = graph.Execute(new ActionForTestEventProducer("new-value")).ToList();
 

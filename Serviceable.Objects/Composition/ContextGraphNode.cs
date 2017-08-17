@@ -12,17 +12,18 @@
         private readonly dynamic hostedContext;
         private readonly ContextGraph contextGraph;
         internal readonly ContextGraphNode RootNode;
-        internal readonly Guid UniqueId = Guid.NewGuid();
+        internal readonly string UniqueId;
 
         private Stack<EventResult> RootExecutionStack => RootNode != null ? RootNode.RootExecutionStack : rootExecutionStack;
         private dynamic HostedContext => hostedContext;
-        private AbstractContext HostedContextAsAbstractContext => hostedContext;
+        internal AbstractContext HostedContextAsAbstractContext => hostedContext;
 
-        public ContextGraphNode(AbstractContext hostedContext, ContextGraph contextGraph, ContextGraphNode rootNode = null)
+        public ContextGraphNode(AbstractContext hostedContext, ContextGraph contextGraph, string uniqueId, ContextGraphNode rootNode = null)
         {
             this.hostedContext = hostedContext;
             this.contextGraph = contextGraph;
             RootNode = rootNode;
+            UniqueId = uniqueId;
 
             if (rootNode == null)
             {
@@ -52,6 +53,7 @@
 
                 var eventResult = new EventResult
                 {
+                    NodeId = UniqueId,
                     ContextType = HostedContextAsAbstractContext.GetType(),
                     ResultObject = (object) resultObject,
                 };
