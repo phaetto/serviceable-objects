@@ -14,11 +14,12 @@
             {
                 if (!string.IsNullOrWhiteSpace(graphVertex.ParentId))
                 {
-                    contextGraph.AddNode(Types.FindType(graphVertex.TypeFullName), graphVertex.Id, graphVertex.ParentId);
+                    contextGraph.AddNode(Types.FindType(graphVertex.TypeFullName), graphVertex.Id);
+                    contextGraph.ConnectNodes(graphVertex.ParentId, graphVertex.Id);
                 }
                 else
                 {
-                    contextGraph.AddRoot(Types.FindType(graphVertex.TypeFullName), graphVertex.Id);
+                    contextGraph.AddInput(Types.FindType(graphVertex.TypeFullName), graphVertex.Id);
                 }
             }
         }

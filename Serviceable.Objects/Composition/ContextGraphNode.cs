@@ -6,43 +6,35 @@
     using System.Reflection;
     using Microsoft.CSharp.RuntimeBinder;
 
-    internal sealed class ContextGraphNode
+    public sealed class ContextGraphNode
     {
         private readonly Stack<EventResult> rootExecutionStack;
         private readonly dynamic hostedContext;
         private readonly ContextGraph contextGraph;
-        internal readonly ContextGraphNode RootNode;
-        internal readonly string UniqueId;
-
-        private Stack<EventResult> RootExecutionStack => RootNode != null ? RootNode.RootExecutionStack : rootExecutionStack;
         private dynamic HostedContext => hostedContext;
-        internal AbstractContext HostedContextAsAbstractContext => hostedContext;
+        private AbstractContext HostedContextAsAbstractContext => hostedContext;
+        public readonly string Id;
 
-        public ContextGraphNode(AbstractContext hostedContext, ContextGraph contextGraph, string uniqueId, ContextGraphNode rootNode = null)
+        public ContextGraphNode(AbstractContext hostedContext, ContextGraph contextGraph, string id)
         {
             this.hostedContext = hostedContext;
             this.contextGraph = contextGraph;
-            RootNode = rootNode;
-            UniqueId = uniqueId;
-
-            if (rootNode == null)
-            {
-                rootExecutionStack = new Stack<EventResult>();
-            }
+            Id = id;
 
             hostedContext.CommandEventWithResultPublished += HostedContext_CommandEventWithResultPublished;
         }
 
         private IEnumerable<EventResult> HostedContext_CommandEventWithResultPublished(IEvent eventPublished)
         {
-            var childNodes = contextGraph.AllNodes.Where(x => x.RootNode?.UniqueId == UniqueId);
-            return childNodes.Select(childNode => childNode.EventPropagated(eventPublished)).Where(eventResult => eventResult != null).ToList();
+            return contextGraph.GetChildren(Id)
+                .Select(childNode => childNode.EventPropagated(eventPublished))
+                .Where(eventResult => eventResult != null).ToList();
         }
 
         public Stack<EventResult> Execute(dynamic command)
         {
             ExecuteInternal(command);
-            return RootExecutionStack;
+            return contextGraph.ResultsExecutionStack;
         }
 
         public EventResult ExecuteInternal(dynamic command)
@@ -53,12 +45,12 @@
 
                 var eventResult = new EventResult
                 {
-                    NodeId = UniqueId,
+                    NodeId = Id,
                     ContextType = HostedContextAsAbstractContext.GetType(),
                     ResultObject = (object) resultObject,
                 };
 
-                RootExecutionStack.Push(eventResult);
+                contextGraph.ResultsExecutionStack.Push(eventResult);
 
                 return eventResult;
             }

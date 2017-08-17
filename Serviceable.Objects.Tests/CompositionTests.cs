@@ -16,8 +16,9 @@
             var container = new Container(customObjectsCache);
             var graph = new ContextGraph(container);
 
-            graph.AddRoot(typeof(ContextForTest), "node-1");
-            graph.AddNode(typeof(ContextForTest2), "node-2", "node-1");
+            graph.AddInput(typeof(ContextForTest), "node-1");
+            graph.AddNode(typeof(ContextForTest2), "node-2");
+            graph.ConnectNodes("node-1", "node-2");
 
             Assert.Equal(2, customObjectsCache.Count);
         }
@@ -38,9 +39,11 @@
             var container = new Container();
             var graph = new ContextGraph(container);
 
-            graph.AddRoot(typeof(ContextForTest), "node-1");
-            graph.AddNode(typeof(ContextForTest2), "node-2", "node-1");
-            graph.AddNode(typeof(ContextForTest3), "node-3", "node-1");
+            graph.AddInput(typeof(ContextForTest), "node-1");
+            graph.AddNode(typeof(ContextForTest2), "node-2");
+            graph.AddNode(typeof(ContextForTest3), "node-3");
+            graph.ConnectNodes("node-1", "node-2");
+            graph.ConnectNodes("node-1", "node-3");
 
             var resultStacks = graph.Execute(new ActionForTestEventProducer("new-value")).ToList();
 

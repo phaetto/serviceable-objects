@@ -10,15 +10,18 @@
     public sealed class ContextGraph
     {
         private readonly Container container;
-        private readonly List<ContextGraphNode> rootNodes = new List<ContextGraphNode>(); // TODO: rename to input nodes
-        internal readonly List<ContextGraphNode> AllNodes = new List<ContextGraphNode>(); // TODO: needs to have proper implementation with vertices and nodes
+        private readonly List<ContextGraphNode> inputNodes = new List<ContextGraphNode>();
+        private readonly List<ContextGraphVertex> vertices = new List<ContextGraphVertex>();
+        private readonly List<ContextGraphNode> nodes = new List<ContextGraphNode>();
+
+        public readonly Stack<EventResult> ResultsExecutionStack = new Stack<EventResult>();
 
         public ContextGraph(Container container = null)
         {
             this.container = container ?? new Container();
         }
 
-        public void AddRoot(Type type, string id)
+        public void AddInput(Type type, string id)
         {
             Check.ArgumentNull(type, nameof(type));
 
@@ -26,45 +29,46 @@
             Check.ArgumentNull(abstractContext, nameof(type), "Type should be derived from Context");
 
             var node = new ContextGraphNode(abstractContext, this, id);
-            rootNodes.Add(node);
-            AllNodes.Add(node);
+            inputNodes.Add(node);
+            nodes.Add(node);
         }
 
-        public void AddNode(Type type, string id, string parentNodeUniqueId)
+        public void AddNode(Type type, string id)
         {
             Check.ArgumentNull(type, nameof(type));
-            Check.ArgumentNull(parentNodeUniqueId, nameof(parentNodeUniqueId));
-
-            var parentNode = AllNodes.FirstOrDefault(x => x.UniqueId == parentNodeUniqueId);
-            Check.ArgumentNull(parentNode, nameof(parentNodeUniqueId), $"Parent node with id '${parentNodeUniqueId}' could not be found");
 
             var abstractContext = container.Resolve(type) as AbstractContext;
             Check.ArgumentNull(abstractContext, nameof(type), "Type should be derived from Context");
 
-            var node = new ContextGraphNode(abstractContext, this, id, parentNode);
-            AllNodes.Add(node);
+            var node = new ContextGraphNode(abstractContext, this, id);
+            nodes.Add(node);
         }
 
-        public void AddNode(string fromId, string toId)
+        public void ConnectNodes(string fromId, string toId)
         {
             Check.ArgumentNull(fromId, nameof(fromId));
             Check.ArgumentNull(toId, nameof(toId));
 
-            var parentNode = AllNodes.FirstOrDefault(x => x.UniqueId == fromId);
+            var parentNode = nodes.FirstOrDefault(x => x.Id == fromId);
             Check.ArgumentNull(parentNode, nameof(fromId), $"Parent node with id '${fromId}' could not be found");
 
-            var childNode = AllNodes.FirstOrDefault(x => x.UniqueId == toId);
+            var childNode = nodes.FirstOrDefault(x => x.Id == toId);
             Check.ArgumentNull(childNode, nameof(toId), $"Parent node with id '${toId}' could not be found");
 
-            var node = new ContextGraphNode(childNode.HostedContextAsAbstractContext, this, fromId, parentNode);
-            AllNodes.Add(node);
+            Check.Argument(vertices.Any(x => x.FromId == fromId && x.ToId == toId), nameof(fromId), "Vertex already exists in this graph");
+
+            vertices.Add(new ContextGraphVertex
+            {
+                FromId = fromId,
+                ToId = toId,
+            });
         }
 
         public IEnumerable<Stack<EventResult>> Execute(dynamic command)
         {
-            var allResultStacks = new List<Stack<EventResult>>(rootNodes.Count);
+            var allResultStacks = new List<Stack<EventResult>>(inputNodes.Count);
             var oneHasRun = false;
-            foreach (var rootNode in rootNodes)
+            foreach (var rootNode in inputNodes)
             {
                 try
                 {
@@ -89,7 +93,7 @@
         {
             try
             {
-                return rootNodes.First(x => x.UniqueId == uniqueId).Execute(command);
+                return inputNodes.First(x => x.Id == uniqueId).Execute(command);
             }
             catch (RuntimeBinderException ex)
             {
@@ -97,6 +101,11 @@
                     "This type of command is not supported by context (Tip: Only one implementation of ICommand<,> can be inferred automatically)",
                     ex);
             }
+        }
+
+        public IEnumerable<ContextGraphNode> GetChildren(string id)
+        {
+            return vertices.Where(x => x.FromId == id).Select(x => nodes.First(y => y.Id == x.ToId));
         }
     }
 }
