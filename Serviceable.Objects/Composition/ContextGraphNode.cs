@@ -60,7 +60,7 @@
             }
         }
 
-        public EventResult EventPropagated(IEvent eventPublished, Stack<EventResult> parentResultExecutionStack)
+        private EventResult EventPropagated(IEvent eventPublished, Stack<EventResult> parentResultExecutionStack)
         {
             var isEventTypeSupported =
                 HostedContextAsAbstractContext.GetType().GetTypeInfo().GetInterfaces().Any(x => InterfaceSupportsEventHandler(eventPublished, x));

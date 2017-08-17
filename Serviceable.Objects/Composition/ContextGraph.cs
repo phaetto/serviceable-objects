@@ -22,7 +22,7 @@
         public void AddInput(Type type, string id)
         {
             Check.ArgumentNull(type, nameof(type));
-            Check.ArgumentNullOrEmpty(id, nameof(id));
+            Check.ArgumentNullOrWhiteSpace(id, nameof(id));
 
             var abstractContext = container.Resolve(type) as AbstractContext;
             Check.ArgumentNull(abstractContext, nameof(type), "Type should be derived from Context");
@@ -35,7 +35,7 @@
         public void AddNode(Type type, string id)
         {
             Check.ArgumentNull(type, nameof(type));
-            Check.ArgumentNullOrEmpty(id, nameof(id));
+            Check.ArgumentNullOrWhiteSpace(id, nameof(id));
 
             var abstractContext = container.Resolve(type) as AbstractContext;
             Check.ArgumentNull(abstractContext, nameof(type), "Type should be derived from Context");
@@ -46,8 +46,8 @@
 
         public void ConnectNodes(string fromId, string toId)
         {
-            Check.ArgumentNullOrEmpty(fromId, nameof(fromId));
-            Check.ArgumentNullOrEmpty(toId, nameof(toId));
+            Check.ArgumentNullOrWhiteSpace(fromId, nameof(fromId));
+            Check.ArgumentNullOrWhiteSpace(toId, nameof(toId));
 
             var parentNode = nodes.FirstOrDefault(x => x.Id == fromId);
             Check.ArgumentNull(parentNode, nameof(fromId), $"Parent node with id '${fromId}' could not be found");
@@ -96,7 +96,7 @@
         public Stack<EventResult> Execute(dynamic command, string uniqueId)
         {
             Check.ArgumentNull(command, nameof(command));
-            Check.ArgumentNullOrEmpty(uniqueId, nameof(uniqueId));
+            Check.ArgumentNullOrWhiteSpace(uniqueId, nameof(uniqueId));
 
             try
             {
@@ -114,7 +114,7 @@
 
         public IEnumerable<ContextGraphNode> GetChildren(string id)
         {
-            Check.ArgumentNullOrEmpty(id, nameof(id));
+            Check.ArgumentNullOrWhiteSpace(id, nameof(id));
 
             return vertices.Where(x => x.FromId == id).Select(x => nodes.First(y => y.Id == x.ToId));
         }

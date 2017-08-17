@@ -14,9 +14,9 @@
             throw new ArgumentNullException(name, message ?? $"Parameter '{name}' is null");
         }
 
-        public static void ArgumentNullOrEmpty(string testString, string name, string message = null)
+        public static void ArgumentNullOrWhiteSpace(string testString, string name, string message = null)
         {
-            if (!string.IsNullOrEmpty(testString))
+            if (!string.IsNullOrWhiteSpace(testString))
             {
                 return;
             }

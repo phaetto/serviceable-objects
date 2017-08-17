@@ -105,7 +105,7 @@
 
         public static Type FindType(string unqualifiedType)
         {
-            Check.ArgumentNullOrEmpty(unqualifiedType, nameof(unqualifiedType));
+            Check.ArgumentNullOrWhiteSpace(unqualifiedType, nameof(unqualifiedType));
 
             if (typeCache.ContainsKey(unqualifiedType))
             {
