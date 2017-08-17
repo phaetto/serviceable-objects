@@ -23,7 +23,7 @@
         }
 
         [Fact]
-        public void Execute_WhenExecutingAnGraph_ThenItIsSuccessfully()
+        public void Execute_WhenExecutingAnGraph_ThenItSuccessfullyGetsNodeResponses()
         {
             /*
              * ActionForTestEventProducer 
@@ -49,7 +49,7 @@
 
             Assert.Equal("new-value", contextForTest2.ContextVariable);
             Assert.Null(contextForTest3.ContextVariable);
-            Assert.Equal(1, resultStacks.Count);
+            Assert.Single(resultStacks);
             Assert.Equal(2, resultStacks[0].Count);
             Assert.Equal(typeof(ContextForTest), resultStacks[0].ElementAt(0).ContextType);
             Assert.Equal(typeof(ContextForTest2), resultStacks[0].ElementAt(1).ContextType);
