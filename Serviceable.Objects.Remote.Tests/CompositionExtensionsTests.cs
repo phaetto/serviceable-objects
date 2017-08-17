@@ -7,7 +7,7 @@
     using Serviceable.Objects.Tests.Classes;
     using Xunit;
 
-    public sealed class CompositionTests
+    public sealed class CompositionExtensionsTests
     {
         [Fact]
         public void FromJson_WhenExecutingAGraphFromJson_ThenItSuccessfullyGetsNodeResponses()

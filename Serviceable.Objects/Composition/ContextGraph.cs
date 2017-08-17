@@ -10,7 +10,7 @@
     public sealed class ContextGraph
     {
         private readonly Container container;
-        private readonly List<ContextGraphNode> rootNodes = new List<ContextGraphNode>();
+        private readonly List<ContextGraphNode> rootNodes = new List<ContextGraphNode>(); // TODO: rename to input nodes
         internal readonly List<ContextGraphNode> AllNodes = new List<ContextGraphNode>(); // TODO: needs to have proper implementation with vertices and nodes
 
         public ContextGraph(Container container = null)
