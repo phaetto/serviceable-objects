@@ -2,7 +2,7 @@
 {
     using Serviceable.Objects.Remote.Serialization;
 
-    public sealed class GraphVertex : SerializableSpecification
+    public sealed class GraphNodeWithVertex : SerializableSpecification
     {
         public override int DataStructureVersionNumber => 1;
 

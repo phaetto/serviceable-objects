@@ -16,18 +16,18 @@
             {
                 GraphVertices = new []
                 {
-                    new GraphVertex
+                    new GraphNodeWithVertex
                     {
                         Id = "node-1",
                         TypeFullName = typeof(ContextForTest).FullName,
                     },
-                    new GraphVertex
+                    new GraphNodeWithVertex
                     {
                         Id = "node-2",
                         ParentId = "node-1",
                         TypeFullName = typeof(ContextForTest2).FullName,
                     },
-                    new GraphVertex
+                    new GraphNodeWithVertex
                     {
                         Id = "node-3",
                         ParentId = "node-1",
