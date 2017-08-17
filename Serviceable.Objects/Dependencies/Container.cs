@@ -94,10 +94,12 @@
                     }
 
                     var newObject = constructor.Invoke(transformedObjects.ToArray());
-                    if (!objectsCache.ContainsKey(type.FullName))
+                    if (objectsCache.ContainsKey(type.FullName))
                     {
-                        objectsCache.Add(type.FullName, newObject);
+                        throw new TypeCreatedTwiceInConatinerException($"Type ${type.FullName} created twice - that should never have happened.");
                     }
+
+                    objectsCache.Add(type.FullName, newObject);
 
                     return newObject;
                 }
