@@ -8,9 +8,9 @@
 
     public sealed class ContextGraphNode
     {
-        private readonly Stack<EventResult> rootExecutionStack;
         private readonly dynamic hostedContext;
         private readonly ContextGraph contextGraph;
+        private Stack<EventResult> localExecutionStack = null;
         private dynamic HostedContext => hostedContext;
         private AbstractContext HostedContextAsAbstractContext => hostedContext;
         public readonly string Id;
@@ -27,21 +27,19 @@
         private IEnumerable<EventResult> HostedContext_CommandEventWithResultPublished(IEvent eventPublished)
         {
             return contextGraph.GetChildren(Id)
-                .Select(childNode => childNode.EventPropagated(eventPublished))
+                .Select(childNode => childNode.EventPropagated(eventPublished, localExecutionStack))
                 .Where(eventResult => eventResult != null).ToList();
         }
 
-        public Stack<EventResult> Execute(dynamic command)
-        {
-            ExecuteInternal(command);
-            return contextGraph.ResultsExecutionStack;
-        }
-
-        public EventResult ExecuteInternal(dynamic command)
+        public EventResult Execute(dynamic command, Stack<EventResult> resultExecutionStack)
         {
             try
             {
+                localExecutionStack = resultExecutionStack;
+
                 var resultObject = HostedContext.Execute(command);
+
+                localExecutionStack = null;
 
                 var eventResult = new EventResult
                 {
@@ -50,7 +48,7 @@
                     ResultObject = (object) resultObject,
                 };
 
-                contextGraph.ResultsExecutionStack.Push(eventResult);
+                resultExecutionStack.Push(eventResult);
 
                 return eventResult;
             }
@@ -62,7 +60,7 @@
             }
         }
 
-        public EventResult EventPropagated(IEvent eventPublished)
+        public EventResult EventPropagated(IEvent eventPublished, Stack<EventResult> parentResultExecutionStack)
         {
             var isEventTypeSupported =
                 HostedContextAsAbstractContext.GetType().GetTypeInfo().GetInterfaces().Any(x => InterfaceSupportsEventHandler(eventPublished, x));
@@ -79,7 +77,7 @@
                     throw new InvalidOperationException($"Could not get command for event {eventPublished.GetType().FullName} on context {HostedContextAsAbstractContext.GetType().FullName}", ex);
                 }
 
-                return ExecuteInternal(command);
+                return Execute(command, parentResultExecutionStack);
             }
 
             return null;

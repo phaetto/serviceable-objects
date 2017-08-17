@@ -7,14 +7,12 @@
     using Serviceable.Objects.Dependencies;
     using Serviceable.Objects.Exceptions;
 
-    public sealed class ContextGraph
+    public sealed class ContextGraph : Context<ContextGraph>
     {
         private readonly Container container;
         private readonly List<ContextGraphNode> inputNodes = new List<ContextGraphNode>();
         private readonly List<ContextGraphVertex> vertices = new List<ContextGraphVertex>();
         private readonly List<ContextGraphNode> nodes = new List<ContextGraphNode>();
-
-        public readonly Stack<EventResult> ResultsExecutionStack = new Stack<EventResult>();
 
         public ContextGraph(Container container = null)
         {
@@ -24,6 +22,7 @@
         public void AddInput(Type type, string id)
         {
             Check.ArgumentNull(type, nameof(type));
+            Check.ArgumentNullOrEmpty(id, nameof(id));
 
             var abstractContext = container.Resolve(type) as AbstractContext;
             Check.ArgumentNull(abstractContext, nameof(type), "Type should be derived from Context");
@@ -36,6 +35,7 @@
         public void AddNode(Type type, string id)
         {
             Check.ArgumentNull(type, nameof(type));
+            Check.ArgumentNullOrEmpty(id, nameof(id));
 
             var abstractContext = container.Resolve(type) as AbstractContext;
             Check.ArgumentNull(abstractContext, nameof(type), "Type should be derived from Context");
@@ -46,8 +46,8 @@
 
         public void ConnectNodes(string fromId, string toId)
         {
-            Check.ArgumentNull(fromId, nameof(fromId));
-            Check.ArgumentNull(toId, nameof(toId));
+            Check.ArgumentNullOrEmpty(fromId, nameof(fromId));
+            Check.ArgumentNullOrEmpty(toId, nameof(toId));
 
             var parentNode = nodes.FirstOrDefault(x => x.Id == fromId);
             Check.ArgumentNull(parentNode, nameof(fromId), $"Parent node with id '${fromId}' could not be found");
@@ -66,13 +66,17 @@
 
         public IEnumerable<Stack<EventResult>> Execute(dynamic command)
         {
+            Check.ArgumentNull(command, nameof(command));
+
             var allResultStacks = new List<Stack<EventResult>>(inputNodes.Count);
             var oneHasRun = false;
             foreach (var rootNode in inputNodes)
             {
                 try
                 {
-                    allResultStacks.Add(rootNode.Execute(command));
+                    var resultExecutionStack = new Stack<EventResult>();
+                    rootNode.Execute(command, resultExecutionStack);
+                    allResultStacks.Add(resultExecutionStack);
                     oneHasRun = true;
                 }
                 catch (RuntimeBinderException)
@@ -91,9 +95,14 @@
 
         public Stack<EventResult> Execute(dynamic command, string uniqueId)
         {
+            Check.ArgumentNull(command, nameof(command));
+            Check.ArgumentNullOrEmpty(uniqueId, nameof(uniqueId));
+
             try
             {
-                return inputNodes.First(x => x.Id == uniqueId).Execute(command);
+                var resultExecutionStack = new Stack<EventResult>();
+                inputNodes.First(x => x.Id == uniqueId).Execute(command, resultExecutionStack);
+                return resultExecutionStack;
             }
             catch (RuntimeBinderException ex)
             {
@@ -105,6 +114,8 @@
 
         public IEnumerable<ContextGraphNode> GetChildren(string id)
         {
+            Check.ArgumentNullOrEmpty(id, nameof(id));
+
             return vertices.Where(x => x.FromId == id).Select(x => nodes.First(y => y.Id == x.ToId));
         }
     }
