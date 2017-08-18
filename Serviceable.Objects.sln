@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26430.16
+VisualStudioVersion = 15.0.26730.3
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Serviceable.Objects", "Serviceable.Objects\Serviceable.Objects.csproj", "{46A7AB18-5784-46A0-89C6-DFBCCE3AE6E6}"
 EndProject
@@ -15,6 +15,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		readme.md = readme.md
 	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestHttpCompositionConsoleApp", "TestHttpCompositionConsoleApp\TestHttpCompositionConsoleApp.csproj", "{BA16EE2E-DD0B-42DB-AF10-908E267A2F7B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -38,8 +40,15 @@ Global
 		{7B6A22CA-0021-4650-AA13-490153BE4F61}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7B6A22CA-0021-4650-AA13-490153BE4F61}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7B6A22CA-0021-4650-AA13-490153BE4F61}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BA16EE2E-DD0B-42DB-AF10-908E267A2F7B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BA16EE2E-DD0B-42DB-AF10-908E267A2F7B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BA16EE2E-DD0B-42DB-AF10-908E267A2F7B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BA16EE2E-DD0B-42DB-AF10-908E267A2F7B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {0660B28D-379D-4936-A426-8CDCCCC8D677}
 	EndGlobalSection
 EndGlobal

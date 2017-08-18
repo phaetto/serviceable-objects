@@ -1,0 +1,80 @@
+﻿namespace TestHttpCompositionConsoleApp.Contexts.Http
+{
+    using System.IO;
+    using System.Linq;
+    using System.Threading.Tasks;
+    using Microsoft.AspNetCore.Builder;
+    using Microsoft.AspNetCore.Hosting;
+    using Microsoft.AspNetCore.Http;
+    using Microsoft.AspNetCore.Routing;
+    using Microsoft.Extensions.Configuration;
+    using Microsoft.Extensions.DependencyInjection;
+    using Microsoft.Extensions.Logging;
+    using Newtonsoft.Json;
+    using Serviceable.Objects;
+    using Serviceable.Objects.Composition.Events;
+    using Serviceable.Objects.Remote.Serialization;
+
+    public sealed class OwinHttpContext : Context<OwinHttpContext>
+    {
+        public readonly IWebHost Host;
+
+        public OwinHttpContext()
+        {
+            var config = new ConfigurationBuilder()
+                .AddEnvironmentVariables().Build();
+
+            Host = new WebHostBuilder()
+                .UseKestrel()
+                .UseConfiguration(config)
+                .UseContentRoot(Directory.GetCurrentDirectory())
+                .ConfigureLogging(l => l.AddConsole())
+                .ConfigureServices(s => s.AddRouting())
+                .Configure(app =>
+                {
+                    app.UseRouter(SetupRouter);
+                })
+                .Build();
+        }
+
+        private void SetupRouter(IRouteBuilder routerBuilder)
+        {
+            routerBuilder.MapPost("test", TestRequestHandler);
+        }
+
+        private async Task TestRequestHandler(HttpContext context)
+        {
+            string data;
+            using (var streamReader = new StreamReader(context.Request.Body))
+            {
+                data = streamReader.ReadToEnd();
+            }
+
+            var spec = DeserializableSpecification<ExecutableCommandSpecification>.DeserializeFromJson(data);
+            var command = spec.CreateFromSpec();
+            
+            var eventResults =
+                OnCommandEventWithResultPublished(new GraphFlowEventPushControlApplyCommandInsteadOfEvent(command))
+                .Where(x => x.ResultObject != null).ToList();
+
+            if (eventResults.Count > 0)
+            {
+                var result = eventResults[0].ResultObject;
+                var serializableSpecification = result as SerializableSpecification;
+                    context.Response.ContentType = "application/json";
+                if (serializableSpecification != null)
+                {
+                    await context.Response.WriteAsync(serializableSpecification.SerializeToJson());
+                }
+                else
+                {
+                    await context.Response.WriteAsync(JsonConvert.SerializeObject(result));
+                }
+            }
+            else
+            {
+                context.Response.StatusCode = 204;
+            }
+        }
+    }
+}
