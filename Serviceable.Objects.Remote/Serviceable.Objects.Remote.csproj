@@ -11,6 +11,7 @@
 
   <ItemGroup>
     <Folder Include="Composition\Events\" />
+    <Folder Include="Composition\Commands\" />
   </ItemGroup>
 
   <ItemGroup>

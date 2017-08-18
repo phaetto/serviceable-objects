@@ -34,14 +34,14 @@
                 return objectsCache[typeRequested.FullName];
             }
 
-            return CreateObject(typeRequested);
+            return CreateObject(typeRequested, new Stack<Type>(10), true);
         }
 
-        private object CreateObject(Type type)
+        public object CreateObject(Type type)
         {
             Check.ArgumentNull(type, nameof(type));
 
-            return CreateObject(type, new Stack<Type>(10));
+            return CreateObject(type, new Stack<Type>(10), false);
         }
 
         public void Dispose()
@@ -62,7 +62,7 @@
             isDisposed = true;
         }
 
-        private object CreateObject(Type type, Stack<Type> typeStackCall)
+        private object CreateObject(Type type, Stack<Type> typeStackCall, bool cacheable)
         {
             Check.ArgumentNull(type, nameof(type));
             Check.ArgumentNull(typeStackCall, nameof(typeStackCall));
@@ -89,17 +89,21 @@
                         }
                         else
                         {
-                            ResolveUnknownType(transformedObjects, parameterInfo, typeStackCall);
+                            ResolveUnknownType(transformedObjects, parameterInfo, typeStackCall, cacheable);
                         }
                     }
 
                     var newObject = constructor.Invoke(transformedObjects.ToArray());
-                    if (objectsCache.ContainsKey(type.FullName))
-                    {
-                        throw new TypeCreatedTwiceInConatinerException($"Type ${type.FullName} created twice - that should never have happened.");
-                    }
 
-                    objectsCache.Add(type.FullName, newObject);
+                    if (cacheable)
+                    {
+                        if (objectsCache.ContainsKey(type.FullName))
+                        {
+                            throw new TypeCreatedTwiceInConatinerException($"Type ${type.FullName} created twice - that should never have happened.");
+                        }
+
+                        objectsCache.Add(type.FullName, newObject);
+                    }
 
                     return newObject;
                 }
@@ -112,7 +116,7 @@
             throw new Exception("No suitable constructor could be found to create the type: " + type.AssemblyQualifiedName);
         }
 
-        private void ResolveUnknownType(List<object> transformedObjects, ParameterInfo parameterInfo, Stack<Type> typeStackCall)
+        private void ResolveUnknownType(List<object> transformedObjects, ParameterInfo parameterInfo, Stack<Type> typeStackCall, bool cacheable)
         {
             Check.ArgumentNull(transformedObjects, nameof(transformedObjects));
             Check.ArgumentNull(parameterInfo, nameof(parameterInfo));
@@ -141,7 +145,7 @@
                 {
                     CheckStack(parameterInfo.ParameterType, typeStackCall);
 
-                    var newObject = CreateObject(parameterInfo.ParameterType, typeStackCall);
+                    var newObject = CreateObject(parameterInfo.ParameterType, typeStackCall, cacheable);
                     transformedObjects.Add(Convert.ChangeType(newObject, parameterInfo.ParameterType));
                 }
                 else

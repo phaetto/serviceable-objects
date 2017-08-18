@@ -10,7 +10,7 @@
     {
         private readonly dynamic hostedContext;
         private readonly ContextGraph contextGraph;
-        private Stack<EventResult> localExecutionStack = null;
+        private Stack<EventResult> localExecutionStack;
         private dynamic HostedContext => hostedContext;
         private AbstractContext HostedContextAsAbstractContext => hostedContext;
         public readonly string Id;
@@ -26,12 +26,18 @@
 
         private IEnumerable<EventResult> HostedContext_CommandEventWithResultPublished(IEvent eventPublished)
         {
+            var controlFlowEvent = eventPublished as IGraphFlowEventPushControl;
+            if (controlFlowEvent != null)
+            {
+                return controlFlowEvent.OverridePropagationLogic(contextGraph, Id, hostedContext);
+            }
+
             return contextGraph.GetChildren(Id)
                 .Select(childNode => childNode.EventPropagated(eventPublished, localExecutionStack))
                 .Where(eventResult => eventResult != null).ToList();
         }
 
-        public EventResult Execute(dynamic command, Stack<EventResult> resultExecutionStack)
+        public EventResult Execute(dynamic command, Stack<EventResult> resultExecutionStack = null)
         {
             try
             {
@@ -39,7 +45,17 @@
 
                 var resultObject = HostedContext.Execute(command);
 
+                foreach (var childNode in contextGraph.GetChildren(Id))
+                {
+                    childNode.CheckPostGraphFlowPullControl(Id, hostedContext, command, localExecutionStack);
+                }
+
                 localExecutionStack = null;
+
+                if (resultObject is AbstractContext)
+                {
+                    resultObject = null;
+                }
 
                 var eventResult = new EventResult
                 {
@@ -48,7 +64,7 @@
                     ResultObject = (object) resultObject,
                 };
 
-                resultExecutionStack.Push(eventResult);
+                resultExecutionStack?.Push(eventResult);
 
                 return eventResult;
             }
@@ -57,6 +73,15 @@
                 throw new NotSupportedException(
                     "This type of command is not supported by context (Tip: Only one implementation of ICommand<,> can be inferred automatically)",
                     ex);
+            }
+        }
+
+        private void CheckPostGraphFlowPullControl(string id, dynamic parentContext, dynamic parentCommandApplied, Stack<EventResult> eventResults)
+        {
+            var hostedContextWithPullControl = hostedContext as IPostGraphFlowPullControl;
+            if (hostedContextWithPullControl != null)
+            {
+                hostedContextWithPullControl.PullNodeExecutionInformation(contextGraph, id, parentContext, parentCommandApplied, eventResults);
             }
         }
 

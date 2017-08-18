@@ -9,14 +9,14 @@
 
     public sealed class ContextGraph : Context<ContextGraph>
     {
-        private readonly Container container;
-        private readonly List<ContextGraphNode> inputNodes = new List<ContextGraphNode>();
-        private readonly List<ContextGraphVertex> vertices = new List<ContextGraphVertex>();
-        private readonly List<ContextGraphNode> nodes = new List<ContextGraphNode>();
+        internal readonly Container Container;
+        internal readonly List<ContextGraphNode> InputNodes = new List<ContextGraphNode>();
+        internal readonly List<ContextGraphVertex> Vertices = new List<ContextGraphVertex>();
+        internal readonly List<ContextGraphNode> Nodes = new List<ContextGraphNode>();
 
         public ContextGraph(Container container = null)
         {
-            this.container = container ?? new Container();
+            this.Container = container ?? new Container();
         }
 
         public void AddInput(Type type, string id)
@@ -24,12 +24,20 @@
             Check.ArgumentNull(type, nameof(type));
             Check.ArgumentNullOrWhiteSpace(id, nameof(id));
 
-            var abstractContext = container.Resolve(type) as AbstractContext;
+            var abstractContext = Container.CreateObject(type) as AbstractContext;
             Check.ArgumentNull(abstractContext, nameof(type), "Type should be derived from Context");
 
-            var node = new ContextGraphNode(abstractContext, this, id);
-            inputNodes.Add(node);
-            nodes.Add(node);
+            AddInput(abstractContext, id);
+        }
+
+        public void AddInput(AbstractContext context, string id)
+        {
+            Check.ArgumentNull(context, nameof(context));
+            Check.ArgumentNullOrWhiteSpace(id, nameof(id));
+
+            var node = new ContextGraphNode(context, this, id);
+            InputNodes.Add(node);
+            Nodes.Add(node);
         }
 
         public void AddNode(Type type, string id)
@@ -37,11 +45,19 @@
             Check.ArgumentNull(type, nameof(type));
             Check.ArgumentNullOrWhiteSpace(id, nameof(id));
 
-            var abstractContext = container.Resolve(type) as AbstractContext;
+            var abstractContext = Container.CreateObject(type) as AbstractContext;
             Check.ArgumentNull(abstractContext, nameof(type), "Type should be derived from Context");
 
-            var node = new ContextGraphNode(abstractContext, this, id);
-            nodes.Add(node);
+            AddNode(abstractContext, id);
+        }
+
+        public void AddNode(AbstractContext context, string id)
+        {
+            Check.ArgumentNull(context, nameof(context));
+            Check.ArgumentNullOrWhiteSpace(id, nameof(id));
+
+            var node = new ContextGraphNode(context, this, id);
+            Nodes.Add(node);
         }
 
         public void ConnectNodes(string fromId, string toId)
@@ -49,15 +65,15 @@
             Check.ArgumentNullOrWhiteSpace(fromId, nameof(fromId));
             Check.ArgumentNullOrWhiteSpace(toId, nameof(toId));
 
-            var parentNode = nodes.FirstOrDefault(x => x.Id == fromId);
+            var parentNode = Nodes.FirstOrDefault(x => x.Id == fromId);
             Check.ArgumentNull(parentNode, nameof(fromId), $"Parent node with id '${fromId}' could not be found");
 
-            var childNode = nodes.FirstOrDefault(x => x.Id == toId);
+            var childNode = Nodes.FirstOrDefault(x => x.Id == toId);
             Check.ArgumentNull(childNode, nameof(toId), $"Parent node with id '${toId}' could not be found");
 
-            Check.Argument(vertices.Any(x => x.FromId == fromId && x.ToId == toId), nameof(fromId), "Vertex already exists in this graph");
+            Check.Argument(Vertices.Any(x => x.FromId == fromId && x.ToId == toId), nameof(fromId), "Vertex already exists in this graph");
 
-            vertices.Add(new ContextGraphVertex
+            Vertices.Add(new ContextGraphVertex
             {
                 FromId = fromId,
                 ToId = toId,
@@ -68,14 +84,14 @@
         {
             Check.ArgumentNull(command, nameof(command));
 
-            var allResultStacks = new List<Stack<EventResult>>(inputNodes.Count);
+            var allResultStacks = new List<Stack<EventResult>>(InputNodes.Count);
             var oneHasRun = false;
-            foreach (var rootNode in inputNodes)
+            foreach (var inputNode in InputNodes)
             {
                 try
                 {
                     var resultExecutionStack = new Stack<EventResult>();
-                    rootNode.Execute(command, resultExecutionStack);
+                    inputNode.Execute(command, resultExecutionStack);
                     allResultStacks.Add(resultExecutionStack);
                     oneHasRun = true;
                 }
@@ -101,7 +117,7 @@
             try
             {
                 var resultExecutionStack = new Stack<EventResult>();
-                inputNodes.First(x => x.Id == uniqueId).Execute(command, resultExecutionStack);
+                InputNodes.First(x => x.Id == uniqueId).Execute(command, resultExecutionStack);
                 return resultExecutionStack;
             }
             catch (RuntimeBinderException ex)
@@ -116,7 +132,7 @@
         {
             Check.ArgumentNullOrWhiteSpace(id, nameof(id));
 
-            return vertices.Where(x => x.FromId == id).Select(x => nodes.First(y => y.Id == x.ToId));
+            return Vertices.Where(x => x.FromId == id).Select(x => Nodes.First(y => y.Id == x.ToId));
         }
     }
 }

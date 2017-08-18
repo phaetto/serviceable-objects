@@ -10,7 +10,7 @@
     public sealed class CompositionTests
     {
         [Fact]
-        public void ContextGraph_WhenCreatingAGraph_ThenItIsSuccessfullyInjectingAllDependencies()
+        public void ContextGraph_WhenCreatingAGraph_ThenTheMainObjectDependenciesAreNotInsertedToContainer()
         {
             var customObjectsCache = new Dictionary<string, object>();
             var container = new Container(customObjectsCache);
@@ -20,7 +20,7 @@
             graph.AddNode(typeof(ContextForTest2), "node-2");
             graph.ConnectNodes("node-1", "node-2");
 
-            Assert.Equal(2, customObjectsCache.Count);
+            Assert.Empty(customObjectsCache);
         }
 
         [Fact]
@@ -38,17 +38,16 @@
 
             var container = new Container();
             var graph = new ContextGraph(container);
+            var contextForTest2 = new ContextForTest2();
+            var contextForTest3 = new ContextForTest3();
 
             graph.AddInput(typeof(ContextForTest), "node-1");
-            graph.AddNode(typeof(ContextForTest2), "node-2");
-            graph.AddNode(typeof(ContextForTest3), "node-3");
+            graph.AddNode(contextForTest2, "node-2");
+            graph.AddNode(contextForTest3, "node-3");
             graph.ConnectNodes("node-1", "node-2");
             graph.ConnectNodes("node-1", "node-3");
 
             var resultStacks = graph.Execute(new ActionForTestEventProducer("new-value")).ToList();
-
-            var contextForTest2 = container.Resolve<ContextForTest2>();
-            var contextForTest3 = container.Resolve<ContextForTest3>();
 
             Assert.Equal("new-value", contextForTest2.ContextVariable);
             Assert.Null(contextForTest3.ContextVariable);
