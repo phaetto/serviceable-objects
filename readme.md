@@ -239,7 +239,7 @@ It looks like this in out case:
 This is why we have some custom event implementations like IGraphFlowEventPushControl.
 This interface creates a factory on the custom event that we can publish and transforms the event to execution of a command internally in the graph.
 
-We have already an event that does that [GraphFlowEventPushControlApplyCommandInsteadOfEvent](https://github.com/phaetto/serviceable-objects/blob/master/Serviceable.Objects/Composition/Events/GraphFlowControlApplyCommand.cs), so let's use it:
+We have already an event that does that [GraphFlowEventPushControlApplyCommandInsteadOfEvent](https://github.com/phaetto/serviceable-objects/blob/master/Serviceable.Objects/Composition/Events/GraphFlowEventPushControlApplyCommandInsteadOfEvent.cs), so let's use it:
 ```csharp
 ...
 private async Task TestRequestHandler(HttpContext context)
@@ -311,10 +311,10 @@ And that's it! Now when we start the application we should eb able to post at lo
 
 ```json
 {
-	Type: "TestHttpCompositionConsoleApp.Contexts.Queues.Commands.Enqueue",
-	DataType: "TestHttpCompositionConsoleApp.Contexts.Queues.Commands.Data.QueueItem",
-	Data: {
-		Data: "some data"
+	"Type": "TestHttpCompositionConsoleApp.Contexts.Queues.Commands.Enqueue",
+	"DataType": "TestHttpCompositionConsoleApp.Contexts.Queues.Commands.Data.QueueItem",
+	"Data": {
+		"Data": "some data"
 	}
 }
 ```
@@ -323,7 +323,7 @@ or
 
 ```json
 {
-	Type: "TestHttpCompositionConsoleApp.Contexts.Queues.Commands.Dequeue",
+	"Type": "TestHttpCompositionConsoleApp.Contexts.Queues.Commands.Dequeue",
 }
 ```
 
