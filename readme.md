@@ -9,7 +9,7 @@ Remote library (Serviceable.Objects.Remote) is made for .NET standard 1.3+.
 If you would like to resolve types in assemblies without assembly qualified naming, then you have to use at least .net standard 1.6+ or .NET 4.5.1+.
 
 ## Concept
-I am considering "a serviceable object" as a service, tight to the lifetime of an object.
+I am considering "a serviceable object" as a service, tied to the lifetime of an object.
 When the object that describes the service is disposed, then the service itself should be considered shut down.
 
 ### Context
@@ -75,7 +75,7 @@ namespace TestHttpCompositionConsoleApp.Contexts.Queues.Commands
 }
 ```
 
-As we can see from above this means that we need to explicitly need to provide a POCO object that will act as our data:
+As we can see above this means that we need to explicitly provide a POCO object that will act as our data:
 
 ```csharp
 namespace TestHttpCompositionConsoleApp.Contexts.Queues.Commands.Data
@@ -116,7 +116,7 @@ namespace TestHttpCompositionConsoleApp.Contexts.Queues.Commands
 }
 ```
 
-The data will need to passed on the constructor and the Execute function will need to be implemented.
+The data will need to be passed on to the constructor and the Execute function will need to be implemented.
 We do not want to return anything specific here, so we just return the same context.
 
 The enqueue behavior can now be used in a unit-test:
@@ -129,7 +129,7 @@ Assert.Equal(3, queue.QueueStorage.Count);
 ```
 
 When we make sure that this command works as expected, we move forward.
-Let's go to our next command, Dequeue. This command has the need to _return_ value to the caller.
+Let's go to our next command, Dequeue. This command needs to _return_ a value to the caller.
 And so we will derive our command from the [RemotableCommandWithData](https://github.com/phaetto/serviceable-objects/blob/master/Serviceable.Objects.Remote/RemotableCommandWithData.cs):
 
 ```csharp
@@ -233,13 +233,13 @@ On the previous graph figure we actually assumed that the graph starts the execu
 This is not true however for many cases. There is the need, like in our server, to pass the control to the context running,
 and this in turn should signal the graph node to continue the propagation of the execution.
 
-It looks like this in out case:
+It looks like this in our case:
 ![alt text](https://raw.githubusercontent.com/phaetto/serviceable-objects/master/images/theory-composable-http.png "Composable context - server controls the flow internally")
 
 This is why we have some custom event implementations like IGraphFlowEventPushControl.
 This interface creates a factory on the custom event that we can publish and transforms the event to execution of a command internally in the graph.
 
-We have already an event that does that [GraphFlowEventPushControlApplyCommandInsteadOfEvent](https://github.com/phaetto/serviceable-objects/blob/master/Serviceable.Objects/Composition/Events/GraphFlowEventPushControlApplyCommandInsteadOfEvent.cs), so let's use it:
+We already have an event that does that [GraphFlowEventPushControlApplyCommandInsteadOfEvent](https://github.com/phaetto/serviceable-objects/blob/master/Serviceable.Objects/Composition/Events/GraphFlowEventPushControlApplyCommandInsteadOfEvent.cs), so let's use it:
 ```csharp
 ...
 private async Task TestRequestHandler(HttpContext context)
@@ -273,9 +273,9 @@ private async Task TestRequestHandler(HttpContext context)
 
 So we signal the application that we need it to run a command and the next services in the graph will try to apply this command.
 
-The we get the results, and we serialize them as our http output.
+Then we get the results, and we serialize them as our http output.
 
-Let's now make out graph in a console app:
+Let's now make our graph in a console app:
 ```csharp
 namespace TestHttpCompositionConsoleApp
 {
