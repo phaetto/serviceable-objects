@@ -30,14 +30,15 @@
                             properties =
                                 GetType()
                                 .GetTypeInfo()
-                                .GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                                .DeclaredProperties
                                 .Where(x => x.GetSetMethod(true) != null)
                                 .Where(x => x.GetIndexParameters().Length == 0)
                                 .ToList(),
                             fields =
                                 GetType()
                                 .GetTypeInfo()
-                                .GetFields(BindingFlags.Public | BindingFlags.Instance)
+                                .DeclaredFields
+                                .Where(x => x.IsPublic && !x.IsStatic)
                                 .ToList()
                         };
 
@@ -144,7 +145,7 @@
 
                     var dataType = Types.FindType(executableActionSpecification.DataType);
 
-                    if (dataType.GetTypeInfo().GetInterface(typeof(ISerializable).FullName) != null)
+                    if (dataType.GetTypeInfo().ImplementedInterfaces.Any(x => x == typeof(ISerializable)))
                     {
                         var serializationInfo = new SerializationInfo(dataType,
                             new JsonFormatterConverter(new JsonSerializer()));

@@ -1,7 +1,27 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
+  <PropertyGroup Condition="'$(TargetFramework)'=='netstandard1.6'">
+    <DefineConstants>DOTNETSTANDARD_16</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(TargetFramework)'=='net451'">
+    <DefineConstants>DOTNET451</DefineConstants>
+  </PropertyGroup>
+  
   <PropertyGroup>
-    <TargetFramework>netstandard1.6</TargetFramework>
+    <TargetFrameworks>netstandard1.6;netstandard1.3;net451;</TargetFrameworks>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Copyright>Alexander Mantzoukas (c) 2017, Rebootify ApS</Copyright>
+    <Authors>Alexander Mantzoukas</Authors>
+    <Company>Rebootify ApS</Company>
+    <Product>Serviceable objects and composable services</Product>
+    <PackageLicenseUrl>https://github.com/phaetto/serviceable-objects/blob/master/license.md</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/phaetto/serviceable-objects/</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/phaetto/serviceable-objects/</RepositoryUrl>
+    <RepositoryType>Git</RepositoryType>
+    <PackageTags>Serviceable-objects TDD Modular Micro-Services Commands</PackageTags>
+    <Description>Builds on top of the command framework to enable the concepts of reproducability of a command and, in extension, remotability. With the addition of json serialization this allows the transformation of all commands to json and back to instance.</Description>
+    <Version>0.1.0</Version>
   </PropertyGroup>
 
   <ItemGroup>

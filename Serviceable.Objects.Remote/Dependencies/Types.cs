@@ -30,7 +30,7 @@
 
         public static object CreateObjectWithParametersAndInjection(Type type, object[] parameters, object[] injectedParameters = null)
         {
-            var constructors = type.GetTypeInfo().GetConstructors(Container.ConstructorBindingFlags).OrderByDescending(x => x.GetParameters().Length);
+            var constructors = type.GetTypeInfo().DeclaredConstructors.OrderByDescending(x => x.GetParameters().Length);
             foreach (var constructor in constructors)
             {
                 try
@@ -56,7 +56,7 @@
                                 for (var n = 0; n < injectedParameters.Length; ++n)
                                 {
                                     if (injectedParameters[n] != null
-                                        && (constructorParameters[m].ParameterType.GetTypeInfo().IsInstanceOfType(injectedParameters[n])
+                                        && (constructorParameters[m].ParameterType == injectedParameters[n].GetType()
                                             || constructorParameters[m].ParameterType.GetTypeInfo().IsSubclassOf(
                                                 injectedParameters[n].GetType())))
                                     {
@@ -119,6 +119,7 @@
                 return type;
             }
 
+#if DOTNETSTANDARD_16
             var runtimeId = RuntimeEnvironment.GetRuntimeIdentifier();
             var assemblyNames = DependencyContext.Default.GetRuntimeAssemblyNames(runtimeId);
 
@@ -132,6 +133,19 @@
                     return type;
                 }
             }
+#elif DOTNET451
+            foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
+            {
+                type = assembly.GetType(unqualifiedType, false);
+                if (type != null)
+                {
+                    typeCache.Add(unqualifiedType, type);
+                    return type;
+                }
+            }
+#endif
+
+            // Exceptions for other frameworks
 
             throw new Exception("Type could not be found: " + unqualifiedType);
         }

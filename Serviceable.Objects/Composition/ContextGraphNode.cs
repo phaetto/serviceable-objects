@@ -88,7 +88,7 @@
         private EventResult EventPropagated(IEvent eventPublished, Stack<EventResult> parentResultExecutionStack)
         {
             var isEventTypeSupported =
-                HostedContextAsAbstractContext.GetType().GetTypeInfo().GetInterfaces().Any(x => InterfaceSupportsEventHandler(eventPublished, x));
+                HostedContextAsAbstractContext.GetType().GetTypeInfo().ImplementedInterfaces.Any(x => InterfaceSupportsEventHandler(eventPublished, x));
 
             if (isEventTypeSupported)
             {
@@ -121,7 +121,7 @@
 
         private static bool GenericTypeSupportsDeclaredInterface(IEvent eventPublished, Type interfaceType)
         {
-            return eventPublished.GetType().GetTypeInfo().GetInterfaces().Any(y => y == interfaceType.GenericTypeArguments[0])
+            return eventPublished.GetType().GetTypeInfo().ImplementedInterfaces.Any(y => y == interfaceType.GenericTypeArguments[0])
                    && interfaceType.GenericTypeArguments[0].GetTypeInfo().IsInterface;
         }
     }

@@ -1,7 +1,23 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard1.6</TargetFramework>
+    <TargetFramework>netstandard1.2</TargetFramework>
+    <Authors>Alexander Mantzoukas</Authors>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Version>0.1.0</Version>
+    <Copyright>Alexander Mantzoukas (c) 2017, Rebootify ApS</Copyright>
+    <PackageLicenseUrl>https://github.com/phaetto/serviceable-objects/blob/master/license.md</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/phaetto/serviceable-objects/</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/phaetto/serviceable-objects/</RepositoryUrl>
+    <RepositoryType>Git</RepositoryType>
+    <PackageTags>Serviceable-objects TDD Modular Micro-Services Commands</PackageTags>
+    <Company>Rebootify ApS</Company>
+    <Product>Serviceable objects and composable services</Product>
+    <Description>Defines primers and derivables that creates a concrete command-based context invocation framework.
+
+Includes module composition that integrates contexts with event-publishing and consuming, as well as the transformation to commands and the orchestration of those.
+
+This framework is developed with testing in mind and every derivable should be fully testable.</Description>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

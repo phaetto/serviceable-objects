@@ -8,10 +8,6 @@
 
     public sealed class Container : IDisposable
     {
-        public const BindingFlags ConstructorBindingFlags =
-            BindingFlags.NonPublic | BindingFlags.FlattenHierarchy | BindingFlags.Instance
-            | BindingFlags.Public;
-
         private readonly Dictionary<string, object> objectsCache = new Dictionary<string, object>();
         private bool isDisposed;
 
@@ -71,7 +67,7 @@
 
             typeStackCall.Push(type);
 
-            var constructors = type.GetTypeInfo().GetConstructors(ConstructorBindingFlags).OrderByDescending(x => x.GetParameters().Length);
+            var constructors = type.GetTypeInfo().DeclaredConstructors.OrderByDescending(x => x.GetParameters().Length);
             foreach (var constructor in constructors)
             {
                 try
@@ -129,7 +125,7 @@
             var found = false;
             foreach (var keyValue in objectsCache)
             {
-                if (parameterType.IsInstanceOfType(keyValue.Value)
+                if (parameterType.GetType() == keyValue.Value.GetType()
                     || parameterType.IsSubclassOf(keyValue.Value.GetType()))
                 {
                     transformedObjects.Add(Convert.ChangeType(keyValue.Value, parameterInfo.ParameterType));
