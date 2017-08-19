@@ -3,7 +3,7 @@
     using Serviceable.Objects.Remote;
     using TestHttpCompositionConsoleApp.Contexts.Queues.Commands.Data;
 
-    public sealed class Enqueue : ReproducibleActionWithData<QueueContext, QueueContext, QueueItem>
+    public sealed class Enqueue : ReproducibleCommandWithData<QueueContext, QueueContext, QueueItem>
     {
         public Enqueue(QueueItem data) : base(data)
         {

@@ -6,14 +6,14 @@
     {
         public static Task<TResultType> Execute<T, TResultType, TExecutionContext>(
             this Task<TExecutionContext> context,
-            IRemotableAction<T, TResultType> action)
+            IRemotableCommand<T, TResultType> command)
             where T : Context<T>
             where TExecutionContext : Context<TExecutionContext>, IProxyContext
         {
             return context.ContinueWith(x =>
             {
                 var remotableCarrier = x.Result.CreateRemotableCarrier<TExecutionContext, T, TResultType>();
-                remotableCarrier.RemotableAction = action;
+                remotableCarrier.RemotableCommand = command;
                 return x.Result.Execute(remotableCarrier);
             });
         }
@@ -34,14 +34,14 @@
 
         public static Task<TResultType> Execute<T, TResultType, TExecutionContext>(
             this Task<TExecutionContext> context,
-            IRemotableAction<T, Task<TResultType>> action)
+            IRemotableCommand<T, Task<TResultType>> command)
             where T : Context<T>
             where TExecutionContext : Context<TExecutionContext>, IProxyContext
         {
             return context.ContinueWith(x =>
             {
                 var remotableCarrier = x.Result.CreateRemotableCarrier<TExecutionContext, T, Task<TResultType>>();
-                remotableCarrier.RemotableAction = action;
+                remotableCarrier.RemotableCommand = command;
                 return x.Result.Execute(remotableCarrier);
             }).Unwrap();
         }
@@ -62,12 +62,12 @@
 
         public static Task<TResultType> Execute<T, TResultType, TExecutionContext>(
             this TExecutionContext context,
-            IRemotableAction<T, Task<TResultType>> action)
+            IRemotableCommand<T, Task<TResultType>> command)
             where T : Context<T>
             where TExecutionContext : Context<TExecutionContext>, IProxyContext
         {
             var remotableCarrier = context.CreateRemotableCarrier<TExecutionContext, T, Task<TResultType>>();
-            remotableCarrier.RemotableAction = action;
+            remotableCarrier.RemotableCommand = command;
             return context.Execute(remotableCarrier);
         }
 

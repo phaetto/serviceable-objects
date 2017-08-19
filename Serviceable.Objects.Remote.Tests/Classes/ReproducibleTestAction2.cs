@@ -2,7 +2,7 @@
 {
     using Serviceable.Objects.Tests.Classes;
 
-    public class ReproducibleTestAction2 : ReproducibleActionWithData<ContextForTest2, ContextForTest2, ReproducibleTestData>
+    public class ReproducibleTestAction2 : ReproducibleCommandWithData<ContextForTest2, ContextForTest2, ReproducibleTestData>
     {
         public ReproducibleTestAction2(ReproducibleTestData testData)
             : base(testData)

@@ -4,12 +4,12 @@
     {
         public static TResultType Execute<T, TResultType, TExecutionContext>(
             this TExecutionContext context,
-            IRemotableAction<T, TResultType> action)
+            IRemotableCommand<T, TResultType> command)
             where T : Context<T>
             where TExecutionContext : Context<TExecutionContext>, IProxyContext
         {
             var remotableCarrier = context.CreateRemotableCarrier<TExecutionContext, T, TResultType>();
-            remotableCarrier.RemotableAction = action;
+            remotableCarrier.RemotableCommand = command;
             return context.Execute(remotableCarrier);
         }
 

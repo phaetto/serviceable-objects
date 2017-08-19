@@ -3,9 +3,9 @@
     using System.Collections.Generic;
     using Serviceable.Objects.Tests.Classes;
 
-    public class RemotableTestAction : RemotableActionWithData<ReproducibleTestData, ReproducibleTestData, ContextForTest>, IEventProducer
+    public class RemotableTestCommand : RemotableCommandWithData<ReproducibleTestData, ReproducibleTestData, ContextForTest>, IEventProducer
     {
-        public RemotableTestAction(ReproducibleTestData testData)
+        public RemotableTestCommand(ReproducibleTestData testData)
             : base(testData)
         {
             Data.DomainName = "Starting value";

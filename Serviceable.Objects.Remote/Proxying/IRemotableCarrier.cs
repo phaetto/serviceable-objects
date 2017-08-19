@@ -4,6 +4,6 @@
         where TOtherContext : Context<TOtherContext>
         where TContext : IProxyContext
     {
-        IRemotableAction<TOtherContext, TReceived> RemotableAction { get; set; }
+        IRemotableCommand<TOtherContext, TReceived> RemotableCommand { get; set; }
     }
 }

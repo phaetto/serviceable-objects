@@ -3,7 +3,7 @@
     using Serviceable.Objects.Remote;
     using TestHttpCompositionConsoleApp.Contexts.Queues.Commands.Data;
 
-    public sealed class Dequeue : RemotableAction<QueueItem, QueueContext>
+    public sealed class Dequeue : RemotableCommand<QueueItem, QueueContext>
     {
         public override QueueItem Execute(QueueContext context)
         {

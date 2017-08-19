@@ -15,7 +15,7 @@
             var contextForTest = new ContextForTest();
             var proxyContext = new ProxyContext(contextForTest);
 
-            var result = proxyContext.Execute(new ReproducibleTestAction(new ReproducibleTestData { ChangeToValue = "custom" }));
+            var result = proxyContext.Execute(new ReproducibleTestCommand(new ReproducibleTestData { ChangeToValue = "custom" }));
 
             Assert.NotNull(result);
             Assert.IsType<ProxyContext>(result);
@@ -28,7 +28,7 @@
             var contextForTest = new ContextForTest();
             var proxyContext = new ProxyContext(contextForTest);
 
-            var result = proxyContext.Execute(new RemotableTestAction(new ReproducibleTestData { ChangeToValue = "custom" }));
+            var result = proxyContext.Execute(new RemotableTestCommand(new ReproducibleTestData { ChangeToValue = "custom" }));
 
             Assert.NotNull(result);
             Assert.IsType<ReproducibleTestData>(result);
@@ -41,7 +41,7 @@
             var contextForTest = new ContextForTest();
             var proxyContext = new ProxyContext(contextForTest);
 
-            var result = await proxyContext.Execute(new ReproducibleTestActionAsync(new ReproducibleTestData { ChangeToValue = "custom" }));
+            var result = await proxyContext.Execute(new ReproducibleTestCommandAsync(new ReproducibleTestData { ChangeToValue = "custom" }));
 
             Assert.NotNull(result);
             Assert.IsType<ProxyContext>(result);
@@ -54,7 +54,7 @@
             var contextForTest = new ContextForTest();
             var proxyContext = new ProxyContext(contextForTest);
 
-            var result = await proxyContext.Execute(new RemotableTestActionAsync(new ReproducibleTestData { ChangeToValue = "custom" }));
+            var result = await proxyContext.Execute(new RemotableTestCommandAsync(new ReproducibleTestData { ChangeToValue = "custom" }));
 
             Assert.NotNull(result);
             Assert.IsType<ReproducibleTestData>(result);
@@ -68,11 +68,11 @@
             var proxyContext = new ProxyContext(contextForTest);
 
             var result = await proxyContext
-                .Execute(new ReproducibleTestAction(new ReproducibleTestData { ChangeToValue = "custom 1" }))
-                .Execute(new ReproducibleTestActionAsync(new ReproducibleTestData { ChangeToValue = "custom 2" }))
-                .Execute(new ReproducibleTestAction(new ReproducibleTestData { ChangeToValue = "custom 3" }))
-                .Execute(new ReproducibleTestActionAsync(new ReproducibleTestData { ChangeToValue = "custom 4" }))
-                .Execute(new ReproducibleTestActionAsync(new ReproducibleTestData { ChangeToValue = "custom 5" }))
+                .Execute(new ReproducibleTestCommand(new ReproducibleTestData { ChangeToValue = "custom 1" }))
+                .Execute(new ReproducibleTestCommandAsync(new ReproducibleTestData { ChangeToValue = "custom 2" }))
+                .Execute(new ReproducibleTestCommand(new ReproducibleTestData { ChangeToValue = "custom 3" }))
+                .Execute(new ReproducibleTestCommandAsync(new ReproducibleTestData { ChangeToValue = "custom 4" }))
+                .Execute(new ReproducibleTestCommandAsync(new ReproducibleTestData { ChangeToValue = "custom 5" }))
                 ;
 
             Assert.NotNull(result);
@@ -87,7 +87,7 @@
         //    var proxyContext = new ProxyContext(contextForTest);
         //    var proxyContext2 = new ProxyContext(proxyContext); // Maybe this not be allowed?
 
-        //    var result = proxyContext2.Execute(new ReproducibleTestAction(new ReproducibleTestData { ChangeToValue = "custom" }));
+        //    var result = proxyContext2.Execute(new ReproducibleTestCommand(new ReproducibleTestData { ChangeToValue = "custom" }));
 
         //    Assert.NotNull(result);
         //    Assert.IsType<ProxyContext>(result);

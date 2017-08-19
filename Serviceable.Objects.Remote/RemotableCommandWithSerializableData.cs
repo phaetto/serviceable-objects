@@ -3,12 +3,12 @@
     using Serviceable.Objects.Remote.Serialization;
     using Serviceable.Objects.Security;
 
-    public abstract class RemotableActionWithSerializableData<TDataType, TReceived, TContext> : Reproducible,
-        IRemotableAction<TContext, TReceived>
+    public abstract class RemotableCommandWithSerializableData<TDataType, TReceived, TContext> : Reproducible,
+        IRemotableCommand<TContext, TReceived>
     {
         public TDataType Data { get; set; }
 
-        protected RemotableActionWithSerializableData(TDataType data)
+        protected RemotableCommandWithSerializableData(TDataType data)
         {
             Data = data;
         }

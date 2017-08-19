@@ -6,11 +6,11 @@
         where TOtherContext : Context<TOtherContext>
         where TContext : IProxyContext
     {
-        public IRemotableAction<TOtherContext, TReceived> RemotableAction { get; set; }
+        public IRemotableCommand<TOtherContext, TReceived> RemotableCommand { get; set; }
 
         public TReceived Execute(TContext context)
         {
-            return ((TOtherContext)context.WrappedContext).Execute(RemotableAction); ;
+            return ((TOtherContext)context.WrappedContext).Execute(RemotableCommand); ;
         }
     }
 }

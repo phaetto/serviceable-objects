@@ -3,9 +3,9 @@
     using System.Threading.Tasks;
     using Serviceable.Objects.Tests.Classes;
 
-    public class RemotableTestActionAsync : RemotableActionWithData<ReproducibleTestData, Task<ReproducibleTestData>, ContextForTest>
+    public class RemotableTestCommandAsync : RemotableCommandWithData<ReproducibleTestData, Task<ReproducibleTestData>, ContextForTest>
     {
-        public RemotableTestActionAsync(ReproducibleTestData testData)
+        public RemotableTestCommandAsync(ReproducibleTestData testData)
             : base(testData)
         {
             Data.DomainName = "Starting value";

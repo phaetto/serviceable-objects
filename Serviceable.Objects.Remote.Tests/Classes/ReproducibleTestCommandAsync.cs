@@ -3,9 +3,9 @@
     using System.Threading.Tasks;
     using Serviceable.Objects.Tests.Classes;
 
-    public class ReproducibleTestActionAsync : ReproducibleActionWithData<ContextForTest, Task<ContextForTest>, ReproducibleTestData>
+    public class ReproducibleTestCommandAsync : ReproducibleCommandWithData<ContextForTest, Task<ContextForTest>, ReproducibleTestData>
     {
-        public ReproducibleTestActionAsync(ReproducibleTestData testData)
+        public ReproducibleTestCommandAsync(ReproducibleTestData testData)
             : base(testData)
         {
             Data.DomainName = "Starting text";

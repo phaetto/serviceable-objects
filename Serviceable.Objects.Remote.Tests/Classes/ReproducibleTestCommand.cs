@@ -2,9 +2,9 @@
 {
     using Serviceable.Objects.Tests.Classes;
 
-    public class ReproducibleTestAction : ReproducibleActionWithData<ContextForTest, ContextForTest, ReproducibleTestData>
+    public class ReproducibleTestCommand : ReproducibleCommandWithData<ContextForTest, ContextForTest, ReproducibleTestData>
     {
-        public ReproducibleTestAction(ReproducibleTestData testData)
+        public ReproducibleTestCommand(ReproducibleTestData testData)
             : base(testData)
         {
             Data.DomainName = "Starting text";
