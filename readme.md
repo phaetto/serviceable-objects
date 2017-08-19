@@ -175,7 +175,9 @@ namespace TestHttpCompositionConsoleApp.Contexts.Http
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Logging;
+    using Newtonsoft.Json;
     using Serviceable.Objects;
+    using Serviceable.Objects.Remote.Serialization;
 
     public sealed class OwinHttpContext : Context<OwinHttpContext>
     {
@@ -206,14 +208,132 @@ namespace TestHttpCompositionConsoleApp.Contexts.Http
 
         private async Task TestRequestHandler(HttpContext context)
         {
-            // Test endpoint implementation
+            string data;
+            using (var streamReader = new StreamReader(context.Request.Body))
+            {
+                data = streamReader.ReadToEnd();
+            }
+
+            var spec = DeserializableSpecification<ExecutableCommandSpecification>.DeserializeFromJson(data);
+            var command = spec.CreateFromSpec();
+
+            context.Response.ContentType = "application/json";
+            await context.Response.WriteAsync(JsonConvert.SerializeObject("json text"));
+        }
+    }
+}
+
+```
+
+I am not going to go through all details, this is a server that works on localhost:5000/test endpoint.
+The server gets the data through ```TaskRequestHandler``` and transforms it to an object with the help of ```DeserializableSpecification``` class.
+
+Now we have to look again on the mechanics of the server.
+On the previous graph figure we actually assumed that the graph starts the execution from a command.
+This is not true however for many cases. There is the need, like in our server, to pass the control to the context running,
+and this in turn should signal the graph node to continue the propagation of the execution.
+
+It looks like this in out case:
+![alt text](https://raw.githubusercontent.com/phaetto/serviceable-objects/master/images/theory-composable-http.png "Composable context - server controls the flow internally")
+
+This is why we have some custom event implementations like IGraphFlowEventPushControl.
+This interface creates a factory on the custom event that we can publish and transforms the event to execution of a command internally in the graph.
+
+We have already an event that does that [GraphFlowEventPushControlApplyCommandInsteadOfEvent](https://github.com/phaetto/serviceable-objects/blob/master/Serviceable.Objects/Composition/Events/GraphFlowControlApplyCommand.cs), so let's use it:
+```csharp
+...
+private async Task TestRequestHandler(HttpContext context)
+{
+    string data;
+    using (var streamReader = new StreamReader(context.Request.Body))
+    {
+        data = streamReader.ReadToEnd();
+    }
+
+    var spec = DeserializableSpecification<ExecutableCommandSpecification>.DeserializeFromJson(data);
+    var command = spec.CreateFromSpec();
+            
+    var eventResults =
+        OnCommandEventWithResultPublished(new GraphFlowEventPushControlApplyCommandInsteadOfEvent(command))
+        .Where(x => x.ResultObject != null).ToList();
+
+    if (eventResults.Count > 0)
+    {
+        var results = eventResults.Select(x => x.ResultObject);
+        context.Response.ContentType = "application/json";
+        await context.Response.WriteAsync(JsonConvert.SerializeObject(results));
+    }
+    else
+    {
+        context.Response.StatusCode = 204;
+    }
+}
+...
+```
+
+So we signal the application that we need it to run a command and the next services in the graph will try to apply this command.
+
+The we get the results, and we serialize them as our http output.
+
+Let's now make out graph in a console app:
+```csharp
+namespace TestHttpCompositionConsoleApp
+{
+    using Serviceable.Objects.Composition;
+    using Serviceable.Objects.Remote.Composition;
+    using TestHttpCompositionConsoleApp.Contexts.ConsoleLog;
+    using TestHttpCompositionConsoleApp.Contexts.Http;
+    using TestHttpCompositionConsoleApp.Contexts.Http.Commands;
+    using TestHttpCompositionConsoleApp.Contexts.Queues;
+
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            var configuration = @"
+{
+    GraphVertices: [
+        { TypeFullName:'" + typeof(OwinHttpContext).FullName + @"', Id:'server-context' },
+        { TypeFullName:'" + typeof(QueueContext).FullName + @"', Id:'queue-context', ParentId:'server-context' },
+    ]
+}
+";
+            
+            var contextGraph = new ContextGraph();
+            contextGraph.FromJson(configuration);
+            contextGraph.Execute(new Run());
         }
     }
 }
 ```
 
-I am not going to go through all details, this is a server that works on localhost:5000/test endpoint.
-_Thanks!_
+And that's it! Now when we start the application we should eb able to post at localhost:5000/test something like:
+
+```json
+{
+	Type: "TestHttpCompositionConsoleApp.Contexts.Queues.Commands.Enqueue",
+	DataType: "TestHttpCompositionConsoleApp.Contexts.Queues.Commands.Data.QueueItem",
+	Data: {
+		Data: "some data"
+	}
+}
+```
+
+or
+
+```json
+{
+	Type: "TestHttpCompositionConsoleApp.Contexts.Queues.Commands.Dequeue",
+}
+```
+
+And get add or remove elements from the queue.
+
+#### Composability
+
+
+
+## Thanks!
 
 If you have any suggestion or comment:
 Alexander Mantzoukas - alexander.mantzoukas@gmail.com
