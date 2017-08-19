@@ -59,17 +59,9 @@
 
             if (eventResults.Count > 0)
             {
-                var result = eventResults[0].ResultObject;
-                var serializableSpecification = result as SerializableSpecification;
-                    context.Response.ContentType = "application/json";
-                if (serializableSpecification != null)
-                {
-                    await context.Response.WriteAsync(serializableSpecification.SerializeToJson());
-                }
-                else
-                {
-                    await context.Response.WriteAsync(JsonConvert.SerializeObject(result));
-                }
+                var results = eventResults.Select(x => x.ResultObject);
+                context.Response.ContentType = "application/json";
+                await context.Response.WriteAsync(JsonConvert.SerializeObject(results));
             }
             else
             {
