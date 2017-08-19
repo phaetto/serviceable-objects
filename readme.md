@@ -34,23 +34,186 @@ it is very hard to find a pattern that all apis could use to tackle composabilit
 So between the contexts an event translation mechanism is introduced and this glues together a graph of micro-API contexts running together.
 
 And so on top of those we are composing services with different context parts that have more specific functionality:
-servers, queues, configurations, clients, etc. We can now create a graph of contexts that communicate with the events that they generate:
+servers, queues, configurations, clients, etc. We can now create a graph of contexts that communicate with the events that they generate.
+
+The graph looks like this:
 ![alt text](https://raw.githubusercontent.com/phaetto/serviceable-objects/master/images/theory-composable.png "Composable context - the context graph")
 
 #### Example
+Let's take as an example a queue service. We would like to create an http-based queue service that can enqueue/dequeue text messages.
+We will try to make that composable and see what benefits that might have.
 
-Theory: Commands -> Context + Events
-- Examples
+We define our base context (this is our serviceable object for this example - the rest will be supportive functionality):
+```csharp
+namespace TestHttpCompositionConsoleApp.Contexts.Queues
+{
+    using System.Collections.Generic;
+    using Serviceable.Objects;
+    using TestHttpCompositionConsoleApp.Contexts.Queues.Commands.Data;
 
-Mechanics
-- Chainable
-- Async/Sync
-- Type proxies
-- Events
-- Reproducibility/Remotability
-- Extras
+    public sealed class QueueContext : Context<QueueContext>
+    {
+        public Queue<QueueItem> QueueStorage = new Queue<QueueItem>();
+    }
+}
+```
 
-Composition
-- Why composition?
-- Graph mechanics
-- Example
+A very simple queue context that just wraps a Queue.
+Next we need the two commands - let's try to implement the enqueue first.
+
+Now, we are building an _http_ service, so we will need to consider the transport of the commands.
+In this case we are going to use the Reproducible line of classes, and more specifically the [ReproducibleCommandWithData](https://github.com/phaetto/serviceable-objects/blob/master/Serviceable.Objects.Remote/RemotableCommandWithData.cs).
+
+```csharp
+namespace TestHttpCompositionConsoleApp.Contexts.Queues.Commands
+{
+    using Serviceable.Objects.Remote;
+
+    public sealed class Enqueue : ReproducibleCommandWithData<QueueContext, QueueContext, ???>
+    {
+    }
+}
+```
+
+As we can see from above this means that we need to explicitly need to provide a POCO object that will act as our data:
+
+```csharp
+namespace TestHttpCompositionConsoleApp.Contexts.Queues.Commands.Data
+{
+    using Serviceable.Objects.Remote.Serialization;
+
+    public sealed class QueueItem : SerializableSpecification
+    {
+        public override int DataStructureVersionNumber => 1;
+
+        public string Data { get; set; }
+    }
+}
+```
+
+We will not care about the data-version management right now, so we will leave it at 1.
+
+The line ```string Data``` is our data that will be added to the queue. Sweet. Let's go back on our enqueue class:
+
+```csharp
+namespace TestHttpCompositionConsoleApp.Contexts.Queues.Commands
+{
+    using Serviceable.Objects.Remote;
+    using TestHttpCompositionConsoleApp.Contexts.Queues.Commands.Data;
+
+    public sealed class Enqueue : ReproducibleCommandWithData<QueueContext, QueueContext, QueueItem>
+    {
+        public Enqueue(QueueItem data) : base(data)
+        {
+        }
+
+        public override QueueContext Execute(QueueContext context)
+        {
+            context.QueueStorage.Enqueue(Data);
+            return context;
+        }
+    }
+}
+```
+
+The data will need to passed on the constructor and the Execute function will need to be implemented.
+We do not want to return anything specific here, so we just return the same context.
+
+The enqueue behavior can now be used in a unit-test:
+```
+var queue = new QueueContext();
+queue.Execute(new Enqueue(new QueueItem { Data = "data-1" }))
+    .Execute(new Enqueue(new QueueItem { Data = "data-2" }))
+    .Execute(new Enqueue(new QueueItem { Data = "data-3" }));
+Assert.Equal(3, queue.QueueStorage.Count);
+```
+
+When we make sure that this command works as expected, we move forward.
+Let's go to our next command, Dequeue. This command has the need to _return_ value to the caller.
+And so we will derive our command from the [RemotableCommandWithData](https://github.com/phaetto/serviceable-objects/blob/master/Serviceable.Objects.Remote/RemotableCommandWithData.cs):
+
+```csharp
+namespace TestHttpCompositionConsoleApp.Contexts.Queues.Commands
+{
+    using Serviceable.Objects.Remote;
+    using TestHttpCompositionConsoleApp.Contexts.Queues.Commands.Data;
+
+    public sealed class Dequeue : RemotableCommand<QueueItem, QueueContext>
+    {
+        public override QueueItem Execute(QueueContext context)
+        {
+            if (context.QueueStorage.Count == 0)
+            {
+                return null;
+            }
+
+            return context.QueueStorage.Dequeue();
+        }
+    }
+}
+```
+So, now when we dequeue we should get a QueueItem. We can test that as well:
+```
+var queue = new QueueContext();
+var queueItem = queue.Execute(new Enqueue(new QueueItem { Data = "data" }))
+    .Execute(new Dequeue());
+Assert.Equal("data", queueItem.Data);
+```
+
+Great! We have now our Queue service running and transportable commands.
+
+Now we need the http server. We will use owin for that and create another simple context:
+```csharp
+namespace TestHttpCompositionConsoleApp.Contexts.Http
+{
+    using System.IO;
+    using System.Threading.Tasks;
+    using Microsoft.AspNetCore.Builder;
+    using Microsoft.AspNetCore.Hosting;
+    using Microsoft.AspNetCore.Http;
+    using Microsoft.AspNetCore.Routing;
+    using Microsoft.Extensions.Configuration;
+    using Microsoft.Extensions.DependencyInjection;
+    using Microsoft.Extensions.Logging;
+    using Serviceable.Objects;
+
+    public sealed class OwinHttpContext : Context<OwinHttpContext>
+    {
+        public readonly IWebHost Host;
+
+        public OwinHttpContext()
+        {
+            var config = new ConfigurationBuilder()
+                .AddEnvironmentVariables().Build();
+
+            Host = new WebHostBuilder()
+                .UseKestrel()
+                .UseConfiguration(config)
+                .UseContentRoot(Directory.GetCurrentDirectory())
+                .ConfigureLogging(l => l.AddConsole())
+                .ConfigureServices(s => s.AddRouting())
+                .Configure(app =>
+                {
+                    app.UseRouter(SetupRouter);
+                })
+                .Build();
+        }
+
+        private void SetupRouter(IRouteBuilder routerBuilder)
+        {
+            routerBuilder.MapPost("test", TestRequestHandler);
+        }
+
+        private async Task TestRequestHandler(HttpContext context)
+        {
+            // Test endpoint implementation
+        }
+    }
+}
+```
+
+I am not going to go through all details, this is a server that works on localhost:5000/test endpoint.
+_Thanks!_
+
+If you have any suggestion or comment:
+Alexander Mantzoukas - alexander.mantzoukas@gmail.com
