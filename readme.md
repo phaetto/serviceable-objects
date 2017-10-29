@@ -120,7 +120,7 @@ The data will need to be passed on to the constructor and the Execute function w
 We do not want to return anything specific here, so we just return the same context.
 
 The enqueue behavior can now be used in a unit-test:
-```
+```csharp
 var queue = new QueueContext();
 queue.Execute(new Enqueue(new QueueItem { Data = "data-1" }))
     .Execute(new Enqueue(new QueueItem { Data = "data-2" }))
@@ -153,7 +153,7 @@ namespace TestHttpCompositionConsoleApp.Contexts.Queues.Commands
 }
 ```
 So, now when we dequeue we should get a QueueItem. We can test that as well:
-```
+```csharp
 var queue = new QueueContext();
 var queueItem = queue.Execute(new Enqueue(new QueueItem { Data = "data" }))
     .Execute(new Dequeue());
@@ -307,7 +307,7 @@ namespace TestHttpCompositionConsoleApp
 }
 ```
 
-And that's it! Now when we start the application we should eb able to post at localhost:5000/test something like:
+And that's it! Now when we start the application we should be able to post at localhost:5000/test something like:
 
 ```json
 {
@@ -331,6 +331,7 @@ And get add or remove elements from the queue.
 
 #### Composability
 
+(still working on this)
 
 
 ## Thanks!
