@@ -259,14 +259,6 @@
             return data;
         }
 
-        private Dictionary<string, object> GetAsDictionary()
-        {
-            var propDict = Properties.ToDictionary(x => x.Name, x => x.GetValue(this, null));
-            var fieldDict = Fields.ToDictionary(x => x.Name, x => x.GetValue(this));
-            var dict = propDict.Concat(fieldDict).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
-            return dict;
-        }
-
         protected virtual void ResolveVersionConflict(IDictionary<string, object> values, int dataVersion)
         {
         }
