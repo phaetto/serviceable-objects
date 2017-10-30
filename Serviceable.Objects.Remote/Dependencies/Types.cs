@@ -53,15 +53,15 @@
                             for (var m = parameters.Length; m < constructorParameters.Length; ++m)
                             {
                                 var found = false;
-                                for (var n = 0; n < injectedParameters.Length; ++n)
+                                foreach (var injectedParameter in injectedParameters)
                                 {
-                                    if (injectedParameters[n] != null
-                                        && (constructorParameters[m].ParameterType == injectedParameters[n].GetType()
+                                    if (injectedParameter != null
+                                        && (constructorParameters[m].ParameterType == injectedParameter.GetType()
                                             || constructorParameters[m].ParameterType.GetTypeInfo().IsSubclassOf(
-                                                injectedParameters[n].GetType())))
+                                                injectedParameter.GetType())))
                                     {
                                         transformedObjects.Add(
-                                            Convert.ChangeType(injectedParameters[n], constructorParameters[m].ParameterType));
+                                            Convert.ChangeType(injectedParameter, constructorParameters[m].ParameterType));
                                         found = true;
                                         break;
                                     }
