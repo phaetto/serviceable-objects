@@ -26,8 +26,7 @@
 
         private IEnumerable<EventResult> HostedContext_CommandEventWithResultPublished(IEvent eventPublished)
         {
-            var controlFlowEvent = eventPublished as IGraphFlowEventPushControl;
-            if (controlFlowEvent != null)
+            if (eventPublished is IGraphFlowEventPushControl controlFlowEvent)
             {
                 return controlFlowEvent.OverridePropagationLogic(contextGraph, Id, hostedContext);
             }
