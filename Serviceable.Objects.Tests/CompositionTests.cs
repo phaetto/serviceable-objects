@@ -55,5 +55,8 @@
             Assert.Equal(typeof(ContextForTest), resultStacks[0].ElementAt(0).ContextType);
             Assert.Equal(typeof(ContextForTest2), resultStacks[0].ElementAt(1).ContextType);
         }
+
+        // TODO: add interface tests
+        // IGraphFlowEventPushControl, IPostGraphFlowPullControl
     }
 }
