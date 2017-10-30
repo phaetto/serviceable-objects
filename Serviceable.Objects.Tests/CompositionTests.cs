@@ -36,8 +36,7 @@
              *
              */
 
-            var container = new Container();
-            var graph = new ContextGraph(container);
+            var graph = new ContextGraph();
             var contextForTest2 = new ContextForTest2();
             var contextForTest3 = new ContextForTest3();
 

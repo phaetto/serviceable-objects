@@ -46,8 +46,7 @@
 
             var json = graphSpec.SerializeToJson();
 
-            var container = new Container();
-            var graph = new ContextGraph(container);
+            var graph = new ContextGraph();
             graph.FromJson(json);
 
             var resultStacks = graph.Execute(new ActionForTestEventProducer("new-value")).ToList();
