@@ -3,7 +3,6 @@
     using System.Collections.Generic;
     using System.Linq;
     using Serviceable.Objects.Composition;
-    using Serviceable.Objects.Dependencies;
     using Serviceable.Objects.Remote.Composition;
     using Serviceable.Objects.Tests.Classes;
     using Xunit;
@@ -15,33 +14,48 @@
         {
             var graphSpec = new GraphSpecification
             {
-                GraphVertices = new []
+                GraphNodes = new []
                 {
-                    new GraphNodeWithVertex
+                    new GraphNode()
                     {
                         Id = "node-1",
                         TypeFullName = typeof(ContextForTest).FullName,
                     },
-                    new GraphNodeWithVertex
+                    new GraphNode()
                     {
                         Id = "node-2",
-                        ParentId = "node-1",
                         TypeFullName = typeof(ContextForTest2).FullName,
                     },
-                    new GraphNodeWithVertex
+                    new GraphNode()
                     {
                         Id = "node-3",
-                        ParentId = "node-1",
                         TypeFullName = typeof(ContextForTest3).FullName,
                     },
                     // Hooks up on the node-2 node and listens to the commands running
-                    new GraphNodeWithVertex
+                    new GraphNode()
                     {
                         Id = "node-assert",
-                        ParentId = "node-2",
                         TypeFullName = typeof(AssertNode).FullName,
                     },
-                }
+                },
+                GraphVertices = new []
+                {
+                    new GraphVertex
+                    {
+                        FromId = "node-1",
+                        ToId = "node-2",
+                    },
+                    new GraphVertex
+                    {
+                        FromId = "node-1",
+                        ToId = "node-3",
+                    },
+                    new GraphVertex
+                    {
+                        FromId = "node-2",
+                        ToId = "node-assert",
+                    },
+                },
             };
 
             var json = graphSpec.SerializeToJson();

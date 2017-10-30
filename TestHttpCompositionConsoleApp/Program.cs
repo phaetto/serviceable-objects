@@ -13,11 +13,15 @@
         {
             var configuration = @"
 {
-    GraphVertices: [
+    GraphNodes: [
         { TypeFullName:'" + typeof(OwinHttpContext).FullName + @"', Id:'server-context' },
-        { TypeFullName:'" + typeof(QueueContext).FullName + @"', Id:'queue-context', ParentId:'server-context' },
-        { TypeFullName:'" + typeof(ConsoleLogContext).FullName + @"', Id:'log-context', ParentId:'queue-context' },
-    ]
+        { TypeFullName:'" + typeof(QueueContext).FullName + @"', Id:'queue-context' },
+        { TypeFullName:'" + typeof(ConsoleLogContext).FullName + @"', Id:'log-context' },
+    ],
+    GraphVertices: [
+        { FromId:'server-context', ToId:'queue-context', },
+        { FromId:'queue-context', ToId:'log-context',  },
+    ],
 }
 ";
             

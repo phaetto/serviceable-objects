@@ -1,4 +1,6 @@
-﻿namespace Serviceable.Objects.Remote.Composition
+﻿using System.Linq;
+
+namespace Serviceable.Objects.Remote.Composition
 {
     using Serviceable.Objects.Composition;
     using Serviceable.Objects.Remote.Dependencies;
@@ -10,17 +12,21 @@
         {
             var specification = DeserializableSpecification<GraphSpecification>.DeserializeFromJson(json);
 
-            foreach (var graphVertex in specification.GraphVertices)
+            foreach (var graphNode in specification.GraphNodes)
             {
-                if (!string.IsNullOrWhiteSpace(graphVertex.ParentId))
+                if (specification.GraphVertices.All(x => x.ToId != graphNode.Id))
                 {
-                    contextGraph.AddNode(Types.FindType(graphVertex.TypeFullName), graphVertex.Id);
-                    contextGraph.ConnectNodes(graphVertex.ParentId, graphVertex.Id);
+                    contextGraph.AddInput(Types.FindType(graphNode.TypeFullName), graphNode.Id);
                 }
                 else
                 {
-                    contextGraph.AddInput(Types.FindType(graphVertex.TypeFullName), graphVertex.Id);
+                    contextGraph.AddNode(Types.FindType(graphNode.TypeFullName), graphNode.Id);
                 }
+            }
+
+            foreach (var graphVertex in specification.GraphVertices)
+            {
+                contextGraph.ConnectNodes(graphVertex.FromId, graphVertex.ToId);
             }
         }
     }

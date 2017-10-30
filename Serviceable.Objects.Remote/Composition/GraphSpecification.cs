@@ -7,6 +7,8 @@
     {
         public override int DataStructureVersionNumber => 1;
 
-        public IEnumerable<GraphNodeWithVertex> GraphVertices { get; set; }
+        public IEnumerable<GraphNode> GraphNodes { get; set; }
+
+        public IEnumerable<GraphVertex> GraphVertices { get; set; }
     }
 }
