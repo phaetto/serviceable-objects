@@ -39,7 +39,7 @@
                     {
                         Id = "node-assert",
                         ParentId = "node-2",
-                        TypeFullName = typeof(PullController).FullName,
+                        TypeFullName = typeof(AssertNode).FullName,
                     },
                 }
             };
@@ -57,7 +57,7 @@
             Assert.Equal(typeof(ContextForTest2), resultStacks[0].ElementAt(1).ContextType);
         }
 
-        private sealed class PullController : Context<PullController>, IPostGraphFlowPullControl
+        private sealed class AssertNode : Context<AssertNode>, IPostGraphFlowPullControl
         {
             public void PullNodeExecutionInformation(ContextGraph contextGraph, string executingNodeId, dynamic parentContext,
                 dynamic parentCommandApplied, Stack<EventResult> eventResults)
