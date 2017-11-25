@@ -23,6 +23,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestHttpCompositionConsoleA
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Serviceable.Objects.Instrumentation", "Serviceable.Objects.Instrumentation\Serviceable.Objects.Instrumentation.csproj", "{A7FB9BA5-9591-4A40-B0F6-3E7B62137D2A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serviceable.Objects.IO", "Serviceable.Objects.IO\Serviceable.Objects.IO.csproj", "{349EED11-5DD9-4E95-8315-AA142CF74A14}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -131,6 +133,22 @@ Global
 		{A7FB9BA5-9591-4A40-B0F6-3E7B62137D2A}.Release|x64.Build.0 = Release|Any CPU
 		{A7FB9BA5-9591-4A40-B0F6-3E7B62137D2A}.Release|x86.ActiveCfg = Release|Any CPU
 		{A7FB9BA5-9591-4A40-B0F6-3E7B62137D2A}.Release|x86.Build.0 = Release|Any CPU
+		{349EED11-5DD9-4E95-8315-AA142CF74A14}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{349EED11-5DD9-4E95-8315-AA142CF74A14}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{349EED11-5DD9-4E95-8315-AA142CF74A14}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{349EED11-5DD9-4E95-8315-AA142CF74A14}.Debug|ARM.Build.0 = Debug|Any CPU
+		{349EED11-5DD9-4E95-8315-AA142CF74A14}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{349EED11-5DD9-4E95-8315-AA142CF74A14}.Debug|x64.Build.0 = Debug|Any CPU
+		{349EED11-5DD9-4E95-8315-AA142CF74A14}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{349EED11-5DD9-4E95-8315-AA142CF74A14}.Debug|x86.Build.0 = Debug|Any CPU
+		{349EED11-5DD9-4E95-8315-AA142CF74A14}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{349EED11-5DD9-4E95-8315-AA142CF74A14}.Release|Any CPU.Build.0 = Release|Any CPU
+		{349EED11-5DD9-4E95-8315-AA142CF74A14}.Release|ARM.ActiveCfg = Release|Any CPU
+		{349EED11-5DD9-4E95-8315-AA142CF74A14}.Release|ARM.Build.0 = Release|Any CPU
+		{349EED11-5DD9-4E95-8315-AA142CF74A14}.Release|x64.ActiveCfg = Release|Any CPU
+		{349EED11-5DD9-4E95-8315-AA142CF74A14}.Release|x64.Build.0 = Release|Any CPU
+		{349EED11-5DD9-4E95-8315-AA142CF74A14}.Release|x86.ActiveCfg = Release|Any CPU
+		{349EED11-5DD9-4E95-8315-AA142CF74A14}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
