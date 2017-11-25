@@ -79,19 +79,5 @@
             Assert.IsType<ProxyContext>(result);
             Assert.Equal("custom 5", contextForTest.ContextVariable);
         }
-
-        //[Fact]
-        //public void ProxyContext_WhenADualProxying_ThenItCorrectlyProxiesIt()
-        //{
-        //    var contextForTest = new ContextForTest();
-        //    var proxyContext = new ProxyContext(contextForTest);
-        //    var proxyContext2 = new ProxyContext(proxyContext); // Maybe this not be allowed?
-
-        //    var result = proxyContext2.Execute(new ReproducibleTestCommand(new ReproducibleTestData { ChangeToValue = "custom" }));
-
-        //    Assert.NotNull(result);
-        //    Assert.IsType<ProxyContext>(result);
-        //    Assert.Equal("custom", contextForTest.ContextVariable);
-        //}
     }
 }
