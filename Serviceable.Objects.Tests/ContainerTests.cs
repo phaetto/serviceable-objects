@@ -1,4 +1,6 @@
-﻿namespace Serviceable.Objects.Tests
+﻿using System;
+
+namespace Serviceable.Objects.Tests
 {
     using System.Collections.Generic;
     using Serviceable.Objects.Dependencies;
@@ -65,7 +67,34 @@
             Assert.Equal(3, customObjectsCache.Count); // Shares ContainerTestClass1
         }
 
-        private class ContainerTestClass1
+        [Fact]
+        public void Resolve_WhenRegisteringWithDefaultInterface_ThenWeCanRetrieveTheObjectSuccessfully()
+        {
+            var container = new Container();
+
+            container.RegisterWithDefaultInterface(typeof(ContainerTestClass1));
+
+            var result = container.Resolve<IContainerTestClass1>();
+
+            Assert.NotNull(result);
+            Assert.IsType<ContainerTestClass1>(result);
+        }
+
+        [Fact]
+        public void Resolve_WhenTryingToRetrieveAnUnregisteredInterface_ThenItThrowsAnException()
+        {
+            var container = new Container();
+
+            Assert.Throws<ArgumentException>(
+                () =>
+                    container.Resolve(typeof(IContainerTestClass1)));
+        }
+
+        private interface IContainerTestClass1
+        {   
+        }
+
+        private class ContainerTestClass1 : IContainerTestClass1
         {
         }
 

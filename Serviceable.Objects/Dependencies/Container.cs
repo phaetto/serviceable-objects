@@ -16,6 +16,33 @@
             objectsCache = customObjectsCache ?? objectsCache;
         }
 
+        public void Register(Type type, object implementation, bool replace = false)
+        {
+            Check.ArgumentNull(type, nameof(type));
+            Check.ArgumentNull(implementation, nameof(implementation));
+            Check.Argument(objectsCache.ContainsKey(type.FullName) && !replace, nameof(type), "Type already exists in the container");
+
+            if (objectsCache.ContainsKey(type.FullName))
+            {
+                objectsCache[type.FullName] = implementation;
+            }
+            else
+            {
+                objectsCache.Add(type.FullName, implementation);
+            }
+        }
+
+        public void RegisterWithDefaultInterface(Type type)
+        {
+            Check.ArgumentNull(type, nameof(type));
+
+            var interfaces = type.GetTypeInfo().ImplementedInterfaces.ToArray();
+
+            Check.Argument(interfaces.Length != 1, nameof(type), "Type should support only one interface.");
+
+            objectsCache[interfaces[0].FullName] = CreateObject(type);
+        }
+
         public TOut Resolve<TOut>()
         {
             return (TOut) Resolve(typeof(TOut));
@@ -30,12 +57,18 @@
                 return objectsCache[typeRequested.FullName];
             }
 
+            var typeInfo = typeRequested.GetTypeInfo();
+            Check.Argument(typeInfo.IsInterface || typeInfo.IsAbstract, nameof(typeRequested), "Cannot instantiate an interface or abstract type.");
+
             return CreateObject(typeRequested, new Stack<Type>(10), true);
         }
 
         public object CreateObject(Type type)
         {
             Check.ArgumentNull(type, nameof(type));
+
+            var typeInfo = type.GetTypeInfo();
+            Check.Argument(typeInfo.IsInterface || typeInfo.IsAbstract, nameof(type), "Cannot instantiate an interface or abstract type.");
 
             return CreateObject(type, new Stack<Type>(10), false);
         }

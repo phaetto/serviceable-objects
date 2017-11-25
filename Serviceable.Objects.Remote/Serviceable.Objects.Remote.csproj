@@ -4,12 +4,12 @@
     <DefineConstants>DOTNETSTANDARD_16</DefineConstants>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(TargetFramework)'=='net451'">
-    <DefineConstants>DOTNET451</DefineConstants>
+  <PropertyGroup Condition="'$(TargetFramework)'=='net46'">
+    <DefineConstants>DOTNET460</DefineConstants>
   </PropertyGroup>
   
   <PropertyGroup>
-    <TargetFrameworks>netstandard1.6;netstandard1.3;net451;</TargetFrameworks>
+    <TargetFrameworks>netstandard1.6;netstandard1.3;net46;</TargetFrameworks>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Copyright>Alexander Mantzoukas (c) 2017, Rebootify ApS</Copyright>
     <Authors>Alexander Mantzoukas</Authors>

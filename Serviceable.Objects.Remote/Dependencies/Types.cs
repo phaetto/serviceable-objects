@@ -133,7 +133,7 @@
                     return type;
                 }
             }
-#elif DOTNET451
+#elif DOTNET460
             foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
             {
                 type = assembly.GetType(unqualifiedType, false);
