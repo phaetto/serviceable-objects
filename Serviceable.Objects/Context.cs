@@ -31,8 +31,8 @@
 
             foreach (var eventProduced in eventProducer.EventsProduced)
             {
-                OnCommandEventWithResultPublished(eventProduced);
-                OnCommandEventPublished(eventProduced);
+                PublishCommandEventAndGetResults(eventProduced);
+                PublishCommandEvent(eventProduced);
             }
         }
 

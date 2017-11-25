@@ -54,7 +54,7 @@
             var command = spec.CreateFromSpec();
             
             var eventResults =
-                OnCommandEventWithResultPublished(new GraphFlowEventPushControlApplyCommandInsteadOfEvent(command))
+                PublishCommandEventAndGetResults(new GraphFlowEventPushControlApplyCommandInsteadOfEvent(command))
                 .Where(x => x.ResultObject != null).ToList();
 
             if (eventResults.Count > 0)

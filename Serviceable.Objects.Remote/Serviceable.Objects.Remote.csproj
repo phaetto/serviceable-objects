@@ -23,15 +23,19 @@
     <Description>Builds on top of the command framework to enable the concepts of reproducability of a command and, in extension, remotability. With the addition of json serialization this allows the transformation of all commands to json and back to instance.</Description>
     <Version>0.1.0</Version>
   </PropertyGroup>
+  
+  <ItemGroup>
+    <Compile Remove="Composition\Commands\**" />
+    <Compile Remove="Composition\Events\**" />
+    <EmbeddedResource Remove="Composition\Commands\**" />
+    <EmbeddedResource Remove="Composition\Events\**" />
+    <None Remove="Composition\Commands\**" />
+    <None Remove="Composition\Events\**" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="2.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Composition\Events\" />
-    <Folder Include="Composition\Commands\" />
   </ItemGroup>
 
   <ItemGroup>
