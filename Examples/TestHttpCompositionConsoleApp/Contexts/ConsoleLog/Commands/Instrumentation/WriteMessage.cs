@@ -7,7 +7,7 @@ namespace TestHttpCompositionConsoleApp.Contexts.ConsoleLog.Commands.Instrumenta
     {
         public override ConsoleLogContext Execute(ConsoleLogContext context)
         {
-            Console.WriteLine("\n\nInstrumentation Command: *** Executed ***");
+            Console.WriteLine("\nInstrumentation Command: *** Executed ***");
 
             return context;
         }

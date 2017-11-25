@@ -1,4 +1,5 @@
 ﻿using System.Management.Automation;
+using Serviceable.Objects.IO.NamedPipes;
 using Serviceable.Objects.Remote;
 
 namespace Serviceable.Objects.Instrumentation
@@ -10,8 +11,8 @@ namespace Serviceable.Objects.Instrumentation
 
         protected override void ProcessRecord()
         {
-            // Open named-pipes
-            // Send command over the wire
+            var namedPipeClientContext = new NamedPipeClientContext();
+            namedPipeClientContext.Connect(GenerateCommand());
         }
     }
 }

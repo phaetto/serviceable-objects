@@ -16,7 +16,7 @@ namespace Serviceable.Objects.Remote.Tests
             var streamSession = new StreamSession();
             while (streamSession.Read(memoryStream));
 
-            Assert.Equal(5, streamSession.VerifiedProtocolStrings.Count);
+            Assert.Equal(5, streamSession.CommandsTextReadyToBeParsedQueue.Count);
         }
 
         [Fact]
@@ -28,7 +28,7 @@ namespace Serviceable.Objects.Remote.Tests
             var streamSession = new StreamSession(2);
             while(streamSession.Read(memoryStream));
 
-            Assert.Equal(5, streamSession.VerifiedProtocolStrings.Count);
+            Assert.Equal(5, streamSession.CommandsTextReadyToBeParsedQueue.Count);
         }
     }
 }

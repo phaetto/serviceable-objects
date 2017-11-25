@@ -1,9 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.IO;
 using System.Linq;
 using System.Text;
-using Serviceable.Objects.Exceptions;
 
 namespace Serviceable.Objects.Remote.Serialization.Streaming
 {
@@ -15,7 +14,7 @@ namespace Serviceable.Objects.Remote.Serialization.Streaming
         private const string EndOfStream = "\n";
         private readonly StreamState streamState = new StreamState();
 
-        public List<string> VerifiedProtocolStrings => streamState.CommandsTextReadyToBeParsed;
+        public ConcurrentQueue<string> CommandsTextReadyToBeParsedQueue => streamState.CommandsTextReadyToBeParsedQueue;
 
         public StreamSession(int bufferSize = 256)
         {
@@ -61,7 +60,7 @@ namespace Serviceable.Objects.Remote.Serialization.Streaming
                 }
                 else
                 {
-                    streamState.CommandsTextReadyToBeParsed.Add(streamState.ParsedCommandBuffer.Substring(StartOfStream.Length));
+                    streamState.CommandsTextReadyToBeParsedQueue.Enqueue(streamState.ParsedCommandBuffer.Substring(StartOfStream.Length));
                 }
                 streamState.ParsedCommandBuffer = string.Empty;
                 startingIndex = 1;
@@ -83,7 +82,7 @@ namespace Serviceable.Objects.Remote.Serialization.Streaming
                 }
                 else
                 {
-                    streamState.CommandsTextReadyToBeParsed.Add(streamState.ParsedCommandBuffer.Substring(StartOfStream.Length));
+                    streamState.CommandsTextReadyToBeParsedQueue.Enqueue(streamState.ParsedCommandBuffer.Substring(StartOfStream.Length));
                 }
             }
 
@@ -97,7 +96,7 @@ namespace Serviceable.Objects.Remote.Serialization.Streaming
                     streamState.HasBegunParsingCommand = !isFinalisedCommand;
                     if (isFinalisedCommand)
                     {
-                        streamState.CommandsTextReadyToBeParsed.Add(streamState.ParsedCommandBuffer.Substring(StartOfStream.Length));
+                        streamState.CommandsTextReadyToBeParsedQueue.Enqueue(streamState.ParsedCommandBuffer.Substring(StartOfStream.Length));
                         streamState.ParsedCommandBuffer = string.Empty;
                     }
                 }
@@ -122,7 +121,7 @@ namespace Serviceable.Objects.Remote.Serialization.Streaming
             streamState.HasBegunParsingCommand = false;
             streamState.ParsedCommandBuffer = string.Empty;
 
-            streamState.CommandsTextReadyToBeParsed.Add(new ExecutableCommandSpecification
+            streamState.CommandsTextReadyToBeParsedQueue.Enqueue(new ExecutableCommandSpecification
             {
                 Data = exception,
                 DataType = exception.GetType().FullName
