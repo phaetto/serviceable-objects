@@ -2,6 +2,7 @@
 
 namespace Serviceable.Objects.Remote.Composition
 {
+    using Objects.Composition.Graph;
     using Serviceable.Objects.Composition;
     using Serviceable.Objects.Remote.Dependencies;
     using Serviceable.Objects.Remote.Serialization;

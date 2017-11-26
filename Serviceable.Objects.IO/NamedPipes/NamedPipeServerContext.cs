@@ -4,9 +4,9 @@
     using System.IO.Pipes;
     using System.Linq;
     using System.Threading.Tasks;
-    using Composition.Events;
-    using Composition.Stages.Configuration;
-    using Composition.Stages.Initialization;
+    using Composition.Graph.Events;
+    using Composition.Graph.Stages.Configuration;
+    using Composition.Graph.Stages.Initialization;
     using Exceptions;
     using Newtonsoft.Json;
     using Remote.Composition.Configuration;

@@ -1,7 +1,7 @@
-﻿namespace Serviceable.Objects.Composition.Commands
+﻿namespace Serviceable.Objects.Composition.Graph.Commands
 {
     using System;
-    using Serviceable.Objects.Exceptions;
+    using Exceptions;
 
     public sealed class AddInputNode : ICommand<ContextGraph, ContextGraph>
     {

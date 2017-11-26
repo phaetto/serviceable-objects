@@ -1,4 +1,4 @@
-﻿namespace Serviceable.Objects.Composition.Stages.Configuration
+﻿namespace Serviceable.Objects.Composition.Graph.Stages.Configuration
 {
     public interface IConfigurable
     {

@@ -30,7 +30,7 @@ This framework is developed with testing in mind and every derivable should be f
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Composition\Commands\" />
+    <Folder Include="Composition\Graph\Commands\" />
   </ItemGroup>
 
 </Project>

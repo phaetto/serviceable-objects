@@ -3,7 +3,8 @@
     using System;
     using Newtonsoft.Json;
     using Serviceable.Objects.Composition;
-    using Serviceable.Objects.Composition.Stages.Configuration;
+    using Serviceable.Objects.Composition.Graph;
+    using Serviceable.Objects.Composition.Graph.Stages.Configuration;
     using Serviceable.Objects.IO.NamedPipes;
     using Serviceable.Objects.IO.NamedPipes.State;
 

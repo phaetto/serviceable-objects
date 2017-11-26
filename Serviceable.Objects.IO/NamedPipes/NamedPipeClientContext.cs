@@ -24,7 +24,7 @@ namespace Serviceable.Objects.IO.NamedPipes
 
                 while (streamSession.CommandsTextReadyToBeParsedQueue.TryDequeue(out string commandString))
                 {
-                    // Deserialize
+                    // TODO: Deserialize
                 }
             }
         }

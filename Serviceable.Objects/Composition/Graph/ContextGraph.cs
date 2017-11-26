@@ -1,13 +1,12 @@
-﻿namespace Serviceable.Objects.Composition
+﻿namespace Serviceable.Objects.Composition.Graph
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Dependencies;
+    using Exceptions;
     using Microsoft.CSharp.RuntimeBinder;
-    using Serviceable.Objects.Dependencies;
-    using Serviceable.Objects.Exceptions;
     using Stages.Configuration;
-    using Stages.Initialization;
 
     public sealed class ContextGraph : Context<ContextGraph> // TODO: IDisposable
     {

@@ -1,4 +1,4 @@
-﻿namespace Serviceable.Objects.Composition.Events
+﻿namespace Serviceable.Objects.Composition.Graph.Events
 {
     using System.Collections.Generic;
     using System.Linq;

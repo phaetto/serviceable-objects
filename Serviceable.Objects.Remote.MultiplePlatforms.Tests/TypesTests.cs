@@ -3,6 +3,7 @@
     using System;
     using Dependencies;
     using Objects.Composition;
+    using Objects.Composition.Graph;
     using Xunit;
 
     public class TypesTests

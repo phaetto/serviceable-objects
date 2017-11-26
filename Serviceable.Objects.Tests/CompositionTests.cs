@@ -2,6 +2,7 @@
 {
     using System.Collections.Generic;
     using System.Linq;
+    using Composition.Graph;
     using Serviceable.Objects.Composition;
     using Serviceable.Objects.Dependencies;
     using Serviceable.Objects.Tests.Classes;

@@ -4,7 +4,8 @@
     using Exceptions;
     using Newtonsoft.Json;
     using Objects.Composition;
-    using Objects.Composition.Stages.Configuration;
+    using Objects.Composition.Graph;
+    using Objects.Composition.Graph.Stages.Configuration;
 
     public abstract class ConfigurableContext<TConfiguration, TContextType> : Context<TContextType>, IConfigurable
         where TConfiguration : struct

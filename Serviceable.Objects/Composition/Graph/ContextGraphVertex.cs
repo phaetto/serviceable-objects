@@ -1,4 +1,4 @@
-﻿namespace Serviceable.Objects.Composition
+﻿namespace Serviceable.Objects.Composition.Graph
 {
     internal sealed class ContextGraphVertex
     {

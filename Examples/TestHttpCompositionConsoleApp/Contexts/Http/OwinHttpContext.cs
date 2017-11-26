@@ -12,7 +12,7 @@
     using Microsoft.Extensions.Logging;
     using Newtonsoft.Json;
     using Serviceable.Objects;
-    using Serviceable.Objects.Composition.Events;
+    using Serviceable.Objects.Composition.Graph.Events;
     using Serviceable.Objects.Remote.Serialization;
 
     public sealed class OwinHttpContext : Context<OwinHttpContext>
