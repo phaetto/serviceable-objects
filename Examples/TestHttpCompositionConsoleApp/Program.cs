@@ -1,12 +1,16 @@
 ﻿
 namespace TestHttpCompositionConsoleApp
 {
+    using System.Collections.Generic;
     using Contexts.ConfigurationSource;
-    using Serviceable.Objects.Composition.Graph;
+    using Serviceable.Objects.Composition.ServiceContainers;
     using Serviceable.Objects.Dependencies;
-    using Serviceable.Objects.IO.NamedPipes;
     using Serviceable.Objects.IO.NamedPipes.Server;
     using Serviceable.Objects.Remote.Composition.Graph;
+    using Serviceable.Objects.Remote.Composition.ServiceContainers;
+    using Serviceable.Objects.Remote.Composition.ServiceContainers.Configuration;
+    using Serviceable.Objects.Remote.Composition.Services;
+    using Serviceable.Objects.Remote.Composition.Services.Configuration;
     using TestHttpCompositionConsoleApp.Contexts.ConsoleLog;
     using TestHttpCompositionConsoleApp.Contexts.Http;
     using TestHttpCompositionConsoleApp.Contexts.Http.Commands;
@@ -43,21 +47,36 @@ namespace TestHttpCompositionConsoleApp
              * 
              */
 
-            // TODO: Add service (graph instance + template + name) extensions with container extensions (on graph or in service-container?)
-            // TODO: Add service-container (service orchestrator)
             // TODO: Add host for service-containers (bring-your-own-process logic)
             // TODO: Add process orchestrator
 
-            var container = new Container();
-            container.RegisterWithDefaultInterface(typeof(MemoryConfigurationSource));
+            // Start the service container
+            var serviceContainer = new ServiceContainerContext(new ServiceContainerContextConfiguration
+            {
+                ContainerName = "service-container",
+                ServiceContainerBinding = new Binding { Host = "localhost" },
+                ExternalBindings = new List<ExternalBinding>(),
+            });
+            serviceContainer.GraphTemplatesDictionary.Add("template-X", graphTemplate);
+            serviceContainer.ServiceRegistrations.Add(new ServiceRegistration { ServiceName = "service-X" });
+            serviceContainer.ServiceContainerContainer.RegisterWithDefaultInterface(typeof(MemoryConfigurationSource));
 
-            var contextGraph = new GraphContext(container);
-            container.Register(contextGraph); // Make the graph accessible in this container // TODO: is it applicable in every scenario?
+            // Start the service
+            var service = new ServiceContext(new ServiceContextConfiguration
+            {
+                ContainerName = "service-container",
+                ServiceName = "service-X",
+                TemplateName = "template-X",
+            });
+            service.ServiceContainer.RegisterWithDefaultInterface(typeof(MemoryConfigurationSource));
 
-            contextGraph.FromJson(graphTemplate);
-            contextGraph.Configure();
-            contextGraph.Initialize();
-            contextGraph.Execute(new Run()); // TODO: blocking operation must be on Host - owin must run on a task
+            // TODO: instrumentation service:
+            // TODO: Named-pipes -> service (template) ---> merge with graph/service template
+
+            service.GraphContext.FromJson(graphTemplate);
+            service.GraphContext.Configure();
+            service.GraphContext.Initialize();
+            service.GraphContext.Execute(new Run()); // TODO: blocking operation must be on Host - owin must run on a task
         }
     }
 }
