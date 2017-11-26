@@ -90,6 +90,19 @@ namespace Serviceable.Objects.Tests
                     container.Resolve(typeof(IContainerTestClass1)));
         }
 
+        [Fact]
+        public void Resolve_WhenRegisteringWithInjectedInterface_ThenWeCanRetrieveTheObjectSuccessfully()
+        {
+            var container = new Container();
+
+            container.RegisterWithDefaultInterface(typeof(ContainerTestClass1));
+
+            var result = container.Resolve<ContainerTestClassWithDepndentIinterface>();
+
+            Assert.NotNull(result);
+            Assert.IsType<ContainerTestClassWithDepndentIinterface>(result);
+        }
+
         private interface IContainerTestClass1
         {   
         }
@@ -129,6 +142,16 @@ namespace Serviceable.Objects.Tests
         {
             public ContainerTestClassCyclicDependency2(ContainerTestClassCyclicDependency1 o)
             {
+            }
+        }
+
+        private class ContainerTestClassWithDepndentIinterface
+        {
+            public readonly IContainerTestClass1 o;
+
+            public ContainerTestClassWithDepndentIinterface(IContainerTestClass1 o)
+            {
+                this.o = o;
             }
         }
     }

@@ -16,6 +16,14 @@
             objectsCache = customObjectsCache ?? objectsCache;
         }
 
+        public void Register(object implementation, bool replace = false)
+        {
+            Check.ArgumentNull(implementation, nameof(implementation));
+            var type = implementation.GetType();
+            
+            Register(type, implementation, replace);
+        }
+
         public void Register(Type type, object implementation, bool replace = false)
         {
             Check.ArgumentNull(type, nameof(type));
@@ -109,12 +117,27 @@
                     foreach (var parameterInfo in constructorParameters)
                     {
                         var parameterTypeFullName = parameterInfo.ParameterType.FullName;
+                        var parameterTypeInfo = parameterInfo.ParameterType.GetTypeInfo();
                         if (objectsCache.ContainsKey(parameterTypeFullName))
                         {
-                            transformedObjects.Add(Convert.ChangeType(objectsCache[parameterTypeFullName], parameterInfo.ParameterType));
+                            var objectUnderInverstigation = objectsCache[parameterTypeFullName];
+                            if (parameterTypeInfo.IsInterface && objectUnderInverstigation.GetType().GetTypeInfo()
+                                    .ImplementedInterfaces.Any(x => x == parameterInfo.ParameterType))
+                            {
+                                transformedObjects.Add(objectUnderInverstigation);
+                            }
+                            else
+                            {
+                                transformedObjects.Add(Convert.ChangeType(objectUnderInverstigation, parameterInfo.ParameterType));
+                            }
                         }
                         else
                         {
+                            if (parameterTypeInfo.IsValueType)
+                            {
+                                throw new InvalidCastException("Value types are not allowed");
+                            }
+
                             ResolveUnknownType(transformedObjects, parameterInfo, typeStackCall, cacheable);
                         }
                     }
