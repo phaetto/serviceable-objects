@@ -3,9 +3,10 @@
     using System;
     using Exceptions;
     using Newtonsoft.Json;
-    using Objects.Composition;
     using Objects.Composition.Graph;
     using Objects.Composition.Graph.Stages.Configuration;
+    using Objects.Composition.ServiceContainers;
+    using Objects.Composition.Services;
 
     public abstract class ConfigurableContext<TConfiguration, TContextType> : Context<TContextType>, IConfigurable
         where TConfiguration : struct
@@ -48,14 +49,14 @@
             return base.InvokeExecute(action);
         }
 
-        public void Configure(ContextGraph contextGraph, ContextGraphNode contextGraphNode)
+        public void Configure(IServiceContainer serviceContainer, IService service, ContextGraph contextGraph, ContextGraphNode contextGraphNode)
         {
             if (!HasBeenConfigured)
             {
                 if (ConfigurationSource != null)
                 {
                     var configurationString =
-                        ConfigurationSource.GetConfigurationValueForKey(contextGraph, contextGraphNode, this.GetType());
+                        ConfigurationSource.GetConfigurationValueForKey(serviceContainer, service, contextGraph, contextGraphNode, this.GetType());
                     SetConfiguration(JsonConvert.DeserializeObject<TConfiguration>(configurationString));
                     HasBeenConfigured = true;
                 }

@@ -1,8 +1,11 @@
 ﻿namespace Serviceable.Objects.Composition.Graph.Stages.Configuration
 {
+    using ServiceContainers;
+    using Services;
+
     public interface IConfigurable
     {
         bool HasBeenConfigured { get; }
-        void Configure(ContextGraph contextGraph, ContextGraphNode contextGraphNode);
+        void Configure(IServiceContainer serviceContainer, IService service, ContextGraph contextGraph, ContextGraphNode contextGraphNode);
     }
 }

@@ -1,11 +1,11 @@
 ﻿namespace Serviceable.Objects.Composition.Graph.Stages.Configuration
 {
     using System;
+    using ServiceContainers;
+    using Services;
 
     public interface IConfigurationSource
     {
-        // TODO: service template type
-        // TODO: container bindings
-        string GetConfigurationValueForKey(ContextGraph contextGraph, ContextGraphNode contextGraphNode, Type type);
+        string GetConfigurationValueForKey(IServiceContainer serviceContainer, IService service, ContextGraph contextGraph, ContextGraphNode contextGraphNode, Type type);
     }
 }

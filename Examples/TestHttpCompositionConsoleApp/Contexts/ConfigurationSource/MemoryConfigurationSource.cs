@@ -2,15 +2,16 @@
 {
     using System;
     using Newtonsoft.Json;
-    using Serviceable.Objects.Composition;
     using Serviceable.Objects.Composition.Graph;
     using Serviceable.Objects.Composition.Graph.Stages.Configuration;
+    using Serviceable.Objects.Composition.ServiceContainers;
+    using Serviceable.Objects.Composition.Services;
     using Serviceable.Objects.IO.NamedPipes;
     using Serviceable.Objects.IO.NamedPipes.State;
 
     public sealed class MemoryConfigurationSource : IConfigurationSource
     {
-        public string GetConfigurationValueForKey(ContextGraph contextGraph, ContextGraphNode contextGraphNode, Type type)
+        public string GetConfigurationValueForKey(IServiceContainer serviceContainer, IService service, ContextGraph contextGraph, ContextGraphNode contextGraphNode, Type type)
         {
             switch (type)
             {

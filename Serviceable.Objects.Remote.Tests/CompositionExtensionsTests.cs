@@ -2,8 +2,8 @@
 {
     using System.Collections.Generic;
     using System.Linq;
+    using Composition.Graph;
     using Objects.Composition.Graph;
-    using Serviceable.Objects.Composition;
     using Serviceable.Objects.Remote.Composition;
     using Serviceable.Objects.Tests.Classes;
     using Xunit;

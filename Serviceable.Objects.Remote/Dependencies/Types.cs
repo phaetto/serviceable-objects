@@ -6,7 +6,6 @@
     using System.Reflection;
     using Microsoft.DotNet.PlatformAbstractions;
     using Microsoft.Extensions.DependencyModel;
-    using Serviceable.Objects.Dependencies;
     using Serviceable.Objects.Exceptions;
 
     public static class Types

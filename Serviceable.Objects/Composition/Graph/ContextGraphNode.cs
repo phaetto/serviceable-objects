@@ -5,6 +5,8 @@
     using System.Linq;
     using System.Reflection;
     using Microsoft.CSharp.RuntimeBinder;
+    using ServiceContainers;
+    using Services;
     using Stages.Configuration;
     using Stages.Initialization;
 
@@ -44,7 +46,11 @@
         {
             if (HostedContext is IConfigurable configurable && !configurable.HasBeenConfigured)
             {
-                configurable.Configure(contextGraph, this);
+                configurable.Configure(
+                    contextGraph.Container.Resolve<IServiceContainer>(throwOnError: false),
+                    contextGraph.Container.Resolve<IService>(throwOnError: false),
+                    contextGraph,
+                    this);
             }
         }
 

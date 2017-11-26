@@ -3,7 +3,6 @@
     using System;
     using System.Collections.Generic;
     using Serviceable.Objects;
-    using Serviceable.Objects.Composition;
     using Serviceable.Objects.Composition.Graph;
 
     public sealed class ConsoleLogContext: Context<ConsoleLogContext>, IPostGraphFlowPullControl
