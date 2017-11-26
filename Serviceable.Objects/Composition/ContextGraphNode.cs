@@ -77,8 +77,7 @@
 
         private void CheckPostGraphFlowPullControl(string id, dynamic parentContext, dynamic parentCommandApplied, Stack<EventResult> eventResults)
         {
-            var hostedContextWithPullControl = hostedContext as IPostGraphFlowPullControl;
-            if (hostedContextWithPullControl != null)
+            if (hostedContext is IPostGraphFlowPullControl hostedContextWithPullControl)
             {
                 hostedContextWithPullControl.PullNodeExecutionInformation(contextGraph, id, parentContext, parentCommandApplied, eventResults);
             }
