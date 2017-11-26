@@ -5,9 +5,10 @@
 
     public interface IService
     {
+        string ContainerName { get; }
         string ServiceName { get; }
-        GraphContext GraphContext { get; }
         string TemplateName { get; }
         Container ServiceContainer { get; }
+        GraphContext GraphContext { get; }
     }
 }

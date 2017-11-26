@@ -6,10 +6,11 @@
 
     public interface IServiceContainer
     {
-        IList<IService> Services { get; }
-        string ServiceName { get; }
+        IList<ServiceRegistration> ServiceRegistrations { get; }
+        string ContainerName { get; }
         Container ServiceContainerContainer { get; }
         Binding ServiceContainerBinding { get; }
         IList<ExternalBinding> ExternalBindings { get; }
+        IDictionary<string, string> GraphTemplatesDictionary { get; }
     }
 }
