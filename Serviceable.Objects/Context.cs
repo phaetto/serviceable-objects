@@ -5,7 +5,7 @@
     using System.Threading.Tasks;
     using Serviceable.Objects.Exceptions;
 
-    public class Context<TContextType> : AbstractContext where TContextType : Context<TContextType>
+    public abstract class Context<TContextType> : AbstractContext where TContextType : Context<TContextType>
     {
         protected virtual TReturnedContextType InvokeExecute<TReturnedContextType>(ICommand<TContextType, TReturnedContextType> action)
         {
