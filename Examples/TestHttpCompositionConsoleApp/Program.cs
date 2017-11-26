@@ -1,7 +1,9 @@
 ﻿
 namespace TestHttpCompositionConsoleApp
 {
+    using Contexts.ConfigurationSource;
     using Serviceable.Objects.Composition;
+    using Serviceable.Objects.Dependencies;
     using Serviceable.Objects.IO.NamedPipes;
     using Serviceable.Objects.Remote.Composition;
     using TestHttpCompositionConsoleApp.Contexts.ConsoleLog;
@@ -13,7 +15,7 @@ namespace TestHttpCompositionConsoleApp
     {
         static void Main(string[] args)
         {
-            var configuration = @"
+            var graphTemplate = @"
 {
     GraphNodes: [
         { TypeFullName:'" + typeof(OwinHttpContext).FullName + @"', Id:'server-context' },
@@ -30,10 +32,26 @@ namespace TestHttpCompositionConsoleApp
     ],
 }
 ";
+            /*
+             * Principles:
+             * 
+             * Composable
+             * Configurable
+             * Testable
+             * Intrumentable
+             * 
+             */
 
-            var contextGraph = new ContextGraph();
-            contextGraph.FromJson(configuration);
-            contextGraph.Execute(new Run());
+            var container = new Container();
+            container.RegisterWithDefaultInterface(typeof(MemoryConfigurationSource));
+
+            var contextGraph = new ContextGraph(container);
+            container.Register(contextGraph); // Make the graph accessible in this container // TODO: is it applicable in every scenario?
+
+            contextGraph.FromJson(graphTemplate);
+            contextGraph.Configure();
+            contextGraph.Initialize();
+            contextGraph.Execute(new Run()); // TODO: blocking operation must be on Host - owin must run on a task
         }
     }
 }

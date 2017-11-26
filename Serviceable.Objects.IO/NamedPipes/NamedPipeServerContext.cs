@@ -1,29 +1,46 @@
-﻿using System.Linq;
-using Newtonsoft.Json;
-using Serviceable.Objects.Composition.Events;
-using Serviceable.Objects.Remote.Serialization;
-using System.IO.Pipes;
-using System.IO;
-using System.Threading.Tasks;
-using Serviceable.Objects.Remote.Serialization.Streaming;
-
-namespace Serviceable.Objects.IO.NamedPipes
+﻿namespace Serviceable.Objects.IO.NamedPipes
 {
-    public sealed class NamedPipeServerContext : Context<NamedPipeServerContext>
+    using System.IO;
+    using System.IO.Pipes;
+    using System.Linq;
+    using System.Threading.Tasks;
+    using Composition.Events;
+    using Composition.Stages.Configuration;
+    using Composition.Stages.Initialization;
+    using Exceptions;
+    using Newtonsoft.Json;
+    using Remote.Composition.Configuration;
+    using Remote.Serialization;
+    using Remote.Serialization.Streaming;
+    using State;
+
+    public sealed class NamedPipeServerContext : ConfigurableContext<NamedPipeServerState, NamedPipeServerContext>, IInitialize
     {
-        private readonly string namedPipe; // TODO: formulate how we get the input redirection
         private readonly StreamSession streamSession = new StreamSession();
-        private readonly Task serverTask;
+        private Task serverTask;
 
         public NamedPipeServerContext()
+        {
+        }
+
+        public NamedPipeServerContext(NamedPipeServerState configuration) : base(configuration)
+        {
+        }
+
+        public NamedPipeServerContext(IConfigurationSource configurationSource) : base(configurationSource)
+        {
+        }
+
+        public void Initialize()
         {
             serverTask = Task.Run(() => RunServerAndBlock());
         }
 
-        // TODO: how to run this on initialization on graph, and still be decoupled?
         private void RunServerAndBlock()
         {
-            using (var namedPipeServerStream = new NamedPipeServerStream("testpipe", PipeDirection.InOut))
+            Check.ArgumentNull(Configuration, nameof(Configuration));
+
+            using (var namedPipeServerStream = new NamedPipeServerStream(Configuration.PipeName, PipeDirection.InOut))
             {
                 while (true)
                 {
