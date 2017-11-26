@@ -1,7 +1,7 @@
-﻿namespace Serviceable.Objects.Remote.Composition
+﻿namespace Serviceable.Objects.Remote.Composition.Graph
 {
     using System.Collections.Generic;
-    using Serviceable.Objects.Remote.Serialization;
+    using Serialization;
 
     public sealed class GraphSpecification : SerializableSpecification
     {

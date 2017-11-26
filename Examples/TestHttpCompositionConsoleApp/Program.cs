@@ -2,11 +2,10 @@
 namespace TestHttpCompositionConsoleApp
 {
     using Contexts.ConfigurationSource;
-    using Serviceable.Objects.Composition;
     using Serviceable.Objects.Composition.Graph;
     using Serviceable.Objects.Dependencies;
     using Serviceable.Objects.IO.NamedPipes;
-    using Serviceable.Objects.Remote.Composition;
+    using Serviceable.Objects.Remote.Composition.Graph;
     using TestHttpCompositionConsoleApp.Contexts.ConsoleLog;
     using TestHttpCompositionConsoleApp.Contexts.Http;
     using TestHttpCompositionConsoleApp.Contexts.Http.Commands;

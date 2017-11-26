@@ -1,11 +1,9 @@
-﻿using System.Linq;
-
-namespace Serviceable.Objects.Remote.Composition
+﻿namespace Serviceable.Objects.Remote.Composition.Graph
 {
+    using System.Linq;
+    using Dependencies;
     using Objects.Composition.Graph;
-    using Serviceable.Objects.Composition;
-    using Serviceable.Objects.Remote.Dependencies;
-    using Serviceable.Objects.Remote.Serialization;
+    using Serialization;
 
     public static class ContextGraphExtensions
     {
