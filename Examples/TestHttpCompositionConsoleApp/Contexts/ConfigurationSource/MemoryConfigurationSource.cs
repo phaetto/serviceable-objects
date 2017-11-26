@@ -21,7 +21,7 @@
                         PipeName  = "testpipe"
                     });
                 default:
-                    throw new InvalidOperationException($"Type {type.FullName} is not supprted.");
+                    throw new InvalidOperationException($"Type {type.FullName} is not supported.");
             }
         }
     }
