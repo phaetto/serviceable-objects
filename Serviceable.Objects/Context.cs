@@ -5,14 +5,14 @@
     using System.Threading.Tasks;
     using Serviceable.Objects.Exceptions;
 
-    public class Context<T> : AbstractContext where T : Context<T>
+    public class Context<TContextType> : AbstractContext where TContextType : Context<TContextType>
     {
-        protected virtual TReturnedContextType InvokeExecute<TReturnedContextType>(ICommand<T, TReturnedContextType> action)
+        protected virtual TReturnedContextType InvokeExecute<TReturnedContextType>(ICommand<TContextType, TReturnedContextType> action)
         {
-            return action.Execute((T) this);
+            return action.Execute((TContextType) this);
         }
 
-        private TReturnedContextType InvokeExecuteAndPostEvents<TReturnedContextType>(ICommand<T, TReturnedContextType> action)
+        private TReturnedContextType InvokeExecuteAndPostEvents<TReturnedContextType>(ICommand<TContextType, TReturnedContextType> action)
         {
             var result = InvokeExecute(action);
 
@@ -21,7 +21,7 @@
             return result;
         }
 
-        private void CheckAndInvokeEvents<TReturnedContextType>(ICommand<T, TReturnedContextType> action)
+        private void CheckAndInvokeEvents<TReturnedContextType>(ICommand<TContextType, TReturnedContextType> action)
         {
             var eventProducer = action as IEventProducer;
             if (eventProducer?.EventsProduced == null)
@@ -37,7 +37,7 @@
         }
 
         public TReturnedContextType Execute<TReturnedContextType>(
-            ICommand<T, TReturnedContextType> action)
+            ICommand<TContextType, TReturnedContextType> action)
         {
             Check.ArgumentNull(action, nameof(action));
 
@@ -47,7 +47,7 @@
         }
 
         public IEnumerable<TReturnedContextType> Execute<TReturnedContextType>(
-            IEnumerable<ICommand<T, TReturnedContextType>> actions)
+            IEnumerable<ICommand<TContextType, TReturnedContextType>> actions)
         {
             Check.ArgumentNull(actions, nameof(actions));
 
@@ -55,7 +55,7 @@
         }
 
         public Task<TReturnedContextType> ForceExecuteAsync<TReturnedContextType>(
-            ICommand<T, TReturnedContextType> action)
+            ICommand<TContextType, TReturnedContextType> action)
         {
             Check.ArgumentNull(action, nameof(action));
 
@@ -63,7 +63,7 @@
         }
 
         public Task<TReturnedContextType> ForceExecuteAsync<TReturnedContextType>(
-            IEnumerable<ICommand<T, TReturnedContextType>> actions)
+            IEnumerable<ICommand<TContextType, TReturnedContextType>> actions)
         {
             Check.ArgumentNull(actions, nameof(actions));
 
