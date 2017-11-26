@@ -57,18 +57,12 @@
                 return objectsCache[typeRequested.FullName];
             }
 
-            var typeInfo = typeRequested.GetTypeInfo();
-            Check.Argument(typeInfo.IsInterface || typeInfo.IsAbstract, nameof(typeRequested), "Cannot instantiate an interface or abstract type.");
-
             return CreateObject(typeRequested, new Stack<Type>(10), true);
         }
 
         public object CreateObject(Type type)
         {
             Check.ArgumentNull(type, nameof(type));
-
-            var typeInfo = type.GetTypeInfo();
-            Check.Argument(typeInfo.IsInterface || typeInfo.IsAbstract, nameof(type), "Cannot instantiate an interface or abstract type.");
 
             return CreateObject(type, new Stack<Type>(10), false);
         }
@@ -96,11 +90,14 @@
             Check.ArgumentNull(type, nameof(type));
             Check.ArgumentNull(typeStackCall, nameof(typeStackCall));
 
+            var typeInfo = type.GetTypeInfo();
+            Check.Argument(typeInfo.IsInterface || typeInfo.IsAbstract, nameof(type), "Cannot instantiate an interface or abstract type.");
+
             CheckStack(type, typeStackCall);
 
             typeStackCall.Push(type);
 
-            var constructors = type.GetTypeInfo().DeclaredConstructors.OrderByDescending(x => x.GetParameters().Length);
+            var constructors = typeInfo.DeclaredConstructors.OrderByDescending(x => x.GetParameters().Length);
             foreach (var constructor in constructors)
             {
                 try
