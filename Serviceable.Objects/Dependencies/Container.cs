@@ -50,11 +50,18 @@
         {
             Check.ArgumentNull(type, nameof(type));
 
-            var interfaces = type.GetTypeInfo().ImplementedInterfaces.ToArray();
+            RegisterWithDefaultInterface(CreateObject(type));
+        }
 
-            Check.Argument(interfaces.Length != 1, nameof(type), "Type should support only one interface.");
+        public void RegisterWithDefaultInterface(object instance)
+        {
+            Check.ArgumentNull(instance, nameof(instance));
 
-            objectsCache[interfaces[0].FullName] = CreateObject(type);
+            var interfaces = instance.GetType().GetTypeInfo().ImplementedInterfaces.ToArray();
+
+            Check.Argument(interfaces.Length != 1, nameof(instance), "Type should support only one interface.");
+
+            objectsCache[interfaces[0].FullName] = instance;
         }
 
         public TOut Resolve<TOut>(bool throwOnError = true)
@@ -116,6 +123,15 @@
             var typeInfo = type.GetTypeInfo();
             if (typeInfo.IsInterface || typeInfo.IsAbstract)
             {
+                if (typeStackCall.Count > 0 && parentContainer != null)
+                {
+                    var resolvedItem = parentContainer.ResolveFromCache(type);
+                    if (resolvedItem != null)
+                    {
+                        return resolvedItem;
+                    }
+                }
+
                 if (!throwOnError)
                 {
                     return null;
@@ -224,7 +240,16 @@
                     CheckStack(parameterInfo.ParameterType, typeStackCall);
 
                     var newObject = CreateObject(parameterInfo.ParameterType, typeStackCall, cacheable);
-                    transformedObjects.Add(Convert.ChangeType(newObject, parameterInfo.ParameterType));
+
+                    if (parameterInfo.ParameterType.GetTypeInfo().IsInterface && newObject.GetType().GetTypeInfo()
+                            .ImplementedInterfaces.Any(x => x == parameterInfo.ParameterType))
+                    {
+                        transformedObjects.Add(newObject);
+                    }
+                    else
+                    {
+                        transformedObjects.Add(Convert.ChangeType(newObject, parameterInfo.ParameterType));
+                    }
                 }
                 else
                 {

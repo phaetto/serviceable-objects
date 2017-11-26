@@ -45,6 +45,19 @@ namespace Serviceable.Objects.Tests
         }
 
         [Fact]
+        public void CreateObject_WhenRegisteringWithInjectedInterface_ThenWeCanRetrieveTheObjectSuccessfully()
+        {
+            var container = new Container();
+
+            container.RegisterWithDefaultInterface(typeof(ContainerTestClass1));
+
+            var result = container.CreateObject(typeof(ContainerTestClassWithDepndentIinterface));
+
+            Assert.NotNull(result);
+            Assert.IsType<ContainerTestClassWithDepndentIinterface>(result);
+        }
+
+        [Fact]
         public void Resolve_WhenCreatingAnObject_ThenItIsSuccessfullyInjectingAllDependencies()
         {
             Dictionary<string, object> customObjectsCache = new Dictionary<string, object>();
