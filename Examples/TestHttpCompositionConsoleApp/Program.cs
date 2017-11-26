@@ -1,10 +1,8 @@
-﻿using System.Threading.Tasks;
-using Serviceable.Objects.IO.NamedPipes;
-using TestHttpCompositionConsoleApp.Contexts.ConsoleLog.Commands.Instrumentation;
-
+﻿
 namespace TestHttpCompositionConsoleApp
 {
     using Serviceable.Objects.Composition;
+    using Serviceable.Objects.IO.NamedPipes;
     using Serviceable.Objects.Remote.Composition;
     using TestHttpCompositionConsoleApp.Contexts.ConsoleLog;
     using TestHttpCompositionConsoleApp.Contexts.Http;
@@ -33,16 +31,6 @@ namespace TestHttpCompositionConsoleApp
 }
 ";
 
-            Task.Run(async () =>
-            {
-                while (true)
-                {
-                    await Task.Delay(5000);
-                    var np = new NamedPipeClientContext();
-                    np.Connect(new WriteMessage());
-                }
-            });
-            
             var contextGraph = new ContextGraph();
             contextGraph.FromJson(configuration);
             contextGraph.Execute(new Run());
