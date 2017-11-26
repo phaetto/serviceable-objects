@@ -9,7 +9,7 @@
     using Stages.Configuration;
     using Stages.Initialization;
 
-    public sealed class ContextGraph : Context<ContextGraph>
+    public sealed class ContextGraph : Context<ContextGraph> // TODO: IDisposable
     {
         internal readonly Container Container;
         internal readonly List<ContextGraphNode> InputNodes = new List<ContextGraphNode>();
@@ -20,6 +20,8 @@
         {
             this.Container = container ?? new Container();
         }
+
+        // TODO: break public methods to commands
 
         public void AddInput(Type type, string id)
         {

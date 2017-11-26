@@ -38,6 +38,8 @@
                 .Where(eventResult => eventResult != null).ToList();
         }
 
+        // TODO: break public methods to commands
+
         public void Configure(IConfigurationSource configurationSource)
         {
             if (HostedContext is IConfigurable configurable && !configurable.HasBeenConfigured)
@@ -71,7 +73,7 @@
 
                 if (resultObject is AbstractContext)
                 {
-                    resultObject = null;
+                    resultObject = null; // TODO: maybe replace the current hosted context if it is the same type? (respecting immutability)
                 }
 
                 var eventResult = new EventResult

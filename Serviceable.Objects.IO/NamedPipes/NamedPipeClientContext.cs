@@ -13,7 +13,7 @@ namespace Serviceable.Objects.IO.NamedPipes
         {
             using (var namedPipeClientStream = new NamedPipeClientStream(".", "testpipe", PipeDirection.InOut))
             {
-                namedPipeClientStream.Connect();
+                namedPipeClientStream.Connect(); // TODO: add timeout
 
                 var specification = command.GetInstanceSpec();
                 streamSession.Write(namedPipeClientStream, specification.SerializeToJson());
