@@ -8,12 +8,18 @@
 
     public sealed class Container : IDisposable
     {
+        private readonly Container parentContainer;
         private readonly Dictionary<string, object> objectsCache = new Dictionary<string, object>();
         private bool isDisposed;
 
         public Container(Dictionary<string, object> customObjectsCache = null)
         {
             objectsCache = customObjectsCache ?? objectsCache;
+        }
+
+        public Container(Container parentContainer)
+        {
+            this.parentContainer = parentContainer;
         }
 
         public void Register(object implementation, bool replace = false)
@@ -60,12 +66,9 @@
         {
             Check.ArgumentNull(typeRequested, nameof(typeRequested));
 
-            if (objectsCache.ContainsKey(typeRequested.FullName))
-            {
-                return objectsCache[typeRequested.FullName];
-            }
-
-            return CreateObject(typeRequested, new Stack<Type>(10), true);
+            return parentContainer?.ResolveFromCache(typeRequested)
+                ?? ResolveFromCache(typeRequested)
+                ?? CreateObject(typeRequested, new Stack<Type>(10), true);
         }
 
         public object CreateObject(Type type)
@@ -91,6 +94,18 @@
             objectsCache.Clear();
 
             isDisposed = true;
+        }
+
+        private object ResolveFromCache(Type typeRequested)
+        {
+            Check.ArgumentNull(typeRequested, nameof(typeRequested));
+
+            if (objectsCache.ContainsKey(typeRequested.FullName))
+            {
+                return objectsCache[typeRequested.FullName];
+            }
+
+            return null;
         }
 
         private object CreateObject(Type type, Stack<Type> typeStackCall, bool cacheable)

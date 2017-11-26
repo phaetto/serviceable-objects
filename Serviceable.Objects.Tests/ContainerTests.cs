@@ -1,7 +1,11 @@
-﻿using System;
+﻿// ReSharper disable ClassNeverInstantiated.Local
+// ReSharper disable MemberCanBePrivate.Local
+// ReSharper disable InconsistentNaming
+// ReSharper disable NotAccessedField.Local
 
 namespace Serviceable.Objects.Tests
 {
+    using System;
     using System.Collections.Generic;
     using Serviceable.Objects.Dependencies;
     using Serviceable.Objects.Exceptions;
@@ -101,6 +105,20 @@ namespace Serviceable.Objects.Tests
 
             Assert.NotNull(result);
             Assert.IsType<ContainerTestClassWithDepndentIinterface>(result);
+        }
+
+        [Fact]
+        public void Resolve_WhenRegisteringOnAParentContainer_ThenWeCanRetrieveTheObjectSuccessfully()
+        {
+            var parentContainer = new Container();
+            var container = new Container(parentContainer);
+
+            parentContainer.RegisterWithDefaultInterface(typeof(ContainerTestClass1));
+
+            var result = container.Resolve<IContainerTestClass1>();
+
+            Assert.NotNull(result);
+            Assert.IsType<ContainerTestClass1>(result);
         }
 
         private interface IContainerTestClass1
