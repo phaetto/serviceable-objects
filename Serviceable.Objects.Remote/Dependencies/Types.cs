@@ -11,7 +11,7 @@
 
     public static class Types
     {
-        public static readonly Dictionary<string, Type> typeCache = new Dictionary<string, Type>();
+        public static readonly Dictionary<string, Type> TypeCache = new Dictionary<string, Type>();
 
         public static object CreateObjectWithParameters(string unqualifiedTypeName, params object[] parameters)
         {
@@ -107,15 +107,18 @@
         {
             Check.ArgumentNullOrWhiteSpace(unqualifiedType, nameof(unqualifiedType));
 
-            if (typeCache.ContainsKey(unqualifiedType))
+            if (TypeCache.ContainsKey(unqualifiedType))
             {
-                return typeCache[unqualifiedType];
+                return TypeCache[unqualifiedType];
             }
 
             var type = Type.GetType(unqualifiedType, false);
             if (type != null)
             {
-                typeCache.Add(unqualifiedType, type);
+                if (!TypeCache.ContainsKey(type.FullName))
+                {
+                    TypeCache.Add(type.FullName, type);
+                }
                 return type;
             }
 
@@ -129,25 +132,27 @@
                 type = Type.GetType(fullyQualifiedName, false);
                 if (type != null)
                 {
-                    typeCache.Add(unqualifiedType, type);
+                    TypeCache.Add(unqualifiedType, type);
                     return type;
                 }
             }
+
+            throw new Exception("Type could not be found: " + unqualifiedType);
 #elif DOTNET460
             foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
             {
                 type = assembly.GetType(unqualifiedType, false);
                 if (type != null)
                 {
-                    typeCache.Add(unqualifiedType, type);
+                    TypeCache.Add(unqualifiedType, type);
                     return type;
                 }
             }
-#endif
-
-            // TODO: Exceptions for other frameworks
 
             throw new Exception("Type could not be found: " + unqualifiedType);
+#else
+            throw new InvalidOperationException($"This version of .net does not support unqualified type access. (Tries to find: {unqualifiedType})");
+#endif
         }
     }
 }
