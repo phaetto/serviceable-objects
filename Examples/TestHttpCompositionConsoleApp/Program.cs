@@ -43,6 +43,10 @@ namespace TestHttpCompositionConsoleApp
              * 
              */
 
+            // TODO: Add service (graph instance + template + name) extensions with container extensions (on graph or in service-container?)
+            // TODO: Add service-container (service and process orchestrator)
+            // TODO: Add host for service-containers (bring-your-own-process logic)
+
             var container = new Container();
             container.RegisterWithDefaultInterface(typeof(MemoryConfigurationSource));
 
