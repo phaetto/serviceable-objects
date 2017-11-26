@@ -47,7 +47,6 @@
             if (HostedContext is IConfigurableStageFactory configurable && !configurable.HasBeenConfigured)
             {
                 var command = configurable.GenerateConfigurationCommand(
-                    graphContext.Container.Resolve<IServiceContainer>(throwOnError: false),
                     graphContext.Container.Resolve<IService>(throwOnError: false),
                     graphContext,
                     this);

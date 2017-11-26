@@ -11,7 +11,7 @@
 
     public sealed class MemoryConfigurationSource : IConfigurationSource
     {
-        public string GetConfigurationValueForKey(IServiceContainer serviceContainer, IService service, GraphContext graphContext, GraphNodeContext graphNodeContext, Type type)
+        public string GetConfigurationValueForKey(IService service, GraphContext graphContext, GraphNodeContext graphNodeContext, Type type)
         {
             switch (type)
             {

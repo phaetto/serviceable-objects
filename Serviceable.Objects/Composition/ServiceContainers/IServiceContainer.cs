@@ -2,7 +2,6 @@
 {
     using System.Collections.Generic;
     using Dependencies;
-    using Services;
 
     public interface IServiceContainer
     {

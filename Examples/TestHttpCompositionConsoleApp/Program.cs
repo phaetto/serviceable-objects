@@ -4,7 +4,6 @@ namespace TestHttpCompositionConsoleApp
     using System.Collections.Generic;
     using Contexts.ConfigurationSource;
     using Serviceable.Objects.Composition.ServiceContainers;
-    using Serviceable.Objects.Dependencies;
     using Serviceable.Objects.IO.NamedPipes.Server;
     using Serviceable.Objects.Remote.Composition.Graph;
     using Serviceable.Objects.Remote.Composition.ServiceContainers;
