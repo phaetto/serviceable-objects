@@ -115,10 +115,6 @@
             var type = Type.GetType(unqualifiedType, false);
             if (type != null)
             {
-                if (!TypeCache.ContainsKey(type.FullName))
-                {
-                    TypeCache.Add(type.FullName, type);
-                }
                 return type;
             }
 
