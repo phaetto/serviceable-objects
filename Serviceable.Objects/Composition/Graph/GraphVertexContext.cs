@@ -1,6 +1,6 @@
 ﻿namespace Serviceable.Objects.Composition.Graph
 {
-    internal sealed class ContextGraphVertex
+    internal sealed class GraphVertexContext
     {
         public string FromId { get; set; }
 

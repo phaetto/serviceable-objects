@@ -6,7 +6,7 @@
     public interface IService
     {
         string ServiceName { get; }
-        ContextGraph ContextGraph { get; }
+        GraphContext GraphContext { get; }
         string TemplateName { get; }
         Container ServiceContainer { get; }
     }

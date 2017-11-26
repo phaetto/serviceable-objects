@@ -8,14 +8,14 @@
     using Microsoft.CSharp.RuntimeBinder;
     using Stages.Configuration;
 
-    public sealed class ContextGraph : Context<ContextGraph> // TODO: IDisposable
+    public sealed class GraphContext : Context<GraphContext> // TODO: IDisposable
     {
         internal readonly Container Container;
-        internal readonly List<ContextGraphNode> InputNodes = new List<ContextGraphNode>();
-        internal readonly List<ContextGraphVertex> Vertices = new List<ContextGraphVertex>();
-        internal readonly List<ContextGraphNode> Nodes = new List<ContextGraphNode>();
+        internal readonly List<GraphNodeContext> InputNodes = new List<GraphNodeContext>();
+        internal readonly List<GraphVertexContext> Vertices = new List<GraphVertexContext>();
+        internal readonly List<GraphNodeContext> Nodes = new List<GraphNodeContext>();
 
-        public ContextGraph(Container container = null)
+        public GraphContext(Container container = null)
         {
             this.Container = container ?? new Container();
         }
@@ -38,7 +38,7 @@
             Check.ArgumentNull(context, nameof(context));
             Check.ArgumentNullOrWhiteSpace(id, nameof(id));
 
-            var node = new ContextGraphNode(context, this, id);
+            var node = new GraphNodeContext(context, this, id);
             InputNodes.Add(node);
             Nodes.Add(node);
         }
@@ -59,7 +59,7 @@
             Check.ArgumentNull(context, nameof(context));
             Check.ArgumentNullOrWhiteSpace(id, nameof(id));
 
-            var node = new ContextGraphNode(context, this, id);
+            var node = new GraphNodeContext(context, this, id);
             Nodes.Add(node);
         }
 
@@ -76,7 +76,7 @@
 
             Check.Argument(Vertices.Any(x => x.FromId == fromId && x.ToId == toId), nameof(fromId), "Vertex already exists in this graph");
 
-            Vertices.Add(new ContextGraphVertex
+            Vertices.Add(new GraphVertexContext
             {
                 FromId = fromId,
                 ToId = toId,
@@ -142,7 +142,7 @@
             }
         }
 
-        public IEnumerable<ContextGraphNode> GetChildren(string id)
+        public IEnumerable<GraphNodeContext> GetChildren(string id)
         {
             Check.ArgumentNullOrWhiteSpace(id, nameof(id));
 

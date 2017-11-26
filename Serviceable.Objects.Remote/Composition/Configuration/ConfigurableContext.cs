@@ -49,14 +49,14 @@
             return base.InvokeExecute(action);
         }
 
-        public void Configure(IServiceContainer serviceContainer, IService service, ContextGraph contextGraph, ContextGraphNode contextGraphNode)
+        public void Configure(IServiceContainer serviceContainer, IService service, GraphContext graphContext, GraphNodeContext graphNodeContext)
         {
             if (!HasBeenConfigured)
             {
                 if (ConfigurationSource != null)
                 {
                     var configurationString =
-                        ConfigurationSource.GetConfigurationValueForKey(serviceContainer, service, contextGraph, contextGraphNode, this.GetType());
+                        ConfigurationSource.GetConfigurationValueForKey(serviceContainer, service, graphContext, graphNodeContext, this.GetType());
                     SetConfiguration(JsonConvert.DeserializeObject<TConfiguration>(configurationString));
                     HasBeenConfigured = true;
                 }

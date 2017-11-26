@@ -7,7 +7,7 @@
 
     public sealed class ConsoleLogContext: Context<ConsoleLogContext>, IPostGraphFlowPullControl
     {
-        public void PullNodeExecutionInformation(ContextGraph contextGraph, string executingNodeId, dynamic parentContext,
+        public void PullNodeExecutionInformation(GraphContext graphContext, string executingNodeId, dynamic parentContext,
             dynamic parentCommandApplied, Stack<EventResult> eventResults)
         {
             Console.WriteLine("\n\n*** Executed ***" +

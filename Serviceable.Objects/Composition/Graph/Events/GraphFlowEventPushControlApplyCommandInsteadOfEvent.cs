@@ -13,14 +13,14 @@
             this.commandToExecute = commandToExecute;
         }
 
-        public IEnumerable<EventResult> OverridePropagationLogic(ContextGraph contextGraph, string publishingNodeId, dynamic publishedHostedContext)
+        public IEnumerable<EventResult> OverridePropagationLogic(GraphContext graphContext, string publishingNodeId, dynamic publishedHostedContext)
         {
-            return contextGraph.GetChildren(publishingNodeId)
+            return graphContext.GetChildren(publishingNodeId)
                 .Select(ExecuteCommand)
                 .Where(eventResult => eventResult != null).ToList();
         }
 
-        private EventResult ExecuteCommand(ContextGraphNode childNode)
+        private EventResult ExecuteCommand(GraphNodeContext childNode)
         {
             try
             {

@@ -6,6 +6,6 @@
 
     public interface IConfigurationSource
     {
-        string GetConfigurationValueForKey(IServiceContainer serviceContainer, IService service, ContextGraph contextGraph, ContextGraphNode contextGraphNode, Type type);
+        string GetConfigurationValueForKey(IServiceContainer serviceContainer, IService service, GraphContext graphContext, GraphNodeContext graphNodeContext, Type type);
     }
 }

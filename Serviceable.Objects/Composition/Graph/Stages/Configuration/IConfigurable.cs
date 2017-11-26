@@ -6,6 +6,6 @@
     public interface IConfigurable
     {
         bool HasBeenConfigured { get; }
-        void Configure(IServiceContainer serviceContainer, IService service, ContextGraph contextGraph, ContextGraphNode contextGraphNode);
+        void Configure(IServiceContainer serviceContainer, IService service, GraphContext graphContext, GraphNodeContext graphNodeContext);
     }
 }

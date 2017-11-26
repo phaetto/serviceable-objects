@@ -7,7 +7,7 @@
 
     public static class ContextGraphExtensions
     {
-        public static void FromJson(this ContextGraph contextGraph, string json)
+        public static void FromJson(this GraphContext graphContext, string json)
         {
             var specification = DeserializableSpecification<GraphSpecification>.DeserializeFromJson(json);
 
@@ -15,17 +15,17 @@
             {
                 if (specification.GraphVertices.All(x => x.ToId != graphNode.Id))
                 {
-                    contextGraph.AddInput(Types.FindType(graphNode.TypeFullName), graphNode.Id);
+                    graphContext.AddInput(Types.FindType(graphNode.TypeFullName), graphNode.Id);
                 }
                 else
                 {
-                    contextGraph.AddNode(Types.FindType(graphNode.TypeFullName), graphNode.Id);
+                    graphContext.AddNode(Types.FindType(graphNode.TypeFullName), graphNode.Id);
                 }
             }
 
             foreach (var graphVertex in specification.GraphVertices)
             {
-                contextGraph.ConnectNodes(graphVertex.FromId, graphVertex.ToId);
+                graphContext.ConnectNodes(graphVertex.FromId, graphVertex.ToId);
             }
         }
     }

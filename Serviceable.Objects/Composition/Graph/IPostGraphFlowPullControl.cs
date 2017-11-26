@@ -4,6 +4,6 @@
 
     public interface IPostGraphFlowPullControl : IEvent
     {
-        void PullNodeExecutionInformation(ContextGraph contextGraph, string executingNodeId, dynamic parentContext, dynamic parentCommandApplied, Stack<EventResult> eventResults);
+        void PullNodeExecutionInformation(GraphContext graphContext, string executingNodeId, dynamic parentContext, dynamic parentCommandApplied, Stack<EventResult> eventResults);
     }
 }

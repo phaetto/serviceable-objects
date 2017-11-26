@@ -50,7 +50,7 @@ namespace TestHttpCompositionConsoleApp
             var container = new Container();
             container.RegisterWithDefaultInterface(typeof(MemoryConfigurationSource));
 
-            var contextGraph = new ContextGraph(container);
+            var contextGraph = new GraphContext(container);
             container.Register(contextGraph); // Make the graph accessible in this container // TODO: is it applicable in every scenario?
 
             contextGraph.FromJson(graphTemplate);

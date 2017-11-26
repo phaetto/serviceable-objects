@@ -10,19 +10,19 @@
     using Stages.Configuration;
     using Stages.Initialization;
 
-    public sealed class ContextGraphNode
+    public sealed class GraphNodeContext
     {
         private readonly dynamic hostedContext;
-        private readonly ContextGraph contextGraph;
+        private readonly GraphContext graphContext;
         private Stack<EventResult> localExecutionStack;
         private dynamic HostedContext => hostedContext;
         private AbstractContext HostedContextAsAbstractContext => hostedContext;
         public readonly string Id;
 
-        public ContextGraphNode(AbstractContext hostedContext, ContextGraph contextGraph, string id)
+        public GraphNodeContext(AbstractContext hostedContext, GraphContext graphContext, string id)
         {
             this.hostedContext = hostedContext;
-            this.contextGraph = contextGraph;
+            this.graphContext = graphContext;
             Id = id;
 
             hostedContext.CommandEventWithResultPublished += HostedContext_CommandEventWithResultPublished;
@@ -32,10 +32,10 @@
         {
             if (eventPublished is IGraphFlowEventPushControl controlFlowEvent)
             {
-                return controlFlowEvent.OverridePropagationLogic(contextGraph, Id, hostedContext);
+                return controlFlowEvent.OverridePropagationLogic(graphContext, Id, hostedContext);
             }
 
-            return contextGraph.GetChildren(Id)
+            return graphContext.GetChildren(Id)
                 .Select(childNode => childNode.EventPropagated(eventPublished, localExecutionStack))
                 .Where(eventResult => eventResult != null).ToList();
         }
@@ -47,9 +47,9 @@
             if (HostedContext is IConfigurable configurable && !configurable.HasBeenConfigured)
             {
                 configurable.Configure(
-                    contextGraph.Container.Resolve<IServiceContainer>(throwOnError: false),
-                    contextGraph.Container.Resolve<IService>(throwOnError: false),
-                    contextGraph,
+                    graphContext.Container.Resolve<IServiceContainer>(throwOnError: false),
+                    graphContext.Container.Resolve<IService>(throwOnError: false),
+                    graphContext,
                     this);
             }
         }
@@ -70,7 +70,7 @@
 
                 var resultObject = HostedContext.Execute(command);
 
-                foreach (var childNode in contextGraph.GetChildren(Id))
+                foreach (var childNode in graphContext.GetChildren(Id))
                 {
                     childNode.CheckPostGraphFlowPullControl(Id, hostedContext, command, localExecutionStack);
                 }
@@ -105,7 +105,7 @@
         {
             if (hostedContext is IPostGraphFlowPullControl hostedContextWithPullControl)
             {
-                hostedContextWithPullControl.PullNodeExecutionInformation(contextGraph, id, parentContext, parentCommandApplied, eventResults);
+                hostedContextWithPullControl.PullNodeExecutionInformation(graphContext, id, parentContext, parentCommandApplied, eventResults);
             }
         }
 

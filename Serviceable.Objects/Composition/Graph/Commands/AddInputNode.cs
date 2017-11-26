@@ -3,7 +3,7 @@
     using System;
     using Exceptions;
 
-    public sealed class AddInputNode : ICommand<ContextGraph, ContextGraph>
+    public sealed class AddInputNode : ICommand<GraphContext, GraphContext>
     {
         private readonly Type type;
         private readonly string id;
@@ -14,18 +14,18 @@
             this.id = id;
         }
 
-        public ContextGraph Execute(ContextGraph context)
+        public GraphContext Execute(GraphContext graphContext)
         {
             Check.ArgumentNull(type, nameof(type));
 
-            var abstractContext = context.Container.Resolve(type) as AbstractContext;
+            var abstractContext = graphContext.Container.Resolve(type) as AbstractContext;
             Check.ArgumentNull(abstractContext, nameof(type), "Type should be derived from Context");
 
-            var node = new ContextGraphNode(abstractContext, context, id);
-            context.InputNodes.Add(node);
-            context.Nodes.Add(node);
+            var node = new GraphNodeContext(abstractContext, graphContext, id);
+            graphContext.InputNodes.Add(node);
+            graphContext.Nodes.Add(node);
 
-            return context;
+            return graphContext;
         }
     }
 }

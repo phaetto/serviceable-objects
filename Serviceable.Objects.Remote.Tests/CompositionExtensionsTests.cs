@@ -61,7 +61,7 @@
 
             var json = graphSpec.SerializeToJson();
 
-            var graph = new ContextGraph();
+            var graph = new GraphContext();
             graph.FromJson(json);
 
             var resultStacks = graph.Execute(new ActionForTestEventProducer("new-value")).ToList();
@@ -74,7 +74,7 @@
 
         private sealed class AssertNode : Context<AssertNode>, IPostGraphFlowPullControl
         {
-            public void PullNodeExecutionInformation(ContextGraph contextGraph, string executingNodeId, dynamic parentContext,
+            public void PullNodeExecutionInformation(GraphContext graphContext, string executingNodeId, dynamic parentContext,
                 dynamic parentCommandApplied, Stack<EventResult> eventResults)
             {
                 var contextForTest2 = (ContextForTest2) parentContext;

@@ -12,11 +12,11 @@
         {
             Types.TypeCache.Clear();
 
-            var typeAssemblyQualifiedName = typeof(ContextGraph).AssemblyQualifiedName;
+            var typeAssemblyQualifiedName = typeof(GraphContext).AssemblyQualifiedName;
 
             var type = Types.FindType(typeAssemblyQualifiedName);
 
-            Assert.Equal(typeof(ContextGraph), type);
+            Assert.Equal(typeof(GraphContext), type);
         }
 
 #if DOTNETSTANDARD_13
@@ -25,7 +25,7 @@
         {
             Types.TypeCache.Clear();
 
-            var typeFullName = typeof(ContextGraph).FullName;
+            var typeFullName = typeof(GraphContext).FullName;
 
             Assert.Throws<InvalidOperationException>(() => Types.FindType(typeFullName));
         }
@@ -35,11 +35,11 @@
         {
             Types.TypeCache.Clear();
 
-            var typeFullName = typeof(ContextGraph).FullName;
+            var typeFullName = typeof(GraphContext).FullName;
 
             var type = Types.FindType(typeFullName);
 
-            Assert.Equal(typeof(ContextGraph), type);
+            Assert.Equal(typeof(GraphContext), type);
         }
 #endif
     }
