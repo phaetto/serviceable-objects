@@ -6,9 +6,8 @@
     using Serviceable.Objects.Composition.Graph.Stages.Configuration;
     using Serviceable.Objects.Composition.ServiceContainers;
     using Serviceable.Objects.Composition.Services;
-    using Serviceable.Objects.IO.NamedPipes;
     using Serviceable.Objects.IO.NamedPipes.Server;
-    using Serviceable.Objects.IO.NamedPipes.Server.State;
+    using Serviceable.Objects.IO.NamedPipes.Server.Configuration;
 
     public sealed class MemoryConfigurationSource : IConfigurationSource
     {
@@ -17,7 +16,7 @@
             switch (type)
             {
                 case var t when t == typeof(NamedPipeServerContext):
-                    return JsonConvert.SerializeObject(new NamedPipeServerState
+                    return JsonConvert.SerializeObject(new NamedPipeServerConfiguration
                     {
                         PipeName  = "testpipe"
                     });

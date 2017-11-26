@@ -8,14 +8,14 @@
     using Composition.Graph.Events;
     using Composition.Graph.Stages.Configuration;
     using Composition.Graph.Stages.Initialization;
+    using Configuration;
     using Exceptions;
     using Newtonsoft.Json;
     using Remote.Composition.Configuration;
     using Remote.Serialization;
     using Remote.Serialization.Streaming;
-    using State;
 
-    public sealed class NamedPipeServerContext : ConfigurableContext<NamedPipeServerState, NamedPipeServerContext>, IInitializeStageFactory
+    public sealed class NamedPipeServerContext : ConfigurableContext<NamedPipeServerConfiguration, NamedPipeServerContext>, IInitializeStageFactory
     {
         private readonly StreamSession streamSession = new StreamSession();
         internal Task ServerTask;
@@ -24,7 +24,7 @@
         {
         }
 
-        public NamedPipeServerContext(NamedPipeServerState configuration) : base(configuration)
+        public NamedPipeServerContext(NamedPipeServerConfiguration configuration) : base(configuration)
         {
         }
 
