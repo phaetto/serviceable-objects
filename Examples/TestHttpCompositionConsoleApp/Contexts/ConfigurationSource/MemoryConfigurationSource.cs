@@ -7,7 +7,8 @@
     using Serviceable.Objects.Composition.ServiceContainers;
     using Serviceable.Objects.Composition.Services;
     using Serviceable.Objects.IO.NamedPipes;
-    using Serviceable.Objects.IO.NamedPipes.State;
+    using Serviceable.Objects.IO.NamedPipes.Server;
+    using Serviceable.Objects.IO.NamedPipes.Server.State;
 
     public sealed class MemoryConfigurationSource : IConfigurationSource
     {

@@ -1,18 +1,18 @@
 ﻿namespace Serviceable.Objects.Remote.Composition.Configuration
 {
     using System;
+    using Commands;
     using Exceptions;
-    using Newtonsoft.Json;
     using Objects.Composition.Graph;
     using Objects.Composition.Graph.Stages.Configuration;
     using Objects.Composition.ServiceContainers;
     using Objects.Composition.Services;
 
-    public abstract class ConfigurableContext<TConfiguration, TContextType> : Context<TContextType>, IConfigurable
+    public abstract class ConfigurableContext<TConfiguration, TContextType> : Context<TContextType>, IConfigurableStageFactory
         where TConfiguration : struct
         where TContextType : Context<TContextType>
     {
-        protected readonly IConfigurationSource ConfigurationSource;
+        internal readonly IConfigurationSource ConfigurationSource;
         public TConfiguration Configuration { get; private set; }
         public bool HasBeenConfigured { get; private set; }
 
@@ -41,7 +41,7 @@
 
         protected override TReturnedContextType InvokeExecute<TReturnedContextType>(ICommand<TContextType, TReturnedContextType> action)
         {
-            if (!HasBeenConfigured)
+            if (!HasBeenConfigured && !(action is ApplyConfiguration<TConfiguration, TContextType>))
             {
                 throw new InvalidOperationException("The instance has not been configured yet.");
             }
@@ -49,22 +49,9 @@
             return base.InvokeExecute(action);
         }
 
-        public void Configure(IServiceContainer serviceContainer, IService service, GraphContext graphContext, GraphNodeContext graphNodeContext)
+        public dynamic GenerateConfigurationCommand(IServiceContainer serviceContainer, IService service, GraphContext graphContext, GraphNodeContext graphNodeContext)
         {
-            if (!HasBeenConfigured)
-            {
-                if (ConfigurationSource != null)
-                {
-                    var configurationString =
-                        ConfigurationSource.GetConfigurationValueForKey(serviceContainer, service, graphContext, graphNodeContext, this.GetType());
-                    SetConfiguration(JsonConvert.DeserializeObject<TConfiguration>(configurationString));
-                    HasBeenConfigured = true;
-                }
-                else
-                {
-                    throw new InvalidOperationException("Configuration failed: No configuration source found.");
-                }
-            }
+            return new ApplyConfiguration<TConfiguration, TContextType>(serviceContainer, service, graphContext, graphNodeContext);
         }
     }
 }

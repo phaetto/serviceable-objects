@@ -1,4 +1,4 @@
-﻿namespace Serviceable.Objects.IO.NamedPipes.State
+﻿namespace Serviceable.Objects.IO.NamedPipes.Server.State
 {
     public struct NamedPipeServerState
     {

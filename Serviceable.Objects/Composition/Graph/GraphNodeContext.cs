@@ -44,21 +44,24 @@
 
         public void Configure(IConfigurationSource configurationSource)
         {
-            if (HostedContext is IConfigurable configurable && !configurable.HasBeenConfigured)
+            if (HostedContext is IConfigurableStageFactory configurable && !configurable.HasBeenConfigured)
             {
-                configurable.Configure(
+                var command = configurable.GenerateConfigurationCommand(
                     graphContext.Container.Resolve<IServiceContainer>(throwOnError: false),
                     graphContext.Container.Resolve<IService>(throwOnError: false),
                     graphContext,
                     this);
+
+                HostedContext.Execute(command);
             }
         }
 
         public void Initialize()
         {
-            if (HostedContext is IInitialize initialization)
+            if (HostedContext is IInitializeStageFactory initialization)
             {
-                initialization.Initialize();
+                var command = initialization.GenerateInitializeCommand();
+                HostedContext.Execute(command);
             }
         }
 

@@ -4,6 +4,8 @@ using Serviceable.Objects.Remote;
 
 namespace Serviceable.Objects.Instrumentation
 {
+    using IO.NamedPipes.Client;
+
     public abstract class InstrumentationCommandCmdlet<T> : Cmdlet
         where T : IReproducible
     {

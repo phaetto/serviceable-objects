@@ -5,6 +5,7 @@ namespace TestHttpCompositionConsoleApp
     using Serviceable.Objects.Composition.Graph;
     using Serviceable.Objects.Dependencies;
     using Serviceable.Objects.IO.NamedPipes;
+    using Serviceable.Objects.IO.NamedPipes.Server;
     using Serviceable.Objects.Remote.Composition.Graph;
     using TestHttpCompositionConsoleApp.Contexts.ConsoleLog;
     using TestHttpCompositionConsoleApp.Contexts.Http;

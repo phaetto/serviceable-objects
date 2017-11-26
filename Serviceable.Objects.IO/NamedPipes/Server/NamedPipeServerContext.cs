@@ -1,9 +1,10 @@
-﻿namespace Serviceable.Objects.IO.NamedPipes
+﻿namespace Serviceable.Objects.IO.NamedPipes.Server
 {
     using System.IO;
     using System.IO.Pipes;
     using System.Linq;
     using System.Threading.Tasks;
+    using Commands;
     using Composition.Graph.Events;
     using Composition.Graph.Stages.Configuration;
     using Composition.Graph.Stages.Initialization;
@@ -14,10 +15,10 @@
     using Remote.Serialization.Streaming;
     using State;
 
-    public sealed class NamedPipeServerContext : ConfigurableContext<NamedPipeServerState, NamedPipeServerContext>, IInitialize
+    public sealed class NamedPipeServerContext : ConfigurableContext<NamedPipeServerState, NamedPipeServerContext>, IInitializeStageFactory
     {
         private readonly StreamSession streamSession = new StreamSession();
-        private Task serverTask;
+        internal Task ServerTask;
 
         public NamedPipeServerContext()
         {
@@ -31,12 +32,12 @@
         {
         }
 
-        public void Initialize()
+        public dynamic GenerateInitializeCommand()
         {
-            serverTask = Task.Run(() => RunServerAndBlock());
+            return new StartServer();
         }
 
-        private void RunServerAndBlock()
+        internal void RunServerAndBlock()
         {
             Check.ArgumentNull(Configuration, nameof(Configuration));
 

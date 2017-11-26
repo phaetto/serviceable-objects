@@ -1,9 +1,9 @@
-﻿using System.IO.Pipes;
-using Serviceable.Objects.Remote;
-using Serviceable.Objects.Remote.Serialization.Streaming;
-
-namespace Serviceable.Objects.IO.NamedPipes
+﻿namespace Serviceable.Objects.IO.NamedPipes.Client
 {
+    using System.IO.Pipes;
+    using Remote;
+    using Remote.Serialization.Streaming;
+
     public sealed class NamedPipeClientContext: Context<NamedPipeClientContext>
     {
         private readonly string namedPipe;
