@@ -6,6 +6,8 @@
     using Microsoft.CSharp.RuntimeBinder;
     using Serviceable.Objects.Dependencies;
     using Serviceable.Objects.Exceptions;
+    using Stages.Configuration;
+    using Stages.Initialization;
 
     public sealed class ContextGraph : Context<ContextGraph>
     {
@@ -78,6 +80,17 @@
                 FromId = fromId,
                 ToId = toId,
             });
+        }
+
+        public void Configure()
+        {
+            var configurationSource = Container.Resolve<IConfigurationSource>();
+            Nodes.ForEach(x => x.Configure(configurationSource));
+        }
+
+        public void Initialize()
+        {
+            Nodes.ForEach(x => x.Initialize());
         }
 
         public IEnumerable<Stack<EventResult>> Execute(dynamic command)

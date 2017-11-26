@@ -5,6 +5,8 @@
     using System.Linq;
     using System.Reflection;
     using Microsoft.CSharp.RuntimeBinder;
+    using Stages.Configuration;
+    using Stages.Initialization;
 
     public sealed class ContextGraphNode
     {
@@ -34,6 +36,22 @@
             return contextGraph.GetChildren(Id)
                 .Select(childNode => childNode.EventPropagated(eventPublished, localExecutionStack))
                 .Where(eventResult => eventResult != null).ToList();
+        }
+
+        public void Configure(IConfigurationSource configurationSource)
+        {
+            if (HostedContext is IConfigurable configurable && !configurable.HasBeenConfigured)
+            {
+                configurable.Configure(contextGraph, this);
+            }
+        }
+
+        public void Initialize()
+        {
+            if (HostedContext is IInitialize initialization)
+            {
+                initialization.Initialize();
+            }
         }
 
         public EventResult Execute(dynamic command, Stack<EventResult> resultExecutionStack = null)
