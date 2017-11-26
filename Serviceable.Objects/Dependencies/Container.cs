@@ -57,18 +57,18 @@
             objectsCache[interfaces[0].FullName] = CreateObject(type);
         }
 
-        public TOut Resolve<TOut>()
+        public TOut Resolve<TOut>(bool throwOnError = true)
         {
-            return (TOut) Resolve(typeof(TOut));
+            return (TOut) Resolve(typeof(TOut), throwOnError);
         }
 
-        public object Resolve(Type typeRequested)
+        public object Resolve(Type typeRequested, bool throwOnError = true)
         {
             Check.ArgumentNull(typeRequested, nameof(typeRequested));
 
             return parentContainer?.ResolveFromCache(typeRequested)
                 ?? ResolveFromCache(typeRequested)
-                ?? CreateObject(typeRequested, new Stack<Type>(10), true);
+                ?? CreateObject(typeRequested, new Stack<Type>(10), true, throwOnError);
         }
 
         public object CreateObject(Type type)
@@ -108,13 +108,22 @@
             return null;
         }
 
-        private object CreateObject(Type type, Stack<Type> typeStackCall, bool cacheable)
+        private object CreateObject(Type type, Stack<Type> typeStackCall, bool cacheable, bool throwOnError = true)
         {
             Check.ArgumentNull(type, nameof(type));
             Check.ArgumentNull(typeStackCall, nameof(typeStackCall));
 
             var typeInfo = type.GetTypeInfo();
-            Check.Argument(typeInfo.IsInterface || typeInfo.IsAbstract, nameof(type), "Cannot instantiate an interface or abstract type.");
+            if (typeInfo.IsInterface || typeInfo.IsAbstract)
+            {
+                if (!throwOnError)
+                {
+                    return null;
+                }
+
+                Check.Argument(typeInfo.IsInterface || typeInfo.IsAbstract, nameof(type),
+                    "Cannot instantiate an interface or abstract type.");
+            }
 
             CheckStack(type, typeStackCall);
 
@@ -175,6 +184,11 @@
                 {
                     // Go to the next
                 }
+            }
+
+            if (!throwOnError)
+            {
+                return null;
             }
 
             throw new Exception("No suitable constructor could be found to create the type: " + type.AssemblyQualifiedName);

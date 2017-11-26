@@ -35,6 +35,16 @@ namespace Serviceable.Objects.Tests
         }
 
         [Fact]
+        public void CreateObject_WhenCreatingAnObjectWithCyclicDependency_ThenItThrowsEvenIfWeForceItNotTo()
+        {
+            var container = new Container();
+
+            Assert.Throws<CyclicDependencyException>(
+                () =>
+                    container.Resolve(typeof(ContainerTestClassCyclicDependency1), throwOnError: false));
+        }
+
+        [Fact]
         public void Resolve_WhenCreatingAnObject_ThenItIsSuccessfullyInjectingAllDependencies()
         {
             Dictionary<string, object> customObjectsCache = new Dictionary<string, object>();
@@ -92,6 +102,16 @@ namespace Serviceable.Objects.Tests
             Assert.Throws<ArgumentException>(
                 () =>
                     container.Resolve(typeof(IContainerTestClass1)));
+        }
+
+        [Fact]
+        public void Resolve_WhenTryingToRetrieveAnUnregisteredInterfaceAndWeSetNoThrow_ThenItReturnsNull()
+        {
+            var container = new Container();
+
+            var result = container.Resolve(typeof(IContainerTestClass1), throwOnError: false);
+
+            Assert.Null(result);
         }
 
         [Fact]
