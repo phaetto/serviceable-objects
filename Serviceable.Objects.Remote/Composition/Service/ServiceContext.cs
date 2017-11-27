@@ -1,11 +1,11 @@
-﻿namespace Serviceable.Objects.Remote.Composition.Services
+﻿namespace Serviceable.Objects.Remote.Composition.Service
 {
     using Composition.Configuration;
     using Configuration;
     using Objects.Composition.Graph;
-    using Objects.Composition.Services;
+    using Objects.Composition.Graph.Stages.Configuration;
+    using Objects.Composition.Service;
     using Objects.Dependencies;
-    using Serviceable.Objects.Composition.Graph.Stages.Configuration;
 
     public sealed class ServiceContext : ConfigurableContext<ServiceContextConfiguration, ServiceContext>, IService
     {
@@ -20,7 +20,7 @@
             ServiceContainer = new Container(serviceContainerContextContainer);
             var graphContainer = new Container(ServiceContainer);
             GraphContext = new GraphContext(graphContainer);
-            graphContainer.Register(GraphContext);
+            ServiceContainer.Register(GraphContext);
             ServiceContainer.Register(typeof(IService), this);
         }
 
@@ -29,7 +29,7 @@
             ServiceContainer = new Container(serviceContainerContextContainer);
             var graphContainer = new Container(ServiceContainer);
             GraphContext = new GraphContext(graphContainer);
-            graphContainer.Register(GraphContext);
+            ServiceContainer.Register(GraphContext);
             ServiceContainer.Register(typeof(IService), this);
         }
 
@@ -38,7 +38,7 @@
             ServiceContainer = new Container(serviceContainerContextContainer);
             var graphContainer = new Container(ServiceContainer);
             GraphContext = new GraphContext(graphContainer);
-            graphContainer.Register(GraphContext);
+            ServiceContainer.Register(GraphContext);
             ServiceContainer.Register(typeof(IService), this);
         }
     }

@@ -5,7 +5,7 @@
     using Exceptions;
     using Objects.Composition.Graph;
     using Objects.Composition.Graph.Stages.Configuration;
-    using Objects.Composition.Services;
+    using Objects.Composition.Service;
 
     public abstract class ConfigurableContext<TConfiguration, TContextType> : Context<TContextType>, IConfigurableStageFactory
         where TConfiguration : struct

@@ -1,10 +1,10 @@
-﻿namespace TestHttpCompositionConsoleApp.Contexts.ConfigurationSource
+﻿namespace TestHttpCompositionConsoleApp.ConfigurationSources
 {
     using System;
     using Newtonsoft.Json;
     using Serviceable.Objects.Composition.Graph;
     using Serviceable.Objects.Composition.Graph.Stages.Configuration;
-    using Serviceable.Objects.Composition.Services;
+    using Serviceable.Objects.Composition.Service;
     using Serviceable.Objects.IO.NamedPipes.Server;
     using Serviceable.Objects.IO.NamedPipes.Server.Configuration;
 

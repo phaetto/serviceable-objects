@@ -1,4 +1,4 @@
-﻿namespace Serviceable.Objects.Composition.Services
+﻿namespace Serviceable.Objects.Composition.Service
 {
     using Dependencies;
     using Graph;

@@ -1,8 +1,8 @@
-﻿namespace Serviceable.Objects.Composition.ServiceContainers
+﻿namespace Serviceable.Objects.Composition.ServiceContainer
 {
     using System.Collections.Generic;
     using Dependencies;
-    using Services;
+    using Service;
 
     public interface IServiceContainer
     {

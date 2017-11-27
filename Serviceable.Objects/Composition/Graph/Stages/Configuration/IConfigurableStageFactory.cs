@@ -1,6 +1,6 @@
 ﻿namespace Serviceable.Objects.Composition.Graph.Stages.Configuration
 {
-    using Services;
+    using Service;
 
     public interface IConfigurableStageFactory
     {

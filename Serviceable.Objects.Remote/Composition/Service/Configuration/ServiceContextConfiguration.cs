@@ -1,4 +1,4 @@
-﻿namespace Serviceable.Objects.Remote.Composition.Services.Configuration
+﻿namespace Serviceable.Objects.Remote.Composition.Service.Configuration
 {
     public struct ServiceContextConfiguration
     {

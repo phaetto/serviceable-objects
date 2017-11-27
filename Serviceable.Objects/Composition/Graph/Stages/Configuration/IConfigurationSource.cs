@@ -1,7 +1,7 @@
 ﻿namespace Serviceable.Objects.Composition.Graph.Stages.Configuration
 {
     using System;
-    using Services;
+    using Service;
 
     public interface IConfigurationSource
     {

@@ -3,7 +3,7 @@
     using System;
     using Newtonsoft.Json;
     using Objects.Composition.Graph;
-    using Objects.Composition.Services;
+    using Objects.Composition.Service;
 
     public sealed class ApplyConfiguration<TConfiguration, TContextType> : ICommand<ConfigurableContext<TConfiguration, TContextType>, ConfigurableContext<TConfiguration, TContextType>>
         where TConfiguration : struct
