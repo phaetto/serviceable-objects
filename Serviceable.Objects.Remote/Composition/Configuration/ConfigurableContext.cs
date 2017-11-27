@@ -6,6 +6,7 @@
     using Objects.Composition.Graph;
     using Objects.Composition.Graph.Stages.Configuration;
     using Objects.Composition.Service;
+    using Objects.Composition.ServiceContainer;
 
     public abstract class ConfigurableContext<TConfiguration, TContextType> : Context<TContextType>, IConfigurableStageFactory
         where TConfiguration : struct
@@ -48,9 +49,9 @@
             return base.InvokeExecute(action);
         }
 
-        public dynamic GenerateConfigurationCommand(IService service, GraphContext graphContext, GraphNodeContext graphNodeContext)
+        public dynamic GenerateConfigurationCommand(IServiceContainer serviceContainer, IService service, GraphContext graphContext, GraphNodeContext graphNodeContext)
         {
-            return new ApplyConfiguration<TConfiguration, TContextType>(service, graphContext, graphNodeContext);
+            return new ApplyConfiguration<TConfiguration, TContextType>(serviceContainer, service, graphContext, graphNodeContext);
         }
     }
 }

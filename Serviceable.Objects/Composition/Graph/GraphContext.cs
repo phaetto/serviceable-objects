@@ -10,7 +10,7 @@
 
     public sealed class GraphContext : Context<GraphContext> // TODO: IDisposable
     {
-        internal readonly Container Container;
+        public readonly Container Container;
         internal readonly List<GraphNodeContext> InputNodes = new List<GraphNodeContext>();
         internal readonly List<GraphVertexContext> Vertices = new List<GraphVertexContext>();
         internal readonly List<GraphNodeContext> Nodes = new List<GraphNodeContext>();
@@ -82,6 +82,11 @@
                 FromId = fromId,
                 ToId = toId,
             });
+        }
+
+        public IEnumerable<string> GetNodeIds<TNodeInContext>()
+        {
+            return Nodes.Where(x => x.HostedContext is TNodeInContext).Select(x => x.Id);
         }
 
         public void Configure()

@@ -20,7 +20,7 @@
             graph.AddNode(typeof(ContextForTest2), "node-2");
             graph.ConnectNodes("node-1", "node-2");
 
-            Assert.Empty(customObjectsCache);
+            Assert.Single(customObjectsCache);
         }
 
         [Fact]

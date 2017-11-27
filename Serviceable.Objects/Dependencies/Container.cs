@@ -15,13 +15,11 @@
         public Container(Dictionary<string, object> customObjectsCache = null)
         {
             objectsCache = customObjectsCache ?? objectsCache;
-            Register(this);
         }
 
         public Container(Container parentContainer)
         {
             this.parentContainer = parentContainer;
-            Register(this);
         }
 
         public void Register(object implementation, bool replace = false)
@@ -38,13 +36,11 @@
             Check.ArgumentNull(implementation, nameof(implementation));
             Check.Argument(objectsCache.ContainsKey(type.FullName) && !replace, nameof(type), "Type already exists in the container");
 
-            if (objectsCache.ContainsKey(type.FullName))
+            objectsCache[type.FullName] = implementation;
+
+            if (implementation.GetType().FullName != type.FullName)
             {
-                objectsCache[type.FullName] = implementation;
-            }
-            else
-            {
-                objectsCache.Add(type.FullName, implementation);
+                objectsCache[implementation.GetType().FullName] = implementation;
             }
         }
 
@@ -64,6 +60,7 @@
             Check.Argument(interfaces.Length != 1, nameof(instance), "Type should support only one interface.");
 
             objectsCache[interfaces[0].FullName] = instance;
+            objectsCache[instance.GetType().FullName] = instance;
         }
 
         public TOut Resolve<TOut>(bool throwOnError = true)
@@ -75,8 +72,7 @@
         {
             Check.ArgumentNull(typeRequested, nameof(typeRequested));
 
-            return parentContainer?.ResolveFromCache(typeRequested)
-                ?? ResolveFromCache(typeRequested)
+            return ResolveFromCache(typeRequested)
                 ?? CreateObject(typeRequested, new Stack<Type>(10), true, throwOnError);
         }
 

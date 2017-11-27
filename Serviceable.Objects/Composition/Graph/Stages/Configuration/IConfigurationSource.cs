@@ -2,9 +2,10 @@
 {
     using System;
     using Service;
+    using ServiceContainer;
 
     public interface IConfigurationSource
     {
-        string GetConfigurationValueForKey(IService service, GraphContext graphContext, GraphNodeContext graphNodeContext, Type type);
+        string GetConfigurationValueForKey(IServiceContainer serviceContainer, IService service, GraphContext graphContext, GraphNodeContext graphNodeContext, Type type);
     }
 }

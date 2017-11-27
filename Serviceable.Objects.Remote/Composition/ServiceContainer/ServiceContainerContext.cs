@@ -15,24 +15,27 @@
         public string OrchestratorName => Configuration.OrchestratorName;
         public string ContainerName => Configuration.ContainerName;
         public IList<IService> Services { get; } = new List<IService>();
-        public Container ServiceContainerContextContainer { get; } = new Container();
+        public Container ServiceContainerContextContainer { get; }
 
         public ServiceContainerContext(GraphContext graphContext)
         {
             this.GraphContext = graphContext;
-            ServiceContainerContextContainer.Register(typeof(IServiceContainer), this);
+            ServiceContainerContextContainer = new Container(graphContext.Container);
+            graphContext.Container.Register(typeof(IServiceContainer), this);
         }
 
         public ServiceContainerContext(ServiceContainerContextConfiguration configuration, GraphContext graphContext) : base(configuration)
         {
             this.GraphContext = graphContext;
-            ServiceContainerContextContainer.Register(typeof(IServiceContainer), this);
+            ServiceContainerContextContainer = new Container(graphContext.Container);
+            graphContext.Container.Register(typeof(IServiceContainer), this);
         }
 
         public ServiceContainerContext(IConfigurationSource configurationSource, GraphContext graphContext) : base(configurationSource)
         {
             this.GraphContext = graphContext;
-            ServiceContainerContextContainer.Register(typeof(IServiceContainer), this);
+            ServiceContainerContextContainer = new Container(graphContext.Container);
+            graphContext.Container.Register(typeof(IServiceContainer), this);
         }
     }
 }

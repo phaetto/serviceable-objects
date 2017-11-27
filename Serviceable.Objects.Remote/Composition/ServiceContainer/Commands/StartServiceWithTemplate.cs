@@ -1,5 +1,6 @@
 ﻿namespace Serviceable.Objects.Remote.Composition.ServiceContainer.Commands
 {
+    using System.Linq;
     using Graph;
     using Service;
     using Service.Configuration;
@@ -27,6 +28,13 @@
             }, context.ServiceContainerContextContainer);
 
             service.GraphContext.FromJson(graphTemplate);
+
+            service.GraphContext.Configure();
+            service.GraphContext.Initialize();
+
+            context.GraphContext.AddNode(service, serviceName);
+            context.GraphContext.ConnectNodes(context.GraphContext.GetNodeIds<ServiceContainerContext>().First(), serviceName);
+
             return context;
         }
     }

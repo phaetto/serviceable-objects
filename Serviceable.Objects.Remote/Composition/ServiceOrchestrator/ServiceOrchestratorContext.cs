@@ -3,6 +3,7 @@
     using System.Collections.Generic;
     using Composition.Configuration;
     using Configuration;
+    using Objects.Composition.Graph;
     using Objects.Composition.Graph.Stages.Configuration;
     using Objects.Composition.ServiceOrchestrator;
     using Objects.Dependencies;
@@ -16,19 +17,19 @@
         public Container ServiceOrchestratorContainer { get; } = new Container();
         public IDictionary<string, string> GraphTemplatesDictionary { get; } = new Dictionary<string, string>();
 
-        public ServiceOrchestratorContext()
+        public ServiceOrchestratorContext(GraphContext graphContext)
         {
-            ServiceOrchestratorContainer.Register(typeof(IServiceOrchestrator), this);
+            graphContext.Container.Register(typeof(IServiceOrchestrator), this);
         }
 
-        public ServiceOrchestratorContext(ServiceOrchestratorConfiguration configuration) : base(configuration)
+        public ServiceOrchestratorContext(ServiceOrchestratorConfiguration configuration, GraphContext graphContext) : base(configuration)
         {
-            ServiceOrchestratorContainer.Register(typeof(IServiceOrchestrator), this);
+            graphContext.Container.Register(typeof(IServiceOrchestrator), this);
         }
 
-        public ServiceOrchestratorContext(IConfigurationSource configurationSource) : base(configurationSource)
+        public ServiceOrchestratorContext(IConfigurationSource configurationSource, GraphContext graphContext) : base(configurationSource)
         {
-            ServiceOrchestratorContainer.Register(typeof(IServiceOrchestrator), this);
+            graphContext.Container.Register(typeof(IServiceOrchestrator), this);
         }
     }
 }

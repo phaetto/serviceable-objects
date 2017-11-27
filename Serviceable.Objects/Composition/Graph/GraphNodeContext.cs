@@ -6,21 +6,21 @@
     using System.Reflection;
     using Microsoft.CSharp.RuntimeBinder;
     using Service;
+    using ServiceContainer;
     using Stages.Configuration;
     using Stages.Initialization;
 
     public sealed class GraphNodeContext
     {
-        private readonly dynamic hostedContext;
+        public readonly string Id;
+        internal dynamic HostedContext { get; }
         private readonly GraphContext graphContext;
         private Stack<EventResult> localExecutionStack;
-        private dynamic HostedContext => hostedContext;
-        private AbstractContext HostedContextAsAbstractContext => hostedContext;
-        public readonly string Id;
+        private AbstractContext HostedContextAsAbstractContext => HostedContext;
 
         public GraphNodeContext(AbstractContext hostedContext, GraphContext graphContext, string id)
         {
-            this.hostedContext = hostedContext;
+            this.HostedContext = hostedContext;
             this.graphContext = graphContext;
             Id = id;
 
@@ -31,7 +31,7 @@
         {
             if (eventPublished is IGraphFlowEventPushControl controlFlowEvent)
             {
-                return controlFlowEvent.OverridePropagationLogic(graphContext, Id, hostedContext);
+                return controlFlowEvent.OverridePropagationLogic(graphContext, Id, HostedContext);
             }
 
             return graphContext.GetChildren(Id)
@@ -46,6 +46,7 @@
             if (HostedContext is IConfigurableStageFactory configurable && !configurable.HasBeenConfigured)
             {
                 var command = configurable.GenerateConfigurationCommand(
+                    graphContext.Container.Resolve<IServiceContainer>(throwOnError: false),
                     graphContext.Container.Resolve<IService>(throwOnError: false),
                     graphContext,
                     this);
@@ -73,7 +74,7 @@
 
                 foreach (var childNode in graphContext.GetChildren(Id))
                 {
-                    childNode.CheckPostGraphFlowPullControl(Id, hostedContext, command, localExecutionStack);
+                    childNode.CheckPostGraphFlowPullControl(Id, HostedContext, command, localExecutionStack);
                 }
 
                 localExecutionStack = null;
@@ -104,7 +105,7 @@
 
         private void CheckPostGraphFlowPullControl(string id, dynamic parentContext, dynamic parentCommandApplied, Stack<EventResult> eventResults)
         {
-            if (hostedContext is IPostGraphFlowPullControl hostedContextWithPullControl)
+            if (HostedContext is IPostGraphFlowPullControl hostedContextWithPullControl)
             {
                 hostedContextWithPullControl.PullNodeExecutionInformation(graphContext, id, parentContext, parentCommandApplied, eventResults);
             }

@@ -1,5 +1,6 @@
 ﻿namespace Serviceable.Objects.Composition.Graph.Events
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using Microsoft.CSharp.RuntimeBinder;
@@ -26,7 +27,7 @@
             {
                 return childNode.Execute(commandToExecute);
             }
-            catch (RuntimeBinderException)
+            catch (NotSupportedException)
             {
             }
 
