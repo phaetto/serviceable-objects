@@ -1,5 +1,11 @@
-﻿PowerShell -NoProfile -Command {
-    $folder = 'C:\sources\serviceable-objects\Examples\TestHttpCompositionConsoleApp\bin\Debug\netcoreapp1.0';
+﻿$location = Split-Path $MyInvocation.MyCommand.Path;
+
+PowerShell -NoProfile -Command {
+    param (
+        [String] $location
+    )
+
+    $folder = "$location\bin\Debug\netcoreapp1.0";
     Set-Location -Path $folder;
     Import-Module "$folder\TestHttpCompositionConsoleApp.dll" -Verbose;
 
@@ -13,4 +19,4 @@
     # Do-SomethingOnServiceContainerProcess -ServiceContainer YYY (copy-service?, move-service?, update-service?, etc)
 
     Write-Host "Done.";
-}
+} -args $location
