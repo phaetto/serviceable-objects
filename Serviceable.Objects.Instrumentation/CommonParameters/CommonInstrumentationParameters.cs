@@ -26,5 +26,9 @@
         [Parameter(Mandatory = true, HelpMessage = "The node id that you want to connect to", ParameterSetName = NodeParameterSet)]
         [Parameter(Mandatory = true, HelpMessage = "The node id that you want to connect to", ParameterSetName = CustomPipeParameterSet)]
         public string NodeId { get; set; }
+
+        [ValidateRange(100, int.MaxValue)]
+        [Parameter(Mandatory = false, HelpMessage = "The timeout that the connection will fail")]
+        public int TimeoutInMilliseconds { get; set; } = 1000;
     }
 }

@@ -1,16 +1,10 @@
-﻿$location = Split-Path $MyInvocation.MyCommand.Path;
-
-PowerShell -NoProfile -Command {
-    param (
-        [String] $location
-    )
-
-    $folder = "$location\bin\Debug\netcoreapp1.0";
+﻿PowerShell -NoProfile -Command {
+    $folder = 'C:\sources\serviceable-objects\Examples\TestHttpCompositionConsoleApp\bin\Debug\netcoreapp1.0';
     Set-Location -Path $folder;
     Import-Module "$folder\TestHttpCompositionConsoleApp.dll" -Verbose;
 
     #Get-Help Write-Message;
-    Write-Message -Message "hey" -PipeName "testpipe" -NodeId "log-context";
+    Write-Message -Message "hey" -PipeName "container-X.service-X.testpipe" -NodeId "log-context";
 
     # Target examples:
     # Run-InstrumentationCommandOnCustomPipe -Pipe XXX -Data "hey" -OtherData "lo"
@@ -19,4 +13,4 @@ PowerShell -NoProfile -Command {
     # Do-SomethingOnServiceContainerProcess -ServiceContainer YYY (copy-service?, move-service?, update-service?, etc)
 
     Write-Host "Done.";
-} -args $location
+}

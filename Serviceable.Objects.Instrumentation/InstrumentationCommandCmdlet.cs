@@ -15,8 +15,11 @@ namespace Serviceable.Objects.Instrumentation
 
         protected override void ProcessRecord()
         {
-            var namedPipeClientContext = new NamedPipeClientContext();
-            namedPipeClientContext.Connect(GenerateCommand());
+            if (!string.IsNullOrWhiteSpace(commonInstrumentationParameters.PipeName))
+            {
+                var namedPipeClientContext = new NamedPipeClientContext(commonInstrumentationParameters.PipeName, commonInstrumentationParameters.TimeoutInMilliseconds);
+                namedPipeClientContext.Connect(GenerateCommand());
+            }
         }
 
         public object GetDynamicParameters()
