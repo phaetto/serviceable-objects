@@ -1,4 +1,4 @@
-﻿namespace Serviceable.Objects.Composition.ServiceContainers
+﻿namespace Serviceable.Objects.Composition.ServiceOrchestrator
 {
     using System.Collections.Generic;
 

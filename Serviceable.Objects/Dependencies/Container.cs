@@ -15,11 +15,13 @@
         public Container(Dictionary<string, object> customObjectsCache = null)
         {
             objectsCache = customObjectsCache ?? objectsCache;
+            Register(this);
         }
 
         public Container(Container parentContainer)
         {
             this.parentContainer = parentContainer;
+            Register(this);
         }
 
         public void Register(object implementation, bool replace = false)
@@ -112,7 +114,7 @@
                 return objectsCache[typeRequested.FullName];
             }
 
-            return null;
+            return parentContainer?.ResolveFromCache(typeRequested);
         }
 
         private object CreateObject(Type type, Stack<Type> typeStackCall, bool cacheable, bool throwOnError = true)

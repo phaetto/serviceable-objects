@@ -3,32 +3,32 @@
     using System.Collections.Generic;
     using Composition.Configuration;
     using Configuration;
+    using Objects.Composition.Graph.Stages.Configuration;
     using Objects.Composition.ServiceContainers;
+    using Objects.Composition.Services;
     using Objects.Dependencies;
-    using Serviceable.Objects.Composition.Graph.Stages.Configuration;
+    using Services;
 
-    public sealed class ServiceContainerContext : ConfigurableContext<ServiceContainerContextConfiguration, ServiceContainerContext>, IServiceContainer
+    public sealed class ServiceContainerContext : ConfigurableContext<ServiceContainerContextConfiguration, ServiceContext>, IServiceContainer
     {
+        public string OrchestratorName => Configuration.OrchestratorName;
         public string ContainerName => Configuration.ContainerName;
-        public Binding ServiceContainerBinding => Configuration.ServiceContainerBinding;
-        public IList<ExternalBinding> ExternalBindings => Configuration.ExternalBindings;
-        public IList<ServiceRegistration> ServiceRegistrations { get; } = new List<ServiceRegistration>();
-        public Container ServiceContainerContainer { get; } = new Container();
-        public IDictionary<string, string> GraphTemplatesDictionary { get; } = new Dictionary<string, string>();
+        public IList<IService> Services { get; } = new List<IService>();
+        public Container ServiceContainerContextContainer { get; } = new Container();
 
         public ServiceContainerContext()
-        {
-            ServiceContainerContainer.Register(typeof(IServiceContainer), this);
+        {   
+            ServiceContainerContextContainer.Register(typeof(IServiceContainer), this);
         }
 
         public ServiceContainerContext(ServiceContainerContextConfiguration configuration) : base(configuration)
         {
-            ServiceContainerContainer.Register(typeof(IServiceContainer), this);
+            ServiceContainerContextContainer.Register(typeof(IServiceContainer), this);
         }
 
         public ServiceContainerContext(IConfigurationSource configurationSource) : base(configurationSource)
         {
-            ServiceContainerContainer.Register(typeof(IServiceContainer), this);
+            ServiceContainerContextContainer.Register(typeof(IServiceContainer), this);
         }
     }
 }

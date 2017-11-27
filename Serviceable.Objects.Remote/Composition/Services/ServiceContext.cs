@@ -15,27 +15,27 @@
         public GraphContext GraphContext { get; }
         public Container ServiceContainer { get; }
 
-        public ServiceContext()
+        public ServiceContext(Container serviceContainerContextContainer = null)
         {   
-            ServiceContainer = new Container();
+            ServiceContainer = new Container(serviceContainerContextContainer);
             var graphContainer = new Container(ServiceContainer);
             GraphContext = new GraphContext(graphContainer);
             graphContainer.Register(GraphContext);
             ServiceContainer.Register(typeof(IService), this);
         }
 
-        public ServiceContext(ServiceContextConfiguration configuration) : base(configuration)
+        public ServiceContext(ServiceContextConfiguration configuration, Container serviceContainerContextContainer = null) : base(configuration)
         {
-            ServiceContainer = new Container();
+            ServiceContainer = new Container(serviceContainerContextContainer);
             var graphContainer = new Container(ServiceContainer);
             GraphContext = new GraphContext(graphContainer);
             graphContainer.Register(GraphContext);
             ServiceContainer.Register(typeof(IService), this);
         }
 
-        public ServiceContext(IConfigurationSource configurationSource) : base(configurationSource)
+        public ServiceContext(IConfigurationSource configurationSource, Container serviceContainerContextContainer = null) : base(configurationSource)
         {
-            ServiceContainer = new Container();
+            ServiceContainer = new Container(serviceContainerContextContainer);
             var graphContainer = new Container(ServiceContainer);
             GraphContext = new GraphContext(graphContainer);
             graphContainer.Register(GraphContext);

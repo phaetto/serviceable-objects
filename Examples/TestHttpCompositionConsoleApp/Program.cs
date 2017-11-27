@@ -3,11 +3,13 @@ namespace TestHttpCompositionConsoleApp
 {
     using System.Collections.Generic;
     using Contexts.ConfigurationSource;
-    using Serviceable.Objects.Composition.ServiceContainers;
+    using Serviceable.Objects.Composition.ServiceOrchestrator;
     using Serviceable.Objects.IO.NamedPipes.Server;
     using Serviceable.Objects.Remote.Composition.Graph;
     using Serviceable.Objects.Remote.Composition.ServiceContainers;
     using Serviceable.Objects.Remote.Composition.ServiceContainers.Configuration;
+    using Serviceable.Objects.Remote.Composition.ServiceOrchestrator;
+    using Serviceable.Objects.Remote.Composition.ServiceOrchestrator.Configuration;
     using Serviceable.Objects.Remote.Composition.Services;
     using Serviceable.Objects.Remote.Composition.Services.Configuration;
     using TestHttpCompositionConsoleApp.Contexts.ConsoleLog;
@@ -50,24 +52,34 @@ namespace TestHttpCompositionConsoleApp
             // TODO: Add process orchestrator
 
             // Start the service container
-            var serviceContainer = new ServiceContainerContext(new ServiceContainerContextConfiguration
+            var serviceOrchestratorContext = new ServiceOrchestratorContext(new ServiceOrchestratorConfiguration
             {
-                ContainerName = "service-container",
-                ServiceContainerBinding = new Binding { Host = "localhost" },
+                OrchestratorName = "service-container",
+                ServiceOrchestratorBinding = new Binding { Host = "localhost" },
                 ExternalBindings = new List<ExternalBinding>(),
             });
-            serviceContainer.GraphTemplatesDictionary.Add("template-X", graphTemplate);
-            serviceContainer.ServiceRegistrations.Add(new ServiceRegistration { ServiceName = "service-X" });
-            serviceContainer.ServiceContainerContainer.RegisterWithDefaultInterface(typeof(MemoryConfigurationSource));
+            serviceOrchestratorContext.GraphTemplatesDictionary.Add("template-X", graphTemplate);
+            serviceOrchestratorContext.ServiceRegistrations.Add(new ServiceRegistration { ServiceName = "service-X" });
+            serviceOrchestratorContext.ServiceOrchestratorContainer.RegisterWithDefaultInterface(typeof(MemoryConfigurationSource));
 
-            // Start the service
-            var service = new ServiceContext(new ServiceContextConfiguration
+            // Init the service container
+            var serviceContainer = new ServiceContainerContext(new ServiceContainerContextConfiguration
             {
-                ContainerName = "service-container",
-                ServiceName = "service-X",
-                TemplateName = "template-X",
+                OrchestratorName = "service-container",
+                ContainerName = "container-X",
             });
-            service.ServiceContainer.RegisterWithDefaultInterface(typeof(MemoryConfigurationSource));
+            serviceContainer.ServiceContainerContextContainer.RegisterWithDefaultInterface(typeof(MemoryConfigurationSource));
+
+            // Start the service // TODO: needs to be a command on ServiceContainerContext
+            var service = new ServiceContext(
+                new ServiceContextConfiguration
+                {
+                    ContainerName = "container-X",
+                    ServiceName = "service-X",
+                    TemplateName = "template-X",
+                },
+                serviceContainer.ServiceContainerContextContainer
+            );
 
             // TODO: instrumentation service:
             // TODO: Named-pipes -> service (template) ---> merge with graph/service template

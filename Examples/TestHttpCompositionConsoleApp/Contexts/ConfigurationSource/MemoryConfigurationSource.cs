@@ -4,7 +4,6 @@
     using Newtonsoft.Json;
     using Serviceable.Objects.Composition.Graph;
     using Serviceable.Objects.Composition.Graph.Stages.Configuration;
-    using Serviceable.Objects.Composition.ServiceContainers;
     using Serviceable.Objects.Composition.Services;
     using Serviceable.Objects.IO.NamedPipes.Server;
     using Serviceable.Objects.IO.NamedPipes.Server.Configuration;

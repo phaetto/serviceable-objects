@@ -109,7 +109,7 @@
                     allResultStacks.Add(resultExecutionStack);
                     oneHasRun = true;
                 }
-                catch (RuntimeBinderException)
+                catch (NotSupportedException)
                 {
                     // Only apply to the ones that support that
                 }

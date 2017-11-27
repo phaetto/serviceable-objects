@@ -5,7 +5,6 @@
     using System.Linq;
     using System.Reflection;
     using Microsoft.CSharp.RuntimeBinder;
-    using ServiceContainers;
     using Services;
     using Stages.Configuration;
     using Stages.Initialization;
