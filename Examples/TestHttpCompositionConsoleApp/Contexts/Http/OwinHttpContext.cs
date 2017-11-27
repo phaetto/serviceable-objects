@@ -3,6 +3,7 @@
     using System.IO;
     using System.Linq;
     using System.Threading.Tasks;
+    using Commands;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Http;
@@ -13,9 +14,10 @@
     using Newtonsoft.Json;
     using Serviceable.Objects;
     using Serviceable.Objects.Composition.Graph.Events;
+    using Serviceable.Objects.Composition.Graph.Stages.Initialization;
     using Serviceable.Objects.Remote.Serialization;
 
-    public sealed class OwinHttpContext : Context<OwinHttpContext>
+    public sealed class OwinHttpContext : Context<OwinHttpContext>, IInitializeStageFactory
     {
         public readonly IWebHost Host;
 
@@ -35,6 +37,11 @@
                     app.UseRouter(SetupRouter);
                 })
                 .Build();
+        }
+
+        public dynamic GenerateInitializeCommand()
+        {
+            return new Run();
         }
 
         private void SetupRouter(IRouteBuilder routerBuilder)
