@@ -12,7 +12,7 @@ namespace TestHttpCompositionConsoleApp.Contexts.ConsoleLog.Commands.Instrumenta
 
         public override WriteMessage GenerateCommand()
         {
-            return new WriteMessage();
+            return new WriteMessage(new WriteMessageData { Message = Message });
         }
     }
 }

@@ -3,11 +3,15 @@
     using System;
     using Serviceable.Objects.Remote;
 
-    public sealed class WriteMessage : ReproducibleCommand<ConsoleLogContext, ConsoleLogContext>
+    public sealed class WriteMessage : ReproducibleCommandWithData<ConsoleLogContext, ConsoleLogContext, WriteMessageData>
     {
+        public WriteMessage(WriteMessageData data) : base(data)
+        {
+        }
+
         public override ConsoleLogContext Execute(ConsoleLogContext context)
         {
-            Console.WriteLine("\nInstrumentation Command: *** Executed ***");
+            Console.WriteLine(Data.Message);
 
             return context;
         }

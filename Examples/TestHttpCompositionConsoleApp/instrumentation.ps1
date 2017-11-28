@@ -10,7 +10,9 @@ PowerShell -NoProfile -Command {
     Import-Module "$folder\TestHttpCompositionConsoleApp.dll" -Verbose;
 
     #Get-Help Write-Message;
-    Write-Message -Message "hey" -PipeName "container-X.service-X.testpipe" -NodeId "log-context";
+    Write-Message -Message "Awesome instrumentation" -PipeName "container-X.service-X.testpipe";
+    Write-Message -Message "Awesome instrumentation - again" -PipeName "container-X.service-X.testpipe";
+
 
     # Target examples:
     # Run-InstrumentationCommandOnCustomPipe -Pipe XXX -Data "hey" -OtherData "lo"
