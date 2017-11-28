@@ -11,6 +11,8 @@
         
         [ValidateNotNullOrEmpty]
         [Parameter(Mandatory = true, HelpMessage = "The container that you want to connect to", ParameterSetName = ContainerParameterSet)]
+        [Parameter(Mandatory = true, HelpMessage = "The container that you want to connect to", ParameterSetName = ServiceParameterSet)]
+        [Parameter(Mandatory = true, HelpMessage = "The container that you want to connect to", ParameterSetName = NodeParameterSet)]
         public string ServiceContainerName { get; set; }
 
         [ValidateNotNullOrEmpty]
@@ -24,7 +26,6 @@
 
         [ValidateNotNullOrEmpty]
         [Parameter(Mandatory = true, HelpMessage = "The node id that you want to connect to", ParameterSetName = NodeParameterSet)]
-        [Parameter(Mandatory = true, HelpMessage = "The node id that you want to connect to", ParameterSetName = CustomPipeParameterSet)]
         public string NodeId { get; set; }
 
         [ValidateRange(100, int.MaxValue)]
