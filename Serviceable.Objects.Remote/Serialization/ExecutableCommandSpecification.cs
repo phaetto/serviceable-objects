@@ -8,15 +8,10 @@
     public class ExecutableCommandSpecification : SerializableSpecification
     {
         public string Type;
-
         public string DataType;
-
         public object Data;
-
         public string Session;
-
         public string ApiKey;
-
         public override int DataStructureVersionNumber => 1;
 
         public T CreateFromSpec<T>()
