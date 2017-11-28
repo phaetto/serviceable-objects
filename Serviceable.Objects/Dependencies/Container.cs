@@ -141,63 +141,70 @@
 
             CheckStack(type, typeStackCall);
 
-            typeStackCall.Push(type);
-
-            var constructors = typeInfo.DeclaredConstructors.OrderByDescending(x => x.GetParameters().Length);
-            foreach (var constructor in constructors)
+            try
             {
-                try
-                {
-                    var constructorParameters = constructor.GetParameters();
+                typeStackCall.Push(type);
 
-                    // This is a candidate
-                    var transformedObjects = new List<object>(constructorParameters.Length);
-                    foreach (var parameterInfo in constructorParameters)
+                var constructors = typeInfo.DeclaredConstructors.OrderByDescending(x => x.GetParameters().Length);
+                foreach (var constructor in constructors)
+                {
+                    try
                     {
-                        var parameterTypeFullName = parameterInfo.ParameterType.FullName;
-                        var parameterTypeInfo = parameterInfo.ParameterType.GetTypeInfo();
-                        if (objectsCache.ContainsKey(parameterTypeFullName))
+                        var constructorParameters = constructor.GetParameters();
+
+                        // This is a candidate
+                        var transformedObjects = new List<object>(constructorParameters.Length);
+                        foreach (var parameterInfo in constructorParameters)
                         {
-                            var objectUnderInverstigation = objectsCache[parameterTypeFullName];
-                            if (parameterTypeInfo.IsInterface && objectUnderInverstigation.GetType().GetTypeInfo()
-                                    .ImplementedInterfaces.Any(x => x == parameterInfo.ParameterType))
+                            var parameterTypeFullName = parameterInfo.ParameterType.FullName;
+                            var parameterTypeInfo = parameterInfo.ParameterType.GetTypeInfo();
+                            if (objectsCache.ContainsKey(parameterTypeFullName))
                             {
-                                transformedObjects.Add(objectUnderInverstigation);
+                                var objectUnderInverstigation = objectsCache[parameterTypeFullName];
+                                if (parameterTypeInfo.IsInterface && objectUnderInverstigation.GetType().GetTypeInfo()
+                                        .ImplementedInterfaces.Any(x => x == parameterInfo.ParameterType))
+                                {
+                                    transformedObjects.Add(objectUnderInverstigation);
+                                }
+                                else
+                                {
+                                    transformedObjects.Add(Convert.ChangeType(objectUnderInverstigation, parameterInfo.ParameterType));
+                                }
                             }
                             else
                             {
-                                transformedObjects.Add(Convert.ChangeType(objectUnderInverstigation, parameterInfo.ParameterType));
+                                if (parameterTypeInfo.IsValueType)
+                                {
+                                    throw new InvalidCastException("Value types are not allowed");
+                                }
+
+                                ResolveUnknownType(transformedObjects, parameterInfo, typeStackCall, cacheable);
                             }
                         }
-                        else
+
+                        var newObject = constructor.Invoke(transformedObjects.ToArray());
+
+                        if (cacheable)
                         {
-                            if (parameterTypeInfo.IsValueType)
+                            if (objectsCache.ContainsKey(type.FullName))
                             {
-                                throw new InvalidCastException("Value types are not allowed");
+                                throw new TypeCreatedTwiceInConatinerException($"Type ${type.FullName} created twice - that should never have happened.");
                             }
 
-                            ResolveUnknownType(transformedObjects, parameterInfo, typeStackCall, cacheable);
+                            objectsCache.Add(type.FullName, newObject);
                         }
+
+                        return newObject;
                     }
-
-                    var newObject = constructor.Invoke(transformedObjects.ToArray());
-
-                    if (cacheable)
+                    catch (InvalidCastException)
                     {
-                        if (objectsCache.ContainsKey(type.FullName))
-                        {
-                            throw new TypeCreatedTwiceInConatinerException($"Type ${type.FullName} created twice - that should never have happened.");
-                        }
-
-                        objectsCache.Add(type.FullName, newObject);
+                        // Go to the next
                     }
-
-                    return newObject;
                 }
-                catch (InvalidCastException)
-                {
-                    // Go to the next
-                }
+            }
+            finally
+            {
+                typeStackCall.Pop();
             }
 
             if (!throwOnError)
@@ -254,8 +261,6 @@
                     transformedObjects.Add(parameterInfo.DefaultValue);
                 }
             }
-
-            typeStackCall.Pop();
         }
 
         private static void CheckStack(Type type, Stack<Type> typeStackCall)
