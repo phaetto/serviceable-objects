@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Concurrent;
-using System.IO;
-using System.Linq;
-using System.Text;
-
-namespace Serviceable.Objects.Remote.Serialization.Streaming
+﻿namespace Serviceable.Objects.Remote.Serialization.Streaming
 {
+    using System;
+    using System.Collections.Concurrent;
+    using System.IO;
+    using System.Linq;
+    using System.Text;
+
     public sealed class StreamSession
     {
         private readonly int bufferSize;
@@ -53,7 +53,7 @@ namespace Serviceable.Objects.Remote.Serialization.Streaming
             {
                 streamState.HasBegunParsingCommand = false;
                 streamState.ParsedCommandBuffer += stringChuncks[0];
-                if (!VerifyProtocolHeader())
+                if (!VerifyProtocolHeader(streamState.ParsedCommandBuffer))
                 {
                     // Replace with protocol error
                     WriteException(new InvalidOperationException("Protocol error. The format was not correct."));
@@ -74,25 +74,25 @@ namespace Serviceable.Objects.Remote.Serialization.Streaming
                     continue;
                 }
 
-                streamState.ParsedCommandBuffer = stringChuncks[i];
-                if (!VerifyProtocolHeader())
+                streamState.ParsedCommandBuffer = string.Empty;
+                if (!VerifyProtocolHeader(stringChuncks[i]))
                 {
                     // Replace with protocol error
                     WriteException(new InvalidOperationException("Protocol error. The format was not correct."));
                 }
                 else
                 {
-                    streamState.CommandsTextReadyToBeParsedQueue.Enqueue(streamState.ParsedCommandBuffer.Substring(StartOfStream.Length));
+                    streamState.CommandsTextReadyToBeParsedQueue.Enqueue(stringChuncks[i].Substring(StartOfStream.Length));
                 }
             }
-
+            
             // Add the last string left to the buffer:
             if (!string.IsNullOrWhiteSpace(stringChuncks.Last()))
             {
                 streamState.ParsedCommandBuffer = stringChuncks.Last();
-                if (VerifyProtocolHeader())
+                if (VerifyProtocolHeader(streamState.ParsedCommandBuffer))
                 {
-                    var isFinalisedCommand = stringRead.LastIndexOf(EndOfStream) == stringRead.Length - EndOfStream.Length;
+                    var isFinalisedCommand = stringRead.LastIndexOf(EndOfStream, StringComparison.Ordinal) == stringRead.Length - EndOfStream.Length;
                     streamState.HasBegunParsingCommand = !isFinalisedCommand;
                     if (isFinalisedCommand)
                     {
@@ -111,9 +111,9 @@ namespace Serviceable.Objects.Remote.Serialization.Streaming
             stream.Write(bytes, 0, bytes.Length);
         }
 
-        private bool VerifyProtocolHeader()
+        private bool VerifyProtocolHeader(string commandBuffer)
         {
-            return streamState.ParsedCommandBuffer.StartsWith(StartOfStream);
+            return commandBuffer.StartsWith(StartOfStream);
         }
 
         private void WriteException(Exception exception)
