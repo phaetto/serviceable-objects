@@ -100,6 +100,19 @@
             Nodes.ForEach(x => x.Initialize());
         }
 
+        public void ConfigureNode(string nodeId)
+        {
+            Check.ArgumentNullOrWhiteSpace(nodeId, nameof(nodeId));
+            var configurationSource = Container.Resolve<IConfigurationSource>();
+            Nodes.First(x => x.Id == nodeId).Configure(configurationSource);
+        }
+
+        public void InitializeNode(string nodeId)
+        {
+            Check.ArgumentNullOrWhiteSpace(nodeId, nameof(nodeId));
+            Nodes.First(x => x.Id == nodeId).Initialize();
+        }
+
         public IEnumerable<Stack<EventResult>> Execute(dynamic command)
         {
             Check.ArgumentNull(command, nameof(command));

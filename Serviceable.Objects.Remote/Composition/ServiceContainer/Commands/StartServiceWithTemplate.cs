@@ -33,6 +33,8 @@
             service.GraphContext.Initialize();
 
             context.GraphContext.AddNode(service, serviceName);
+            context.GraphContext.ConfigureNode(serviceName);
+            context.GraphContext.InitializeNode(serviceName);
             context.GraphContext.ConnectNodes(context.GraphContext.GetNodeIds<ServiceContainerContext>().First(), serviceName);
 
             return context;
