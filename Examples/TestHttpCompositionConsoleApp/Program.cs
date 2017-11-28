@@ -75,8 +75,8 @@ namespace TestHttpCompositionConsoleApp
             // TODO: Add process orchestrator
 
             // Start the service container
-            var serviceOrchestratorContainer = new Container(); // Move this to graph configuration
-            serviceOrchestratorContainer.RegisterWithDefaultInterface(typeof(MemoryConfigurationSource));
+            var serviceOrchestratorContainer = new Container();
+            serviceOrchestratorContainer.RegisterWithDefaultInterface(typeof(MemoryConfigurationSource)); // TODO: Move this to graph configuration
             var serviceOrchestratorrGraph = new GraphContext(serviceOrchestratorContainer);
             serviceOrchestratorrGraph.FromJson(serviceOrchestratorGraphTemplate);
             serviceOrchestratorrGraph.Configure();
@@ -89,7 +89,7 @@ namespace TestHttpCompositionConsoleApp
 
             // Init the service container
             var container = new Container(); // Move this to graph configuration
-            container.RegisterWithDefaultInterface(typeof(ServiceContainerConfigurationSource));
+            container.RegisterWithDefaultInterface(typeof(ServiceContainerConfigurationSource)); // TODO: Move this to graph configuration
             var serviceContainerGraph = new GraphContext(container);
             serviceContainerGraph.FromJson(serviceContainerGraphTemplate);
             serviceContainerGraph.Configure();

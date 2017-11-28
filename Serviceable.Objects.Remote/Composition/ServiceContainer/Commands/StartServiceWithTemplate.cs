@@ -5,7 +5,7 @@
     using Service;
     using Service.Configuration;
 
-    public class StartServiceWithTemplate : ICommand<ServiceContainerContext, ServiceContainerContext>
+    public class StartServiceWithTemplate : ICommand<ServiceContainerContext, ServiceContainerContext> // TODO: reproducible
     {
         private readonly string graphTemplate;
         private readonly string templateName;
