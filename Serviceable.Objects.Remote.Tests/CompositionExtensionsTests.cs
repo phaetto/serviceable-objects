@@ -3,6 +3,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using Composition.Graph;
+    using Newtonsoft.Json;
     using Objects.Composition.Graph;
     using Serviceable.Objects.Remote.Composition;
     using Serviceable.Objects.Tests.Classes;
@@ -13,7 +14,7 @@
         [Fact]
         public void FromJson_WhenExecutingAGraphFromJson_ThenItSuccessfullyGetsNodeResponses()
         {
-            var graphSpec = new GraphSpecification
+            var graphSpec = new GraphTemplate
             {
                 GraphNodes = new []
                 {
@@ -59,7 +60,7 @@
                 },
             };
 
-            var json = graphSpec.SerializeToJson();
+            var json = JsonConvert.SerializeObject(graphSpec);
 
             var graph = new GraphContext();
             graph.FromJson(json);

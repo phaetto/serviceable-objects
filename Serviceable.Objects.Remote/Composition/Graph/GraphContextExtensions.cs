@@ -2,14 +2,16 @@
 {
     using System.Linq;
     using Dependencies;
+    using Newtonsoft.Json;
     using Objects.Composition.Graph;
-    using Serialization;
 
-    public static class ContextGraphExtensions
+    public static class GraphContextExtensions
     {
         public static void FromJson(this GraphContext graphContext, string json)
         {
-            var specification = DeserializableSpecification<GraphSpecification>.DeserializeFromJson(json);
+            var specification = JsonConvert.DeserializeObject<GraphTemplate>(json);
+
+            graphContext.Container.FromJson(json);
 
             foreach (var graphNode in specification.GraphNodes)
             {
