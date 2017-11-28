@@ -14,7 +14,7 @@
             this.commandToExecute = commandToExecute;
         }
 
-        public IEnumerable<EventResult> OverridePropagationLogic(GraphContext graphContext, string publishingNodeId, dynamic publishedHostedContext)
+        public IEnumerable<EventResult> OverrideEventPropagationLogic(GraphContext graphContext, string publishingNodeId, dynamic publishedHostedContext)
         {
             return graphContext.GetChildren(publishingNodeId)
                 .Select(ExecuteCommand)
