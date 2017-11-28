@@ -12,15 +12,12 @@
     {
         private readonly IServiceContainer serviceContainer;
         private readonly IService service;
-        private readonly GraphContext graphContext;
         private readonly GraphNodeContext graphNodeContext;
 
-        public ApplyConfiguration(IServiceContainer serviceContainer, IService service, GraphContext graphContext,
-            GraphNodeContext graphNodeContext)
+        public ApplyConfiguration(IServiceContainer serviceContainer, IService service, GraphNodeContext graphNodeContext)
         {
             this.serviceContainer = serviceContainer;
             this.service = service;
-            this.graphContext = graphContext;
             this.graphNodeContext = graphNodeContext;
         }
 
@@ -31,7 +28,7 @@
                 if (context.ConfigurationSource != null)
                 {
                     var configurationString =
-                        context.ConfigurationSource.GetConfigurationValueForKey(serviceContainer, service, graphContext, graphNodeContext, context.GetType());
+                        context.ConfigurationSource.GetConfigurationValueForKey(serviceContainer?.ContainerName, service?.ServiceName, graphNodeContext.Id, context.GetType().FullName);
                     context.SetConfiguration(JsonConvert.DeserializeObject<TConfiguration>(configurationString));
                 }
                 else

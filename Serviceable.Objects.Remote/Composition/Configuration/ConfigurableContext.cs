@@ -51,7 +51,7 @@
 
         public dynamic GenerateConfigurationCommand(IServiceContainer serviceContainer, IService service, GraphContext graphContext, GraphNodeContext graphNodeContext)
         {
-            return new ApplyConfiguration<TConfiguration, TContextType>(serviceContainer, service, graphContext, graphNodeContext);
+            return new ApplyConfiguration<TConfiguration, TContextType>(serviceContainer, service, graphNodeContext);
         }
     }
 }
