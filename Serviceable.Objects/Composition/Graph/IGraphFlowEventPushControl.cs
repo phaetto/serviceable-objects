@@ -4,6 +4,6 @@
 
     public interface IGraphFlowEventPushControl : IEvent
     {
-        IEnumerable<EventResult> OverridePropagationLogic(GraphContext graphContext, string publishingNodeId, dynamic hostedContext);
+        IEnumerable<EventResult> OverrideEventPropagationLogic(GraphContext graphContext, string publishingNodeId, dynamic hostedContext);
     }
 }

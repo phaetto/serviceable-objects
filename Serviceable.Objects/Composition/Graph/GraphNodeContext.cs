@@ -31,7 +31,7 @@
         {
             if (eventPublished is IGraphFlowEventPushControl controlFlowEvent)
             {
-                return controlFlowEvent.OverridePropagationLogic(graphContext, Id, HostedContext);
+                return controlFlowEvent.OverrideEventPropagationLogic(graphContext, Id, HostedContext);
             }
 
             return graphContext.GetChildren(Id)
