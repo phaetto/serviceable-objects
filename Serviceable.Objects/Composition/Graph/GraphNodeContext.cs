@@ -70,7 +70,22 @@
             {
                 localExecutionStack = resultExecutionStack;
 
-                var resultObject = HostedContext.Execute(command);
+                dynamic resultObject;
+                try
+                {
+                    resultObject = HostedContext.Execute(command);
+                }
+                catch (RuntimeBinderException)
+                {
+                    if (HostedContextAsAbstractContext is IGraphFlowExecutionSink graphFlowExecutionSink)
+                    {
+                        resultObject = graphFlowExecutionSink.CustomCommandExecute(graphContext, Id, command, localExecutionStack);
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
 
                 foreach (var childNode in graphContext.GetChildren(Id))
                 {
