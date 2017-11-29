@@ -26,7 +26,7 @@ namespace TestHttpCompositionConsoleApp
     GraphNodes: [
         { TypeFullName:'" + typeof(ServiceOrchestratorContext).FullName + @"', Id:'server-orchestrator-context' },
         { TypeFullName:'" + typeof(NamedPipeServerContext).FullName + @"', Id:'named-pipe-instrumentation-context' },
-        { TypeFullName:'" + typeof(InstrumentationServer).FullName + @"', Id:'instrumentation-context' },
+        { TypeFullName:'" + typeof(InstrumentationServerContext).FullName + @"', Id:'instrumentation-context' },
     ],
     GraphVertices: [
         { FromId:'named-pipe-instrumentation-context', ToId:'instrumentation-context',  },
@@ -45,7 +45,7 @@ namespace TestHttpCompositionConsoleApp
         { TypeFullName:'" + typeof(ConsoleLogContext).FullName + @"', Id:'console-log-context' },
         { TypeFullName:'" + typeof(NamedPipeServerContext).FullName + @"', Id:'namedpipes-log-instrumentation-context' },
         { TypeFullName:'" + typeof(NamedPipeServerContext).FullName + @"', Id:'namedpipes-instrumentation-context' },
-        { TypeFullName:'" + typeof(InstrumentationServer).FullName + @"', Id:'instrumentation-context' },
+        { TypeFullName:'" + typeof(InstrumentationServerContext).FullName + @"', Id:'instrumentation-context' },
     ],
     GraphVertices: [
         { FromId:'server-context', ToId:'queue-context', },
@@ -72,10 +72,10 @@ namespace TestHttpCompositionConsoleApp
 
             // Start the service container
             var serviceOrchestratorContainer = new Container();
-            var serviceOrchestratorrGraph = new GraphContext(serviceOrchestratorContainer);
-            serviceOrchestratorrGraph.FromJson(serviceOrchestratorGraphTemplate);
-            serviceOrchestratorrGraph.Configure();
-            serviceOrchestratorrGraph.Initialize();
+            var serviceOrchestratorGraph = new GraphContext(serviceOrchestratorContainer);
+            serviceOrchestratorGraph.FromJson(serviceOrchestratorGraphTemplate);
+            serviceOrchestratorGraph.Configure();
+            serviceOrchestratorGraph.Initialize();
 
             // TODO: should be a command
             var serviceOrchestratorContext = serviceOrchestratorContainer.Resolve<ServiceOrchestratorContext>();

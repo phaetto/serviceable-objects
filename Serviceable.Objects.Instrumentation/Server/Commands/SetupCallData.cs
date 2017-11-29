@@ -3,13 +3,13 @@
     using CommonParameters;
     using Remote;
 
-    public sealed class SetupCallData : ReproducibleCommandWithData<InstrumentationServer, InstrumentationServer, CommonInstrumentationParameters>
+    public sealed class SetupCallData : ReproducibleCommandWithData<InstrumentationServerContext, InstrumentationServerContext, CommonInstrumentationParameters>
     {
         public SetupCallData(CommonInstrumentationParameters data) : base(data)
         {
         }
 
-        public override InstrumentationServer Execute(InstrumentationServer context)
+        public override InstrumentationServerContext Execute(InstrumentationServerContext context)
         {
             context.CommonInstrumentationParameters = Data;
             return context;

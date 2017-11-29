@@ -5,7 +5,7 @@
 
     public interface IService
     {
-        string ContainerName { get; }
+        string OrchestratorName { get; }
         string ServiceName { get; }
         string TemplateName { get; }
         Container ServiceContainer { get; }

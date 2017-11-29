@@ -1,4 +1,4 @@
-namespace Serviceable.Objects.Instrumentation
+namespace Serviceable.Objects.Instrumentation.Powershell
 {
     using System.Management.Automation;
     using CommonParameters;
@@ -24,17 +24,16 @@ namespace Serviceable.Objects.Instrumentation
             if (!string.IsNullOrWhiteSpace(commonInstrumentationParameters.PipeName))
             {
                 namedPipeClientContext = new NamedPipeClientContext(commonInstrumentationParameters.PipeName, commonInstrumentationParameters.TimeoutInMilliseconds);
-                WriteObject(namedPipeClientContext.Connect(GenerateCommand()));
+                WriteObject(namedPipeClientContext.Send(GenerateCommand()));
                 return;
             }
 
-            // TODO: shared container maps for common configuration
             var namedPipe = string.Join(".", commonInstrumentationParameters.ServiceName,
                 commonInstrumentationParameters.NodeId);
             namedPipeClientContext =
                 new NamedPipeClientContext(namedPipe, commonInstrumentationParameters.TimeoutInMilliseconds);
-            namedPipeClientContext.Connect(new SetupCallData(commonInstrumentationParameters));
-            WriteObject(namedPipeClientContext.Connect(GenerateCommand()));
+            namedPipeClientContext.Send(new SetupCallData(commonInstrumentationParameters));
+            WriteObject(namedPipeClientContext.Send(GenerateCommand()));
         }
 
         public object GetDynamicParameters()

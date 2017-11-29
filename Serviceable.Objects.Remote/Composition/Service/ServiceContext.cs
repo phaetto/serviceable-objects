@@ -10,7 +10,6 @@
     public sealed class ServiceContext : ConfigurableContext<ServiceContextConfiguration, ServiceContext>, IService
     {
         public string OrchestratorName => Configuration.OrchestratorName;
-        public string ContainerName => Configuration.ContainerName;
         public string ServiceName => Configuration.ServiceName;
         public string TemplateName => Configuration.TemplateName;
         public GraphContext GraphContext { get; }

@@ -1,4 +1,4 @@
-﻿namespace Serviceable.Objects.Instrumentation
+﻿namespace Serviceable.Objects.Instrumentation.Powershell
 {
     using System.Management.Automation;
     using Remote;

@@ -12,20 +12,17 @@ PowerShell -NoProfile -Command {
     Get-Help Write-Message;
     #Get-Help Enqueue-Message;
 
+    # Invalid
+    #Write-Message -Data @{ Message = "Awesome instrumentation" } -PipeName "service-X.namedpipes-instrumentation-context";
+    
     Write-Message -Data @{ Message = "Awesome instrumentation" } -PipeName "service-X.namedpipes-log-instrumentation-context";
     Write-Message -Data @{ Message = "Awesome instrumentation - again!" } -PipeName "service-X.namedpipes-log-instrumentation-context";
 
-    #Enqueue-Message "a message" -PipeName "container-X.self.testpipe";
-    #Dequeue-Message -PipeName "container-X.self.testpipe";
-
     Enqueue-Message @{ "Data" = "a message" } -ServiceName "service-X" -NodeId "namedpipes-instrumentation-context" -ContextId "queue-context";
     $message = Dequeue-Message -ServiceName "service-X" -NodeId "namedpipes-instrumentation-context" -ContextId "queue-context";
-
-    # Target examples:
-    # Run-InstrumentationCommandOnCustomPipe -Pipe XXX -Data "hey" -OtherData "lo"
-    # Run-InstrumentationCommandOnNode -Service XXX -ServiceContainer YYY -NodeId log-context -Data "hey" -OtherData "lo"
-    # Do-SomethingOnServiceProcess -Service XXX -ServiceContainer YYY (add-node? merge-template? pause-service?, etc)
-    # Do-SomethingOnServiceContainerProcess -ServiceContainer YYY (copy-service?, move-service?, update-service?, etc)
+    
+    # target:
+    #$message = Dequeue-Message -ServiceName "service-X" -ContextId "queue-context";
 
     Write-Host "Message: '$message'";
 
