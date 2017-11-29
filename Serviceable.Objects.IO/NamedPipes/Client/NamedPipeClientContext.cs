@@ -19,7 +19,7 @@
             this.timeoutInMilliseconds = timeoutInMilliseconds;
         }
 
-        public object Connect(IReproducible command)
+        public object Send(IReproducible command)
         {
             using (var namedPipeClientStream = new NamedPipeClientStream(".", namedPipe, PipeDirection.InOut))
             {
