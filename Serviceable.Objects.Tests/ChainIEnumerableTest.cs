@@ -65,28 +65,30 @@
         }
 
         [Fact]
-        public void Chain_WhenInfiniteListIsProvidedAsync_ThenSuccesfullyAppliesItemsInEventLikeMannerRightAfterTheStreamItem()
+        public async Task Chain_WhenInfiniteListIsProvidedAsync_ThenSuccesfullyAppliesItemsInEventLikeMannerRightAfterTheStreamItem()
         {
             var blockingColection = new BlockingCollection<ActionForTest>(new ConcurrentQueue<ActionForTest>(), 10);
 
             var contextForTest = new ContextForTest();
 
             // This will produce an infinite stream and enumerate it
+#pragma warning disable 4014
             contextForTest.ForceExecuteAsync(blockingColection.GetConsumingEnumerable());
+#pragma warning restore 4014
 
             blockingColection.Add(new ActionForTest("Value 1"));
 
-            Thread.Sleep(TimeBetweenValueUpdates);
+            await Task.Delay(TimeBetweenValueUpdates);
             Assert.Equal("Value 1", contextForTest.ContextVariable);
 
             blockingColection.Add(new ActionForTest("Value 2"));
 
-            Thread.Sleep(TimeBetweenValueUpdates);
+            await Task.Delay(TimeBetweenValueUpdates);
             Assert.Equal("Value 2", contextForTest.ContextVariable);
 
             blockingColection.Add(new ActionForTest("Value 3"));
 
-            Thread.Sleep(TimeBetweenValueUpdates);
+            await Task.Delay(TimeBetweenValueUpdates);
             Assert.Equal("Value 3", contextForTest.ContextVariable);
         }
     }
