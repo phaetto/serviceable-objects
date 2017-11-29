@@ -12,14 +12,14 @@ PowerShell -NoProfile -Command {
     #Get-Help Write-Message;
     #Get-Help Enqueue-Message;
 
-    Write-Message -Message "Awesome instrumentation" -PipeName "container-X.service-X.testpipe";
-    Write-Message -Message "Awesome instrumentation - again" -PipeName "container-X.service-X.testpipe";
+    Write-Message -Message "Awesome instrumentation" -PipeName "service-X.namedpipes-log-instrumentation-context";
+    Write-Message -Message "Awesome instrumentation - again" -PipeName "service-X.namedpipes-log-instrumentation-context";
 
     #Enqueue-Message "a message" -PipeName "container-X.self.testpipe";
     #Dequeue-Message -PipeName "container-X.self.testpipe";
 
-    Enqueue-Message "a message" -ServiceContainerName "container-X" -ServiceName "service-X" -NodeId "queue-context";
-    $message = Dequeue-Message -ServiceContainerName "container-X" -ServiceName "service-X" -NodeId "queue-context";
+    Enqueue-Message "a message" -ServiceName "service-X" -NodeId "namedpipes-instrumentation-context" -ContextId "queue-context";
+    $message = Dequeue-Message -ServiceName "service-X" -NodeId "namedpipes-instrumentation-context" -ContextId "queue-context";
 
     # Target examples:
     # Run-InstrumentationCommandOnCustomPipe -Pipe XXX -Data "hey" -OtherData "lo"

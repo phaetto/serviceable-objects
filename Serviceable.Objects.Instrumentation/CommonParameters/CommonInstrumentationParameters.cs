@@ -4,17 +4,10 @@
 
     public sealed class CommonInstrumentationParameters
     {
-        public const string ContainerParameterSet = "Container";
         public const string ServiceParameterSet = "Service";
         public const string NodeParameterSet = "Node";
         public const string CustomPipeParameterSet = "Custom Pipe";
         
-        [ValidateNotNullOrEmpty]
-        [Parameter(Mandatory = true, HelpMessage = "The container that you want to connect to", ParameterSetName = ContainerParameterSet)]
-        [Parameter(Mandatory = true, HelpMessage = "The container that you want to connect to", ParameterSetName = ServiceParameterSet)]
-        [Parameter(Mandatory = true, HelpMessage = "The container that you want to connect to", ParameterSetName = NodeParameterSet)]
-        public string ServiceContainerName { get; set; }
-
         [ValidateNotNullOrEmpty]
         [Parameter(Mandatory = true, HelpMessage = "The service that you want to connect to", ParameterSetName = ServiceParameterSet)]
         [Parameter(Mandatory = true, HelpMessage = "The service that you want to connect to", ParameterSetName = NodeParameterSet)]
@@ -27,6 +20,10 @@
         [ValidateNotNullOrEmpty]
         [Parameter(Mandatory = true, HelpMessage = "The node id that you want to connect to", ParameterSetName = NodeParameterSet)]
         public string NodeId { get; set; }
+
+        [ValidateNotNullOrEmpty]
+        [Parameter(Mandatory = true, HelpMessage = "The context id that this command aims to instrument at", ParameterSetName = NodeParameterSet)]
+        public string ContextId { get; set; }
 
         [ValidateRange(100, int.MaxValue)]
         [Parameter(Mandatory = false, HelpMessage = "The timeout that the connection will fail")]

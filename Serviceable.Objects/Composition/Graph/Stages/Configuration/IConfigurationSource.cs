@@ -2,6 +2,6 @@
 {
     public interface IConfigurationSource
     {
-        string GetConfigurationValueForKey(string serviceContainerName, string serviceName, string graphNodeId, string typeName);
+        string GetConfigurationValueForKey(string serviceName, string graphNodeId, string typeName);
     }
 }

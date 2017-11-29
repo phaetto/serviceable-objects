@@ -15,16 +15,31 @@
 
         protected override void ProcessRecord()
         {
+            NamedPipeClientContext namedPipeClientContext;
+
             if (!string.IsNullOrWhiteSpace(commonInstrumentationParameters.PipeName))
             {
-                var namedPipeClientContext = new NamedPipeClientContext(commonInstrumentationParameters.PipeName, commonInstrumentationParameters.TimeoutInMilliseconds);
+                namedPipeClientContext = new NamedPipeClientContext(commonInstrumentationParameters.PipeName, commonInstrumentationParameters.TimeoutInMilliseconds);
+                WriteObject(namedPipeClientContext.Connect(GenerateCommand()));
+                return;
+            }
+            
+            // TODO: shared container maps for common configuration
+
+            if (!string.IsNullOrWhiteSpace(commonInstrumentationParameters.NodeId))
+            {
+                var namedPipe = string.Join(".", commonInstrumentationParameters.ServiceName,
+                    commonInstrumentationParameters.NodeId);
+                namedPipeClientContext =
+                    new NamedPipeClientContext(namedPipe, commonInstrumentationParameters.TimeoutInMilliseconds);
+                namedPipeClientContext.Connect(new SetupCallData(commonInstrumentationParameters));
                 WriteObject(namedPipeClientContext.Connect(GenerateCommand()));
             }
-            else if (!string.IsNullOrWhiteSpace(commonInstrumentationParameters.ServiceContainerName))
+            else
             {
-                // TODO: shared container maps for common configuration
-                var namedPipe = string.Join(".", commonInstrumentationParameters.ServiceContainerName, "self", "testpipe");
-                var namedPipeClientContext = new NamedPipeClientContext(namedPipe, commonInstrumentationParameters.TimeoutInMilliseconds);
+                var namedPipe = $"serviceable.objects/instrumentation/{commonInstrumentationParameters.ServiceName}";
+                namedPipeClientContext =
+                    new NamedPipeClientContext(namedPipe, commonInstrumentationParameters.TimeoutInMilliseconds);
                 namedPipeClientContext.Connect(new SetupCallData(commonInstrumentationParameters));
                 WriteObject(namedPipeClientContext.Connect(GenerateCommand()));
             }

@@ -6,7 +6,6 @@
     using System.Reflection;
     using Microsoft.CSharp.RuntimeBinder;
     using Service;
-    using ServiceContainer;
     using Stages.Configuration;
     using Stages.Initialization;
 
@@ -46,7 +45,6 @@
             if (HostedContext is IConfigurableStageFactory configurable && !configurable.HasBeenConfigured)
             {
                 var command = configurable.GenerateConfigurationCommand(
-                    graphContext.Container.Resolve<IServiceContainer>(throwOnError: false),
                     graphContext.Container.Resolve<IService>(throwOnError: false),
                     graphContext,
                     this);

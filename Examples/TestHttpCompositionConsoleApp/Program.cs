@@ -10,8 +10,8 @@ namespace TestHttpCompositionConsoleApp
     using Serviceable.Objects.Remote.Composition.Graph;
     using Serviceable.Objects.Remote.Composition.Host;
     using Serviceable.Objects.Remote.Composition.Host.Commands;
-    using Serviceable.Objects.Remote.Composition.ServiceContainer;
-    using Serviceable.Objects.Remote.Composition.ServiceContainer.Commands;
+    using Serviceable.Objects.Remote.Composition.Service;
+    using Serviceable.Objects.Remote.Composition.Service.Configuration;
     using Serviceable.Objects.Remote.Composition.ServiceOrchestrator;
     using TestHttpCompositionConsoleApp.Contexts.ConsoleLog;
     using TestHttpCompositionConsoleApp.Contexts.Http;
@@ -37,34 +37,24 @@ namespace TestHttpCompositionConsoleApp
 }
 ";
 
-            var serviceContainerGraphTemplate = @"
-{
-    GraphNodes: [
-        { TypeFullName:'" + typeof(ServiceContainerContext).FullName + @"', Id:'server-container-context' },
-        { TypeFullName:'" + typeof(NamedPipeServerContext).FullName + @"', Id:'named-pipe-instrumentation-context' },
-        { TypeFullName:'" + typeof(InstrumentationServer).FullName + @"', Id:'instrumentation-context' },
-    ],
-    GraphVertices: [
-        { FromId:'named-pipe-instrumentation-context', ToId:'instrumentation-context',  },
-    ],
-    Registrations: [
-        { Type:'" + typeof(ServiceContainerConfigurationSource).FullName + @"', WithDefaultInterface:true },
-    ],
-}
-";
-
             var graphTemplate = @"
 {
     GraphNodes: [
         { TypeFullName:'" + typeof(OwinHttpContext).FullName + @"', Id:'server-context' },
         { TypeFullName:'" + typeof(QueueContext).FullName + @"', Id:'queue-context' },
-        { TypeFullName:'" + typeof(ConsoleLogContext).FullName + @"', Id:'log-context' },
-        { TypeFullName:'" + typeof(NamedPipeServerContext).FullName + @"', Id:'console-instrumentation-context' },
+        { TypeFullName:'" + typeof(ConsoleLogContext).FullName + @"', Id:'console-log-context' },
+        { TypeFullName:'" + typeof(NamedPipeServerContext).FullName + @"', Id:'namedpipes-log-instrumentation-context' },
+        { TypeFullName:'" + typeof(NamedPipeServerContext).FullName + @"', Id:'namedpipes-instrumentation-context' },
+        { TypeFullName:'" + typeof(InstrumentationServer).FullName + @"', Id:'instrumentation-context' },
     ],
     GraphVertices: [
         { FromId:'server-context', ToId:'queue-context', },
-        { FromId:'queue-context', ToId:'log-context',  },
-        { FromId:'console-instrumentation-context', ToId:'log-context',  },
+        { FromId:'queue-context', ToId:'console-log-context',  },
+        { FromId:'namedpipes-log-instrumentation-context', ToId:'console-log-context',  },
+        { FromId:'namedpipes-instrumentation-context', ToId:'instrumentation-context',  },
+    ],
+    Registrations: [
+        { Type:'" + typeof(ServiceContainerConfigurationSource).FullName + @"', WithDefaultInterface:true },
     ],
 }
 ";
@@ -93,16 +83,16 @@ namespace TestHttpCompositionConsoleApp
             serviceOrchestratorContext.ServiceRegistrations.Add(new ServiceRegistration { ServiceName = "service-X" });
 
             // Init the service container
-            var serviceContainerGraph = new GraphContext();
-            serviceContainerGraph.FromJson(serviceContainerGraphTemplate);
-            serviceContainerGraph.Configure();
-            serviceContainerGraph.Initialize();
+            var service = new ServiceContext(new ServiceContextConfiguration
+            {
+                ServiceName = "service-X",
+                OrchestratorName = "orchestrator-X",
+                TemplateName = "template-X",
+            });
 
-            serviceContainerGraph.Execute(new StartServiceWithTemplate(
-                serviceOrchestratorContext.GraphTemplatesDictionary["template-X"],
-                "template-X",
-                "service-X"
-            ));
+            service.GraphContext.FromJson(graphTemplate);
+            service.GraphContext.Configure();
+            service.GraphContext.Initialize();
 
             new ApplicationHost().Execute(new RunAndBlock());
         }

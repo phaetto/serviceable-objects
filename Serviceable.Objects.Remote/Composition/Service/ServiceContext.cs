@@ -9,33 +9,31 @@
 
     public sealed class ServiceContext : ConfigurableContext<ServiceContextConfiguration, ServiceContext>, IService
     {
+        public string OrchestratorName => Configuration.OrchestratorName;
         public string ContainerName => Configuration.ContainerName;
         public string ServiceName => Configuration.ServiceName;
         public string TemplateName => Configuration.TemplateName;
         public GraphContext GraphContext { get; }
-        public Container ServiceContainer { get; }
+        public Container ServiceContainer { get; } = new Container();
 
-        public ServiceContext(Container serviceContainerContextContainer = null)
+        public ServiceContext()
         {   
-            ServiceContainer = new Container(serviceContainerContextContainer);
             var graphContainer = new Container(ServiceContainer);
             GraphContext = new GraphContext(graphContainer);
             ServiceContainer.Register(GraphContext);
             ServiceContainer.Register(typeof(IService), this);
         }
 
-        public ServiceContext(ServiceContextConfiguration configuration, Container serviceContainerContextContainer = null) : base(configuration)
+        public ServiceContext(ServiceContextConfiguration configuration) : base(configuration)
         {
-            ServiceContainer = new Container(serviceContainerContextContainer);
             var graphContainer = new Container(ServiceContainer);
             GraphContext = new GraphContext(graphContainer);
             ServiceContainer.Register(GraphContext);
             ServiceContainer.Register(typeof(IService), this);
         }
 
-        public ServiceContext(IConfigurationSource configurationSource, Container serviceContainerContextContainer = null) : base(configurationSource)
+        public ServiceContext(IConfigurationSource configurationSource) : base(configurationSource)
         {
-            ServiceContainer = new Container(serviceContainerContextContainer);
             var graphContainer = new Container(ServiceContainer);
             GraphContext = new GraphContext(graphContainer);
             ServiceContainer.Register(GraphContext);

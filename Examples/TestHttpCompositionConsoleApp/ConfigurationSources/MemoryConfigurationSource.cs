@@ -12,7 +12,7 @@
 
     public sealed class MemoryConfigurationSource : IConfigurationSource
     {
-        public string GetConfigurationValueForKey(string serviceContainerName, string serviceName, string graphNodeId, string typeName)
+        public string GetConfigurationValueForKey(string serviceName, string graphNodeId, string typeName)
         {
             switch (typeName)
             {
