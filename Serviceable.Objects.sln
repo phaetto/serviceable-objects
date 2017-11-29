@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27004.2009
+VisualStudioVersion = 15.0.27004.2010
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Serviceable.Objects", "Serviceable.Objects\Serviceable.Objects.csproj", "{46A7AB18-5784-46A0-89C6-DFBCCE3AE6E6}"
 EndProject
@@ -27,6 +27,9 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Serviceable.Objects.IO", "Serviceable.Objects.IO\Serviceable.Objects.IO.csproj", "{349EED11-5DD9-4E95-8315-AA142CF74A14}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Serviceable.Objects.Remote.MultiplePlatforms.Tests", "Serviceable.Objects.Remote.MultiplePlatforms.Tests\Serviceable.Objects.Remote.MultiplePlatforms.Tests.csproj", "{71799D72-F01C-40FB-A0BA-76432AB06174}"
+	ProjectSection(ProjectDependencies) = postProject
+		{D560D552-B2F9-4EF9-9EF6-835FEB9BA3ED} = {D560D552-B2F9-4EF9-9EF6-835FEB9BA3ED}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
