@@ -3,7 +3,9 @@
     using Serviceable.Objects.Remote.Serialization;
     using Serviceable.Objects.Security;
 
-    public abstract class RemotableCommandWithSerializableData<TDataType, TReceived, TContext> : Reproducible,
+    public abstract class RemotableCommandWithSerializableData<TDataType, TReceived, TContext> :  // TODO: merge with the non-serializable version?
+        Reproducible,
+        IReproducibleWithKnownData<TDataType>,
         IRemotableCommand<TContext, TReceived>
     {
         public TDataType Data { get; set; }

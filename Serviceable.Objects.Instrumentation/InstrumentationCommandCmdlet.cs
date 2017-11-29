@@ -1,53 +1,24 @@
 ﻿namespace Serviceable.Objects.Instrumentation
 {
     using System.Management.Automation;
-    using CommonParameters;
-    using IO.NamedPipes.Client;
     using Remote;
-    using Server.Commands;
+    using Remote.Dependencies;
 
-    public abstract class InstrumentationCommandCmdlet<T> : Cmdlet, IDynamicParameters
-        where T : IReproducible
+    public abstract class InstrumentationCommandCmdlet<TCommand> : InstrumentationCommandCmdletBase<TCommand>
+        where TCommand : IReproducible, IReproducibleWithoutData
     {
-        private readonly CommonInstrumentationParameters commonInstrumentationParameters = new CommonInstrumentationParameters();
+    }
 
-        public abstract T GenerateCommand();
+    public abstract class InstrumentationCommandCmdlet<TCommand, TDataType> : InstrumentationCommandCmdletBase<TCommand>
+        where TCommand : IReproducible, IReproducibleWithData
+    {
+        [ValidateNotNullOrEmpty]
+        [Parameter(Mandatory = true, Position = 0, HelpMessage = "The data that you would like to send")]
+        public TDataType Data { get; set; }
 
-        protected override void ProcessRecord()
+        public override TCommand GenerateCommand()
         {
-            NamedPipeClientContext namedPipeClientContext;
-
-            if (!string.IsNullOrWhiteSpace(commonInstrumentationParameters.PipeName))
-            {
-                namedPipeClientContext = new NamedPipeClientContext(commonInstrumentationParameters.PipeName, commonInstrumentationParameters.TimeoutInMilliseconds);
-                WriteObject(namedPipeClientContext.Connect(GenerateCommand()));
-                return;
-            }
-            
-            // TODO: shared container maps for common configuration
-
-            if (!string.IsNullOrWhiteSpace(commonInstrumentationParameters.NodeId))
-            {
-                var namedPipe = string.Join(".", commonInstrumentationParameters.ServiceName,
-                    commonInstrumentationParameters.NodeId);
-                namedPipeClientContext =
-                    new NamedPipeClientContext(namedPipe, commonInstrumentationParameters.TimeoutInMilliseconds);
-                namedPipeClientContext.Connect(new SetupCallData(commonInstrumentationParameters));
-                WriteObject(namedPipeClientContext.Connect(GenerateCommand()));
-            }
-            else
-            {
-                var namedPipe = $"serviceable.objects/instrumentation/{commonInstrumentationParameters.ServiceName}";
-                namedPipeClientContext =
-                    new NamedPipeClientContext(namedPipe, commonInstrumentationParameters.TimeoutInMilliseconds);
-                namedPipeClientContext.Connect(new SetupCallData(commonInstrumentationParameters));
-                WriteObject(namedPipeClientContext.Connect(GenerateCommand()));
-            }
-        }
-
-        public object GetDynamicParameters()
-        {
-            return commonInstrumentationParameters;
+            return (TCommand)Types.CreateObjectWithParameters(typeof(TCommand), Data);
         }
     }
 }

@@ -6,9 +6,5 @@
     [Cmdlet("Dequeue", "Message")]
     public sealed class DequeueCmdlet : InstrumentationCommandCmdlet<Dequeue>
     {
-        public override Dequeue GenerateCommand()
-        {
-            return new Dequeue();
-        }
     }
 }

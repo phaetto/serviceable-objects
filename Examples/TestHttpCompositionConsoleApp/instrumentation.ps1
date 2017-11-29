@@ -9,16 +9,16 @@ PowerShell -NoProfile -Command {
     Set-Location -Path $folder;
     Import-Module "$folder\TestHttpCompositionConsoleApp.dll";
 
-    #Get-Help Write-Message;
+    Get-Help Write-Message;
     #Get-Help Enqueue-Message;
 
-    Write-Message -Message "Awesome instrumentation" -PipeName "service-X.namedpipes-log-instrumentation-context";
-    Write-Message -Message "Awesome instrumentation - again" -PipeName "service-X.namedpipes-log-instrumentation-context";
+    Write-Message -Data @{ Message = "Awesome instrumentation" } -PipeName "service-X.namedpipes-log-instrumentation-context";
+    Write-Message -Data @{ Message = "Awesome instrumentation - again!" } -PipeName "service-X.namedpipes-log-instrumentation-context";
 
     #Enqueue-Message "a message" -PipeName "container-X.self.testpipe";
     #Dequeue-Message -PipeName "container-X.self.testpipe";
 
-    Enqueue-Message "a message" -ServiceName "service-X" -NodeId "namedpipes-instrumentation-context" -ContextId "queue-context";
+    Enqueue-Message @{ "Data" = "a message" } -ServiceName "service-X" -NodeId "namedpipes-instrumentation-context" -ContextId "queue-context";
     $message = Dequeue-Message -ServiceName "service-X" -NodeId "namedpipes-instrumentation-context" -ContextId "queue-context";
 
     # Target examples:
@@ -30,4 +30,4 @@ PowerShell -NoProfile -Command {
     Write-Host "Message: '$message'";
 
     Write-Host " --- Done --- ";
-} -args $location
+} -args $location;
