@@ -112,6 +112,8 @@
             }
             catch (RuntimeBinderException ex)
             {
+                // TODO: Create a warning and error pool instead of throwing and catching?
+
                 throw new NotSupportedException(
                     "This type of command is not supported by context (Tip: Only one implementation of ICommand<,> can be inferred automatically)",
                     ex);

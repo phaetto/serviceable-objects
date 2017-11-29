@@ -1,6 +1,7 @@
 ﻿namespace Serviceable.Objects.IO.NamedPipes.Client
 {
     using System.IO.Pipes;
+    using Newtonsoft.Json;
     using Remote;
     using Remote.Serialization.Streaming;
 
@@ -18,7 +19,7 @@
             this.timeoutInMilliseconds = timeoutInMilliseconds;
         }
 
-        public void Connect(IReproducible command)
+        public object Connect(IReproducible command)
         {
             using (var namedPipeClientStream = new NamedPipeClientStream(".", namedPipe, PipeDirection.InOut))
             {
@@ -31,10 +32,15 @@
 
                 streamSession.Read(namedPipeClientStream);
 
-                while (streamSession.CommandsTextReadyToBeParsedQueue.TryDequeue(out string commandString))
+                if (streamSession.CommandsTextReadyToBeParsedQueue.TryDequeue(out var replyString))
                 {
-                    // TODO: Deserialize
+                    if (!string.IsNullOrWhiteSpace(replyString))
+                    {
+                        return JsonConvert.DeserializeObject(replyString);
+                    }
                 }
+
+                return null;
             }
         }
     }

@@ -113,6 +113,12 @@
             Nodes.First(x => x.Id == nodeId).Initialize();
         }
 
+        public GraphNodeContext GetNodeById(string nodeId)
+        {
+            Check.ArgumentNullOrWhiteSpace(nodeId, nameof(nodeId));
+            return Nodes.First(x => x.Id == nodeId);
+        }
+
         public IEnumerable<Stack<EventResult>> Execute(dynamic command)
         {
             Check.ArgumentNull(command, nameof(command));

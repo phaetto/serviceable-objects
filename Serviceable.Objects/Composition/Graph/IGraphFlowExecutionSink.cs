@@ -5,6 +5,6 @@
     public interface IGraphFlowExecutionSink
     {
         dynamic CustomCommandExecute(GraphContext graphContext, string executingNodeId,
-            dynamic parentCommandApplied, Stack<EventResult> eventResults);
+            dynamic commandApplied, Stack<EventResult> eventResults);
     }
 }

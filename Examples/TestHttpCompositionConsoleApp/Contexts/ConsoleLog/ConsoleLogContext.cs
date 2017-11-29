@@ -10,7 +10,7 @@
         public void PullNodeExecutionInformation(GraphContext graphContext, string executingNodeId, dynamic parentContext,
             dynamic parentCommandApplied, Stack<EventResult> eventResults)
         {
-            Console.WriteLine("\n\n*** Executed ***" +
+            Console.WriteLine("\n*** Executed ***" +
                               $"\n\tNode '{executingNodeId}'," +
                               $"\n\tContext: '{((object)parentContext).GetType().FullName}'," +
                               $"\n\tCommand: '{((object)parentCommandApplied).GetType().FullName}'" +

@@ -31,6 +31,9 @@ namespace TestHttpCompositionConsoleApp
     GraphVertices: [
         { FromId:'named-pipe-instrumentation-context', ToId:'instrumentation-context',  },
     ],
+    Registrations: [
+        { Type:'" + typeof(MemoryConfigurationSource).FullName + @"', WithDefaultInterface:true },
+    ],
 }
 ";
 
@@ -43,6 +46,9 @@ namespace TestHttpCompositionConsoleApp
     ],
     GraphVertices: [
         { FromId:'named-pipe-instrumentation-context', ToId:'instrumentation-context',  },
+    ],
+    Registrations: [
+        { Type:'" + typeof(ServiceContainerConfigurationSource).FullName + @"', WithDefaultInterface:true },
     ],
 }
 ";
@@ -76,7 +82,6 @@ namespace TestHttpCompositionConsoleApp
 
             // Start the service container
             var serviceOrchestratorContainer = new Container();
-            serviceOrchestratorContainer.RegisterWithDefaultInterface(typeof(MemoryConfigurationSource)); // TODO: Move this to graph configuration
             var serviceOrchestratorrGraph = new GraphContext(serviceOrchestratorContainer);
             serviceOrchestratorrGraph.FromJson(serviceOrchestratorGraphTemplate);
             serviceOrchestratorrGraph.Configure();
@@ -88,9 +93,7 @@ namespace TestHttpCompositionConsoleApp
             serviceOrchestratorContext.ServiceRegistrations.Add(new ServiceRegistration { ServiceName = "service-X" });
 
             // Init the service container
-            var container = new Container(); // Move this to graph configuration
-            container.RegisterWithDefaultInterface(typeof(ServiceContainerConfigurationSource)); // TODO: Move this to graph configuration
-            var serviceContainerGraph = new GraphContext(container);
+            var serviceContainerGraph = new GraphContext();
             serviceContainerGraph.FromJson(serviceContainerGraphTemplate);
             serviceContainerGraph.Configure();
             serviceContainerGraph.Initialize();

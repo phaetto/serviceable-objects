@@ -28,6 +28,7 @@
             }, context.ServiceContainerContextContainer);
 
             service.GraphContext.FromJson(graphTemplate);
+            context.Services.Add(service);
 
             service.GraphContext.Configure();
             service.GraphContext.Initialize();
