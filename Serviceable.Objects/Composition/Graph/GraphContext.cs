@@ -95,6 +95,11 @@
             Nodes.ForEach(x => x.Configure(configurationSource));
         }
 
+        public void Setup()
+        {
+            Nodes.ForEach(x => x.Setup());
+        }
+
         public void Initialize()
         {
             Nodes.ForEach(x => x.Initialize());

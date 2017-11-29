@@ -75,6 +75,7 @@ namespace TestHttpCompositionConsoleApp
             var serviceOrchestratorGraph = new GraphContext(serviceOrchestratorContainer);
             serviceOrchestratorGraph.FromJson(serviceOrchestratorGraphTemplate);
             serviceOrchestratorGraph.Configure();
+            serviceOrchestratorGraph.Setup();
             serviceOrchestratorGraph.Initialize();
 
             // TODO: should be a command
@@ -92,6 +93,7 @@ namespace TestHttpCompositionConsoleApp
 
             service.GraphContext.FromJson(graphTemplate);
             service.GraphContext.Configure();
+            service.GraphContext.Setup();
             service.GraphContext.Initialize();
 
             new ApplicationHost().Execute(new RunAndBlock());

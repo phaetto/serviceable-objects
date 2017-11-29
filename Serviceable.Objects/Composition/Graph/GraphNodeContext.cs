@@ -8,6 +8,7 @@
     using Service;
     using Stages.Configuration;
     using Stages.Initialization;
+    using Stages.Setup;
 
     public sealed class GraphNodeContext
     {
@@ -49,6 +50,15 @@
                     graphContext,
                     this);
 
+                HostedContext.Execute(command); // TODO: immutability concerns
+            }
+        }
+
+        public void Setup()
+        {
+            if (HostedContext is ISetupStageFactory graphSetup)
+            {
+                var command = graphSetup.GenerateSetupCommand(graphContext, this);
                 HostedContext.Execute(command);
             }
         }

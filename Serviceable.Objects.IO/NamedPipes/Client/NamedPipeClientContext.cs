@@ -1,13 +1,16 @@
 ﻿namespace Serviceable.Objects.IO.NamedPipes.Client
 {
+    using System;
+    using System.Collections.Generic;
     using System.IO.Pipes;
+    using Composition.Graph;
     using Newtonsoft.Json;
     using Remote;
     using Remote.Serialization.Streaming;
 
-    public sealed class NamedPipeClientContext: Context<NamedPipeClientContext>
+    public sealed class NamedPipeClientContext: Context<NamedPipeClientContext>, IGraphFlowExecutionSink
     {
-        // TODO: make client a real proxy content
+        // TODO: make client a real proxy context
         private readonly string namedPipe;
 
         private readonly int timeoutInMilliseconds;
@@ -42,6 +45,18 @@
 
                 return null;
             }
+        }
+
+        // TODO: proxy might not need this
+        public dynamic CustomCommandExecute(GraphContext graphContext, string executingNodeId, dynamic commandApplied,
+            Stack<EventResult> eventResults)
+        {
+            if (commandApplied is IReproducible reproducible)
+            {
+                return this.Send(reproducible);
+            }
+
+            throw new NotSupportedException($"Command {commandApplied.GetType().FullName} was not IReproducible");
         }
     }
 }

@@ -9,22 +9,20 @@ PowerShell -NoProfile -Command {
     Set-Location -Path $folder;
     Import-Module "$folder\TestHttpCompositionConsoleApp.dll";
 
-    Get-Help Write-Message;
+    #Get-Help Write-Message;
     #Get-Help Enqueue-Message;
 
-    # Invalid
-    #Write-Message -Data @{ Message = "Awesome instrumentation" } -PipeName "service-X.namedpipes-instrumentation-context";
+    $message = Dequeue-Message -ServiceOrchestrator "orchestrator-X" -ServiceName "service-X" -ContextId "LALALA- queue-context";
     
+    Write-Host "Message 1: '$message'";
+
     Write-Message -Data @{ Message = "Awesome instrumentation" } -PipeName "service-X.namedpipes-log-instrumentation-context";
     Write-Message -Data @{ Message = "Awesome instrumentation - again!" } -PipeName "service-X.namedpipes-log-instrumentation-context";
 
-    Enqueue-Message @{ "Data" = "a message" } -ServiceName "service-X" -NodeId "namedpipes-instrumentation-context" -ContextId "queue-context";
-    $message = Dequeue-Message -ServiceName "service-X" -NodeId "namedpipes-instrumentation-context" -ContextId "queue-context";
+    Enqueue-Message @{ "Data" = "a message" } -ServiceOrchestrator "orchestrator-X" -ServiceName "service-X" -ContextId "queue-context";
+    $message = Dequeue-Message -ServiceOrchestrator "orchestrator-X" -ServiceName "service-X" -ContextId "queue-context";
     
-    # target:
-    #$message = Dequeue-Message -ServiceName "service-X" -ContextId "queue-context";
-
-    Write-Host "Message: '$message'";
+    Write-Host "Message 2: '$message'";
 
     Write-Host " --- Done --- ";
 } -args $location;

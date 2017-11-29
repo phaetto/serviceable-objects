@@ -64,7 +64,7 @@
                             namedPipeServerStream.WaitForPipeDrain();
                         }
                     }
-                    catch (IOException)
+                    catch (IOException exception)
                     {
                         namedPipeServerStream.Disconnect();
                         // Reconnect

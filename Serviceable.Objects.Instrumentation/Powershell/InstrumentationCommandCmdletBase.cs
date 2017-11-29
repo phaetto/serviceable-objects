@@ -28,8 +28,9 @@ namespace Serviceable.Objects.Instrumentation.Powershell
                 return;
             }
 
-            var namedPipe = string.Join(".", commonInstrumentationParameters.ServiceName,
-                commonInstrumentationParameters.NodeId);
+            var namedPipe = SetupServer.WellknownPipeFormat(
+                commonInstrumentationParameters.ServiceOrchestrator,
+                commonInstrumentationParameters.ServiceName);
             namedPipeClientContext =
                 new NamedPipeClientContext(namedPipe, commonInstrumentationParameters.TimeoutInMilliseconds);
             namedPipeClientContext.Send(new SetupCallData(commonInstrumentationParameters));
