@@ -21,7 +21,6 @@
     <RepositoryType>Git</RepositoryType>
     <PackageTags>Serviceable-objects TDD Modular Micro-Services Commands</PackageTags>
     <Description>Builds on top of the command framework to enable the concepts of reproducability of a command and, in extension, remotability. With the addition of json serialization this allows the transformation of all commands to json and back to instance.</Description>
-    <Version>0.1.0</Version>
   </PropertyGroup>
   
   <ItemGroup>
