@@ -25,10 +25,6 @@ Graphs provide the composition of a system that consists from contexts. When com
 
 Services are an encapsulation of Graphs that can be described uniquely across a large microservices system.
 
-- ‎*Service containers*:
-
-The container of many services. Shares the process space.
-
 - ‎*Services orchestrator*:
 
 The responsible part that orchestrates the start, stop and containment of a service.
@@ -42,16 +38,13 @@ The runtime connection to a process. A developer can customise it in a custom pr
 Project | Description | Supporting Platform
 --- | --- | ---
 Serviceable.Objects | The main Context/Command/Event/Graph library | .NET Standard 1.3
-Serviceable.Objects.Remote | Everything that has to do with remotables, JSON and dynamicity | .NET Standard 1.3*
+Serviceable.Objects.Remote | Everything that has to do with remotables, JSON and dynamicity | .NET Standard 1.3
 Serviceable.Objects.IO | Streaming and remoting support | .NET Standard 1.3
-Serviceable.Objects.Instrumentation | Powershell integration and instrumentation | .NET Standard 1.6
-
-*Note: if assembly searching is required, it needs to support at least .NET Standard 1.6 or .NET Framework 4.6
+Serviceable.Objects.Instrumentation | Powershell integration and instrumentation | .NET Standard 1.6 or .NET Core 2.0
 
 ## If you have a comment
 
-Feel free to contact me at:
-Alexander Mantzoukas - alexander.mantzoukas@gmail.com
+Feel free to contact me at: alexander.mantzoukas@gmail.com
 
 ## License
 

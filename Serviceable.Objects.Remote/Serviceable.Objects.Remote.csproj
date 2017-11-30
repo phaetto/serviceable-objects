@@ -1,15 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
-  <PropertyGroup Condition="'$(TargetFramework)'=='netstandard1.6'">
-    <DefineConstants>DOTNETSTANDARD_16</DefineConstants>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(TargetFramework)'=='net46'">
-    <DefineConstants>DOTNET460</DefineConstants>
-  </PropertyGroup>
   
   <PropertyGroup>
-    <TargetFrameworks>netstandard1.6;netstandard1.3;net46;</TargetFrameworks>
+    <TargetFramework>netstandard1.3</TargetFramework>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Copyright>Alexander Mantzoukas (c) 2017, Rebootify ApS</Copyright>
     <Authors>Alexander Mantzoukas</Authors>
