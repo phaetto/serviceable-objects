@@ -11,6 +11,7 @@
     using Composition.Graph.Stages.Initialization;
     using Configuration;
     using Exceptions;
+    using Newtonsoft.Json;
     using Remote.Composition.Configuration;
     using Remote.Serialization;
     using Remote.Serialization.Streaming;
@@ -56,17 +57,22 @@
 
                             if (streamSession.CommandsTextReadyToBeParsedQueue.TryDequeue(out var commandString))
                             {
-                                var result = PushDataAsCommand(commandString);
+                                var commandSpecification = JsonConvert.DeserializeObject<CommandSpecification>(commandString);
+                                var commandSpecificationService = new CommandSpecificationService();
+                                var command = commandSpecificationService.CreateCommandFromSpecification(commandSpecification);
 
-                                if (result != null)
+                                var eventResults =
+                                    PublishCommandEventAndGetResults(new GraphFlowEventPushControlApplyCommandInsteadOfEvent(command))
+                                        .Where(x => x.ResultObject != null).ToList();
+
+                                if (eventResults.Count > 0)
                                 {
-                                    var dataSpecifications = result.Where(x => x != null).Select(x => new DataSpecification
-                                    {
-                                        Data = x,
-                                        DataType = x.GetType().AssemblyQualifiedName
-                                    });
+                                    var results = eventResults.Select(x => x.ResultObject);
+                                    var commandResultSpecifications = results
+                                        .Where(x => x != null)
+                                        .Select(x => commandSpecificationService.CreateSpecificationForCommandResult(command.GetType(), x));
 
-                                    streamSession.Write(namedPipeServerStream, SerializableSpecification.SerializeManyToJson(dataSpecifications.ToArray()));
+                                    streamSession.Write(namedPipeServerStream, JsonConvert.SerializeObject(commandResultSpecifications.ToArray()));
                                 }
                             }
 
@@ -80,24 +86,6 @@
                     }
                 }
             }
-        }
-
-        private IEnumerable<object> PushDataAsCommand(string data)
-        {
-            var spec = DeserializableSpecification<ExecutableCommandSpecification>.DeserializeFromJson(data);
-            var command = spec.CreateFromSpec();
-
-            var eventResults =
-                PublishCommandEventAndGetResults(new GraphFlowEventPushControlApplyCommandInsteadOfEvent(command))
-                    .Where(x => x.ResultObject != null).ToList();
-
-            if (eventResults.Count > 0)
-            {
-                var results = eventResults.Select(x => x.ResultObject);
-                return results;
-            }
-
-            return null;
         }
     }
 }

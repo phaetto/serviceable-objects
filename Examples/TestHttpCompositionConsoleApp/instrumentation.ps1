@@ -9,14 +9,14 @@ PowerShell -NoProfile -Command {
     $folder = "$location\bin\Debug\$appRuntime";
     Set-Location -Path $folder;
 
-    Copy-Item C:\sources\powershell-binaries-$appRuntime\* -Destination $folder -Force;
+    # Copy-Item C:\sources\powershell-binaries-$appRuntime\* -Destination $folder -Force;
 
     Import-Module "$folder\TestHttpCompositionConsoleApp.dll";
 
     #Get-Help Write-Message;
     #Get-Help Enqueue-Message;
 
-    $message = Dequeue-Message -ServiceOrchestrator "orchestrator-X" -ServiceName "service-X" -ContextId "LALALA- queue-context";
+    #$message = Dequeue-Message -ServiceOrchestrator "orchestrator-X" -ServiceName "service-X" -ContextId "LALALA- queue-context";
     
     Write-Host "Message 1: '$message'";
 

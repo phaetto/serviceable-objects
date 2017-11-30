@@ -1,7 +1,6 @@
 ﻿namespace Serviceable.Objects.Remote
 {
-    using Serviceable.Objects.Remote.Serialization;
-    using Serviceable.Objects.Security;
+    using System;
 
     public abstract class ReproducibleCommandWithSerializableData<TContext, TReceived, TDataType> : 
         Reproducible,
@@ -9,6 +8,8 @@
         IReproducibleWithKnownData<TDataType>
     {
         public TDataType Data { get; set; }
+        public object DataAsObject => Data;
+        public Type InitializationType => typeof(TDataType);
 
         protected ReproducibleCommandWithSerializableData(TDataType data)
         {
@@ -16,20 +17,5 @@
         }
 
         public abstract TReceived Execute(TContext context);
-
-        public override ExecutableCommandSpecification GetInstanceSpec()
-        {
-            var secureAction = this as ISessionAuthorizableCommand;
-            var apiAction = this as IApplicationAuthorizableCommand;
-
-            return new ExecutableCommandSpecification
-                   {
-                       Data = Data,
-                       DataType = Data?.GetType().FullName,
-                       Type = GetType().FullName,
-                       Session = secureAction?.Session,
-                       ApiKey = apiAction?.ApiKey
-                   };
-        }
     }
 }

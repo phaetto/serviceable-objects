@@ -150,7 +150,7 @@
                 }
                 catch (RuntimeBinderException ex)
                 {
-                    throw new InvalidOperationException($"Could not get command for event {eventPublished.GetType().FullName} on context {HostedContextAsAbstractContext.GetType().FullName}", ex);
+                    throw new InvalidOperationException($"Could not get command for event {eventPublished.GetType().AssemblyQualifiedName} on context {HostedContextAsAbstractContext.GetType().AssemblyQualifiedName}", ex);
                 }
 
                 return Execute(command, parentResultExecutionStack);

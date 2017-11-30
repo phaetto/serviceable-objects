@@ -32,7 +32,7 @@
 
         public void SetConfiguration(TConfiguration state)
         {
-            Check.Argument(HasBeenConfigured, nameof(state), $"The instance {this.GetType().FullName} has already been configured");
+            Check.Argument(HasBeenConfigured, nameof(state), $"The instance {this.GetType().AssemblyQualifiedName} has already been configured");
 
             Configuration = state;
             HasBeenConfigured = true;
@@ -42,7 +42,7 @@
         {
             if (!HasBeenConfigured && !(action is ApplyConfiguration<TConfiguration, TContextType>))
             {
-                throw new InvalidOperationException($"The instance {this.GetType().FullName} has already been configured yet.");
+                throw new InvalidOperationException($"The instance {this.GetType().AssemblyQualifiedName} has already been configured yet.");
             }
 
             return base.InvokeExecute(action);

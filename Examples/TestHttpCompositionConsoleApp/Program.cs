@@ -24,15 +24,15 @@ namespace TestHttpCompositionConsoleApp
             var serviceOrchestratorGraphTemplate = @"
 {
     GraphNodes: [
-        { TypeFullName:'" + typeof(ServiceOrchestratorContext).FullName + @"', Id:'server-orchestrator-context' },
-        { TypeFullName:'" + typeof(NamedPipeServerContext).FullName + @"', Id:'named-pipe-instrumentation-context' },
-        { TypeFullName:'" + typeof(InstrumentationServerContext).FullName + @"', Id:'instrumentation-context' },
+        { TypeFullName:'" + typeof(ServiceOrchestratorContext).AssemblyQualifiedName + @"', Id:'server-orchestrator-context' },
+        { TypeFullName:'" + typeof(NamedPipeServerContext).AssemblyQualifiedName + @"', Id:'named-pipe-instrumentation-context' },
+        { TypeFullName:'" + typeof(InstrumentationServerContext).AssemblyQualifiedName + @"', Id:'instrumentation-context' },
     ],
     GraphVertices: [
         { FromId:'named-pipe-instrumentation-context', ToId:'instrumentation-context',  },
     ],
     Registrations: [
-        { Type:'" + typeof(MemoryConfigurationSource).FullName + @"', WithDefaultInterface:true },
+        { Type:'" + typeof(MemoryConfigurationSource).AssemblyQualifiedName + @"', WithDefaultInterface:true },
     ],
 }
 ";
@@ -40,12 +40,12 @@ namespace TestHttpCompositionConsoleApp
             var graphTemplate = @"
 {
     GraphNodes: [
-        { TypeFullName:'" + typeof(OwinHttpContext).FullName + @"', Id:'server-context' },
-        { TypeFullName:'" + typeof(QueueContext).FullName + @"', Id:'queue-context' },
-        { TypeFullName:'" + typeof(ConsoleLogContext).FullName + @"', Id:'console-log-context' },
-        { TypeFullName:'" + typeof(NamedPipeServerContext).FullName + @"', Id:'namedpipes-log-instrumentation-context' },
-        { TypeFullName:'" + typeof(NamedPipeServerContext).FullName + @"', Id:'namedpipes-instrumentation-context' },
-        { TypeFullName:'" + typeof(InstrumentationServerContext).FullName + @"', Id:'instrumentation-context' },
+        { TypeFullName:'" + typeof(OwinHttpContext).AssemblyQualifiedName + @"', Id:'server-context' },
+        { TypeFullName:'" + typeof(QueueContext).AssemblyQualifiedName + @"', Id:'queue-context' },
+        { TypeFullName:'" + typeof(ConsoleLogContext).AssemblyQualifiedName + @"', Id:'console-log-context' },
+        { TypeFullName:'" + typeof(NamedPipeServerContext).AssemblyQualifiedName + @"', Id:'namedpipes-log-instrumentation-context' },
+        { TypeFullName:'" + typeof(NamedPipeServerContext).AssemblyQualifiedName + @"', Id:'namedpipes-instrumentation-context' },
+        { TypeFullName:'" + typeof(InstrumentationServerContext).AssemblyQualifiedName + @"', Id:'instrumentation-context' },
     ],
     GraphVertices: [
         { FromId:'server-context', ToId:'queue-context', },
@@ -54,7 +54,7 @@ namespace TestHttpCompositionConsoleApp
         { FromId:'namedpipes-instrumentation-context', ToId:'instrumentation-context',  },
     ],
     Registrations: [
-        { Type:'" + typeof(ServiceContainerConfigurationSource).FullName + @"', WithDefaultInterface:true },
+        { Type:'" + typeof(ServiceContainerConfigurationSource).AssemblyQualifiedName + @"', WithDefaultInterface:true },
     ],
 }
 ";

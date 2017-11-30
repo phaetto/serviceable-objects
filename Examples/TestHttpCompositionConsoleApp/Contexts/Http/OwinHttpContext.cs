@@ -57,8 +57,9 @@
                 data = streamReader.ReadToEnd();
             }
 
-            var spec = DeserializableSpecification<ExecutableCommandSpecification>.DeserializeFromJson(data);
-            var command = spec.CreateFromSpec();
+            var commandSpecification = JsonConvert.DeserializeObject<CommandSpecification>(data);
+            var commandSpecificationService = new CommandSpecificationService();
+            var command = commandSpecificationService.CreateCommandFromSpecification(commandSpecification);
             
             var eventResults =
                 PublishCommandEventAndGetResults(new GraphFlowEventPushControlApplyCommandInsteadOfEvent(command))

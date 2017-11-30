@@ -12,6 +12,7 @@
     {
         public static readonly Dictionary<string, Type> TypeCache = new Dictionary<string, Type>();
 
+        [Obsolete]
         public static object CreateObjectWithParameters(string unqualifiedTypeName, params object[] parameters)
         {
             return CreateObjectWithParametersAndInjection(FindType(unqualifiedTypeName), parameters);
@@ -22,6 +23,7 @@
             return CreateObjectWithParametersAndInjection(type, parameters);
         }
 
+        [Obsolete]
         public static object CreateObjectWithParametersAndInjection(string unqualifiedTypeName, object[] parameters, object[] injectedParameters = null)
         {
             return CreateObjectWithParametersAndInjection(FindType(unqualifiedTypeName), parameters, injectedParameters);
@@ -102,20 +104,22 @@
             throw new Exception("No constructor could be found to create the unqualifiedTypeName: " + type.AssemblyQualifiedName);
         }
 
-        public static Type FindType(string unqualifiedType)
+        public static Type FindType(string fullyQualifiedName)
         {
-            Check.ArgumentNullOrWhiteSpace(unqualifiedType, nameof(unqualifiedType));
+            Check.ArgumentNullOrWhiteSpace(fullyQualifiedName, nameof(fullyQualifiedName));
 
-            if (TypeCache.ContainsKey(unqualifiedType))
+            if (TypeCache.ContainsKey(fullyQualifiedName))
             {
-                return TypeCache[unqualifiedType];
+                return TypeCache[fullyQualifiedName];
             }
 
-            var type = Type.GetType(unqualifiedType, false);
+            var type = Type.GetType(fullyQualifiedName, false);
             if (type != null)
             {
                 return type;
             }
+
+            // TODO: remove the following when we get to use only qualified names
 
 #if DOTNETSTANDARD_16
             var runtimeId = RuntimeEnvironment.GetRuntimeIdentifier();
@@ -123,30 +127,30 @@
 
             foreach (var assemblyName in assemblyNames)
             {
-                var fullyQualifiedName = $"{unqualifiedType},{assemblyName}";
-                type = Type.GetType(fullyQualifiedName, false);
+                var fullyQualifiedName2 = $"{fullyQualifiedName},{assemblyName}";
+                type = Type.GetType(fullyQualifiedName2, false);
                 if (type != null)
                 {
-                    TypeCache.Add(unqualifiedType, type);
+                    TypeCache.Add(fullyQualifiedName, type);
                     return type;
                 }
             }
 
-            throw new Exception("Type could not be found: " + unqualifiedType);
+            throw new Exception("Type could not be found: " + fullyQualifiedName);
 #elif DOTNET460
             foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
             {
-                type = assembly.GetType(unqualifiedType, false);
+                type = assembly.GetType(fullyQualifiedName, false);
                 if (type != null)
                 {
-                    TypeCache.Add(unqualifiedType, type);
+                    TypeCache.Add(fullyQualifiedName, type);
                     return type;
                 }
             }
 
-            throw new Exception("Type could not be found: " + unqualifiedType);
+            throw new Exception("Type could not be found: " + fullyQualifiedName);
 #else
-            throw new InvalidOperationException($"This version of .net does not support unqualified type access. (Tries to find: {unqualifiedType})");
+            throw new InvalidOperationException($"This version of .net does not support unqualified type access. (Tries to find: {fullyQualifiedName})");
 #endif
         }
     }

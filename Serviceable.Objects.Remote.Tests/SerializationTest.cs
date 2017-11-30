@@ -1,6 +1,9 @@
 ﻿namespace Serviceable.Objects.Remote.Tests
 {
-    using System.Collections.Generic;
+    using System;
+    using Newtonsoft.Json;
+    using Objects.Tests.Classes;
+    using Serialization.Exceptions;
     using Serviceable.Objects.Remote.Serialization;
     using Serviceable.Objects.Remote.Tests.Classes;
     using Xunit;
@@ -8,87 +11,63 @@
     public class SerializationTest
     {
         [Fact]
-        public void Chain_WhenObjectIsSerializedToJsonAndDeserialized_ThenTheObjectIsTheSame()
+        public void CommandSpecification_WhenCommandIsSerializedToJsonAndDeserialized_ThenTheObjectIsTheSame()
         {
-            var data = new ReproducibleTestData
-                       {
-                           ChangeToValue = "value",
-                           DomainName = "domain"
-                       };
+            var serializableSpecificationService = new CommandSpecificationService();
+            var reproducibleCommand = new ReproducibleTestCommand(new ReproducibleTestData
+            {
+                ChangeToValue = "value",
+                DomainName = "domain"
+            });
 
-            var serializableData = data.SerializeToJson();
+            var serializableCommandSpecification =
+                serializableSpecificationService.CreateSpecificationForCommand(reproducibleCommand);
 
-            var deserializedData =
-                DeserializableSpecification<ReproducibleTestData>.DeserializeFromJson(serializableData);
+            var deserializedCommand = serializableSpecificationService.CreateCommandFromSpecification<ReproducibleTestCommand>(serializableCommandSpecification);
 
-            Assert.Equal("value", deserializedData.ChangeToValue);
-            Assert.Equal("domain", deserializedData.DomainName);
+            Assert.Equal("value", deserializedCommand.Data.ChangeToValue);
+            Assert.Equal("domain", deserializedCommand.Data.DomainName);
         }
 
         [Fact]
-        public void Chain_WhenManyObjectsAreSerializedToJsonAndDeserialized_ThenObjectsAreTheSame()
+        public void CommandSpecification_WhenRemotableDataIsSerializedToJsonAndDeserialized_ThenTheObjectIsTheSame()
         {
-            var data = new[]
-                       {
-                           new ReproducibleTestData
-                           {
-                               ChangeToValue = "value 1",
-                               DomainName = "domain 1",
-                               StringArray = new[]
-                                             {
-                                                 "stuff 1",
-                                                 "stuff 2",
-                                             }
-                           },
-                           new ReproducibleTestData
-                           {
-                               ChangeToValue = "value 2",
-                               DomainName = "domain 2"
-                           },
-                           new ReproducibleTestData
-                           {
-                               ChangeToValue = "value 3",
-                               DomainName = "domain 3"
-                           }
-                       };
+            var serializableSpecificationService = new CommandSpecificationService();
+            var remotableTestCommand = new RemotableTestCommand(new ReproducibleTestData
+            {
+                ChangeToValue = "value",
+                DomainName = "domain"
+            });
+            var contextForTest = new ContextForTest();
 
-            var serializableData = SerializableSpecification.SerializeManyToJson(data);
+            var remotableResult = contextForTest.Execute(remotableTestCommand);
 
-            var deserializedData =
-                DeserializableSpecification<ReproducibleTestData>.DeserializeManyFromJson(serializableData);
+            var commandResultSpecification =
+                serializableSpecificationService.CreateSpecificationForCommandResult(remotableTestCommand.GetType(), remotableResult);
 
-            Assert.Equal("value 1", deserializedData[0].ChangeToValue);
-            Assert.Equal("domain 1", deserializedData[0].DomainName);
-            Assert.Equal("value 2", deserializedData[1].ChangeToValue);
-            Assert.Equal("domain 2", deserializedData[1].DomainName);
-            Assert.Equal("value 3", deserializedData[2].ChangeToValue);
-            Assert.Equal("domain 3", deserializedData[2].DomainName);
+            var data = serializableSpecificationService.CreateResultDataFromCommandSpecification<ReproducibleTestData>(commandResultSpecification);
+
+            Assert.Equal("value", data.ChangeToValue);
+            Assert.Equal("Starting value", data.DomainName);
         }
 
         [Fact]
-        public void DeserializableSpecification_WhenDeserializingComplexExceptionDataFromCommandSpec_ThenItSucceeds()
+        public void CommandSpecification_WhenRemotableDataWithErrorIsDeserialized_ThenTheObjectIsAnException()
         {
-            var jsonData =
-                "{\"DataType\":\"System.Collections.Generic.KeyNotFoundException\",\"Data\":{\"ClassName\":\"System.Collections.Generic.KeyNotFoundException\",\"Message\":\"The given key was not present in the dictionary.\",\"InnerException\":null,\"HelpURL\":null,\"StackTraceString\":\"at System.Collections.Generic.Dictionary`2 < string, string>.get_Item(string) < 0x001b8 >\nat Services.Communication.DataStructures.NameValue.GetKeyValue.Execute(Services.Communication.DataStructures.NameValue.HashContext) < 0x0004f >\nat Chains.Context`1 < Services.Communication.DataStructures.NameValue.HashContext >.InvokeAct<Services.Communication.DataStructures.NameValue.KeyValueData>(Chains.ICommand`2 < Services.Communication.DataStructures.NameValue.HashContext, Services.Communication.DataStructures.NameValue.KeyValueData >) < 0x0005f >\nat Chains.Context`1 < Services.Communication.DataStructures.NameValue.HashContext >.Execute<Services.Communication.DataStructures.NameValue.KeyValueData>(Chains.ICommand`2 < Services.Communication.DataStructures.NameValue.HashContext, Services.Communication.DataStructures.NameValue.KeyValueData >) < 0x00063 >\nat(wrapper dynamic - method) object.CallSite.Target(System.Runtime.CompilerServices.Closure, System.Runtime.CompilerServices.CallSite, object, object) < 0x0010f >\nat Chains.Play.ExecuteActionAndGetResult.Execute(Chains.Play.DynamicExecutionContext) < 0x005a3 >\nat Chains.Context`1 < Chains.Play.DynamicExecutionContext >.InvokeAct<Chains.Play.ExecutionResultContext>(Chains.ICommand`2 < Chains.Play.DynamicExecutionContext, Chains.Play.ExecutionResultContext >) < 0x0005f >\nat Chains.Context`1 < Chains.Play.DynamicExecutionContext >.Execute<Chains.Play.ExecutionResultContext>(Chains.ICommand`2 < Chains.Play.DynamicExecutionContext, Chains.Play.ExecutionResultContext >) < 0x00063 >\nat Chains.Play.ExecuteActionFromSpecification.Execute(Chains.Play.DynamicExecutionContext) < 0x0005f >\nat Chains.Context`1 < Chains.Play.DynamicExecutionContext >.InvokeAct<Chains.Play.ExecutionResultContext>(Chains.ICommand`2 < Chains.Play.DynamicExecutionContext, Chains.Play.ExecutionResultContext >) < 0x0005f >\nat Chains.Context`1 < Chains.Play.DynamicExecutionContext >.Execute<Chains.Play.ExecutionResultContext>(Chains.ICommand`2 < Chains.Play.DynamicExecutionContext, Chains.Play.ExecutionResultContext >) < 0x00063 >\nat Services.Communication.Protocol.ProtocolServerLogic.ApplyDataOnExecutionChain(Chains.Play.DynamicExecutionContext, Chains.Play.ExecutableCommandSpecification[]) < 0x00083 >\nat Services.Communication.Protocol.ProtocolServerLogic.ApplyDataAndReturn(Chains.Play.DynamicExecutionContext, Chains.Play.ExecutableCommandSpecification[], bool) < 0x000e3 >\n\",\"RemoteStackTraceString\":null,\"RemoteStackIndex\":0,\"HResult\":-2146233087,\"Source\":\"mscorlib\",\"ExceptionMethod\":null,\"Data\":null},\"DataStructureVersionNumber\":1}";
+            var serializableSpecificationService = new CommandSpecificationService();
+            var commandResultSpecification = new CommandResultSpecification
+            {
+                CommandType = typeof(RemotableTestCommand).AssemblyQualifiedName,
+                ContainsError = true,
+                ResultDataAsJson = JsonConvert.SerializeObject(new InvalidOperationException("This is so invalid.")),
+            };
 
-            var deserializedData =
-                DeserializableSpecification<ExecutableCommandSpecification>.DeserializeFromJson(jsonData);
+            var data = serializableSpecificationService.CreateResultDataFromCommandSpecification(commandResultSpecification);
 
-            Assert.NotNull(deserializedData);
-            Assert.IsType<KeyNotFoundException>(deserializedData.Data);
-        }
-
-        [Fact]
-        public void DeserializableSpecification_WhenDeserializingComplexExceptionDataFromDataSpec_ThenItSucceeds()
-        {
-            var jsonData =
-                "{\"DataType\":\"System.Collections.Generic.KeyNotFoundException\",\"Data\":{\"ClassName\":\"System.Collections.Generic.KeyNotFoundException\",\"Message\":\"The given key was not present in the dictionary.\",\"InnerException\":null,\"HelpURL\":null,\"StackTraceString\":\"at System.Collections.Generic.Dictionary`2 < string, string>.get_Item(string) < 0x001b8 >\nat Services.Communication.DataStructures.NameValue.GetKeyValue.Execute(Services.Communication.DataStructures.NameValue.HashContext) < 0x0004f >\nat Chains.Context`1 < Services.Communication.DataStructures.NameValue.HashContext >.InvokeAct<Services.Communication.DataStructures.NameValue.KeyValueData>(Chains.ICommand`2 < Services.Communication.DataStructures.NameValue.HashContext, Services.Communication.DataStructures.NameValue.KeyValueData >) < 0x0005f >\nat Chains.Context`1 < Services.Communication.DataStructures.NameValue.HashContext >.Execute<Services.Communication.DataStructures.NameValue.KeyValueData>(Chains.ICommand`2 < Services.Communication.DataStructures.NameValue.HashContext, Services.Communication.DataStructures.NameValue.KeyValueData >) < 0x00063 >\nat(wrapper dynamic - method) object.CallSite.Target(System.Runtime.CompilerServices.Closure, System.Runtime.CompilerServices.CallSite, object, object) < 0x0010f >\nat Chains.Play.ExecuteActionAndGetResult.Execute(Chains.Play.DynamicExecutionContext) < 0x005a3 >\nat Chains.Context`1 < Chains.Play.DynamicExecutionContext >.InvokeAct<Chains.Play.ExecutionResultContext>(Chains.ICommand`2 < Chains.Play.DynamicExecutionContext, Chains.Play.ExecutionResultContext >) < 0x0005f >\nat Chains.Context`1 < Chains.Play.DynamicExecutionContext >.Execute<Chains.Play.ExecutionResultContext>(Chains.ICommand`2 < Chains.Play.DynamicExecutionContext, Chains.Play.ExecutionResultContext >) < 0x00063 >\nat Chains.Play.ExecuteActionFromSpecification.Execute(Chains.Play.DynamicExecutionContext) < 0x0005f >\nat Chains.Context`1 < Chains.Play.DynamicExecutionContext >.InvokeAct<Chains.Play.ExecutionResultContext>(Chains.ICommand`2 < Chains.Play.DynamicExecutionContext, Chains.Play.ExecutionResultContext >) < 0x0005f >\nat Chains.Context`1 < Chains.Play.DynamicExecutionContext >.Execute<Chains.Play.ExecutionResultContext>(Chains.ICommand`2 < Chains.Play.DynamicExecutionContext, Chains.Play.ExecutionResultContext >) < 0x00063 >\nat Services.Communication.Protocol.ProtocolServerLogic.ApplyDataOnExecutionChain(Chains.Play.DynamicExecutionContext, Chains.Play.ExecutableCommandSpecification[]) < 0x00083 >\nat Services.Communication.Protocol.ProtocolServerLogic.ApplyDataAndReturn(Chains.Play.DynamicExecutionContext, Chains.Play.ExecutableCommandSpecification[], bool) < 0x000e3 >\n\",\"RemoteStackTraceString\":null,\"RemoteStackIndex\":0,\"HResult\":-2146233087,\"Source\":\"mscorlib\",\"ExceptionMethod\":null,\"Data\":null},\"DataStructureVersionNumber\":1}";
-
-            var deserializedData =
-                DeserializableSpecification<DataSpecification>.DeserializeFromJson(jsonData);
-
-            Assert.NotNull(deserializedData);
-            Assert.IsType<KeyNotFoundException>(deserializedData.Data);
+            Assert.IsNotType<ReproducibleTestData>(data);
+            Assert.IsType<Exception>(data);
+            var exception = data as Exception;
+            Assert.Equal("This is so invalid.", exception.Message);
         }
     }
 }

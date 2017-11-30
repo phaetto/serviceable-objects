@@ -26,7 +26,7 @@
                 if (context.ConfigurationSource != null)
                 {
                     var configurationString =
-                        context.ConfigurationSource.GetConfigurationValueForKey(service?.ServiceName ?? OrchestratorService, graphNodeContext.Id, context.GetType().FullName);
+                        context.ConfigurationSource.GetConfigurationValueForKey(service?.ServiceName ?? OrchestratorService, graphNodeContext.Id, context.GetType().AssemblyQualifiedName);
                     context.SetConfiguration(JsonConvert.DeserializeObject<TConfiguration>(configurationString));
                 }
                 else

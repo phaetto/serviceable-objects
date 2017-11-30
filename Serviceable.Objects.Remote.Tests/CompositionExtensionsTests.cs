@@ -21,23 +21,23 @@
                     new GraphNode()
                     {
                         Id = "node-1",
-                        TypeFullName = typeof(ContextForTest).FullName,
+                        TypeFullName = typeof(ContextForTest).AssemblyQualifiedName,
                     },
                     new GraphNode()
                     {
                         Id = "node-2",
-                        TypeFullName = typeof(ContextForTest2).FullName,
+                        TypeFullName = typeof(ContextForTest2).AssemblyQualifiedName,
                     },
                     new GraphNode()
                     {
                         Id = "node-3",
-                        TypeFullName = typeof(ContextForTest3).FullName,
+                        TypeFullName = typeof(ContextForTest3).AssemblyQualifiedName,
                     },
                     // Hooks up on the node-2 node and listens to the commands running
                     new GraphNode()
                     {
                         Id = "node-assert",
-                        TypeFullName = typeof(AssertNode).FullName,
+                        TypeFullName = typeof(AssertNode).AssemblyQualifiedName,
                     },
                 },
                 GraphVertices = new []

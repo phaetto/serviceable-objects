@@ -5,6 +5,7 @@
     using System.IO.Pipes;
     using System.Linq;
     using Composition.Graph;
+    using Newtonsoft.Json;
     using Remote;
     using Remote.Serialization;
     using Remote.Serialization.Streaming;
@@ -30,7 +31,7 @@
                 namedPipeClientStream.Connect(timeoutInMilliseconds);
 
                 var specification = command.GetInstanceSpec();
-                streamSession.Write(namedPipeClientStream, specification.SerializeToJson());
+                streamSession.Write(namedPipeClientStream, JsonConvert.SerializeObject(specification));
 
                 namedPipeClientStream.WaitForPipeDrain();
 
@@ -45,7 +46,9 @@
                     {
                         if (!string.IsNullOrWhiteSpace(replyString))
                         {
-                            return DeserializableSpecification<DataSpecification>.DeserializeManyFromJson(replyString).FirstOrDefault();
+                            var commandSpecificationService = new CommandSpecificationService();
+                            var commandResultSpecification = JsonConvert.DeserializeObject<CommandResultSpecification[]>(replyString);
+                            return commandSpecificationService.CreateResultDataFromCommandSpecification(commandResultSpecification.First());
                         }
                     }
                 }
@@ -63,7 +66,7 @@
                 return this.Send(reproducible);
             }
 
-            throw new NotSupportedException($"Command {commandApplied.GetType().FullName} was not IReproducible");
+            throw new NotSupportedException($"Command {commandApplied.GetType().AssemblyQualifiedName} was not IReproducible");
         }
     }
 }

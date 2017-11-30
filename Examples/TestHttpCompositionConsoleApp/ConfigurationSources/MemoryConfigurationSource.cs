@@ -16,12 +16,12 @@
         {
             switch (typeName)
             {
-                case var s when s == typeof(NamedPipeServerContext).FullName:
+                case var s when s == typeof(NamedPipeServerContext).AssemblyQualifiedName:
                     return JsonConvert.SerializeObject(new NamedPipeServerConfiguration
                     {
                         PipeName  = "testpipe"
                     });
-                case var s when s == typeof(ServiceOrchestratorContext).FullName:
+                case var s when s == typeof(ServiceOrchestratorContext).AssemblyQualifiedName:
                     return JsonConvert.SerializeObject(new ServiceOrchestratorConfiguration
                     {
                         OrchestratorName = "orchestrator-X",

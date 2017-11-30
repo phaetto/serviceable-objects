@@ -97,7 +97,7 @@
 
         public void Setup()
         {
-            Nodes.ForEach(x => x.Setup());
+            Nodes.ToList().ForEach(x => x.Setup());
         }
 
         public void Initialize()

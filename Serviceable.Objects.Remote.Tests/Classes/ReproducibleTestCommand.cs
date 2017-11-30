@@ -7,7 +7,7 @@
         public ReproducibleTestCommand(ReproducibleTestData testData)
             : base(testData)
         {
-            Data.DomainName = "Starting text";
+            //ResultDataAsJson.DomainName = "Starting text";
         }
 
         public override ContextForTest Execute(ContextForTest context)

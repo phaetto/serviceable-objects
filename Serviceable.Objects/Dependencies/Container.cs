@@ -34,13 +34,13 @@
         {
             Check.ArgumentNull(type, nameof(type));
             Check.ArgumentNull(implementation, nameof(implementation));
-            Check.Argument(objectsCache.ContainsKey(type.FullName) && !replace, nameof(type), "Type already exists in the container");
+            Check.Argument(objectsCache.ContainsKey(type.AssemblyQualifiedName) && !replace, nameof(type), "Type already exists in the container");
 
-            objectsCache[type.FullName] = implementation;
+            objectsCache[type.AssemblyQualifiedName] = implementation;
 
-            if (implementation.GetType().FullName != type.FullName)
+            if (implementation.GetType().AssemblyQualifiedName != type.AssemblyQualifiedName)
             {
-                objectsCache[implementation.GetType().FullName] = implementation;
+                objectsCache[implementation.GetType().AssemblyQualifiedName] = implementation;
             }
         }
 
@@ -59,8 +59,8 @@
 
             Check.Argument(interfaces.Length != 1, nameof(instance), "Type should support only one interface.");
 
-            objectsCache[interfaces[0].FullName] = instance;
-            objectsCache[instance.GetType().FullName] = instance;
+            objectsCache[interfaces[0].AssemblyQualifiedName] = instance;
+            objectsCache[instance.GetType().AssemblyQualifiedName] = instance;
         }
 
         public TOut Resolve<TOut>(bool throwOnError = true)
@@ -105,9 +105,9 @@
         {
             Check.ArgumentNull(typeRequested, nameof(typeRequested));
 
-            if (objectsCache.ContainsKey(typeRequested.FullName))
+            if (objectsCache.ContainsKey(typeRequested.AssemblyQualifiedName))
             {
-                return objectsCache[typeRequested.FullName];
+                return objectsCache[typeRequested.AssemblyQualifiedName];
             }
 
             return parentContainer?.ResolveFromCache(typeRequested);
@@ -156,7 +156,7 @@
                         var transformedObjects = new List<object>(constructorParameters.Length);
                         foreach (var parameterInfo in constructorParameters)
                         {
-                            var parameterTypeFullName = parameterInfo.ParameterType.FullName;
+                            var parameterTypeFullName = parameterInfo.ParameterType.AssemblyQualifiedName;
                             var parameterTypeInfo = parameterInfo.ParameterType.GetTypeInfo();
                             if (objectsCache.ContainsKey(parameterTypeFullName))
                             {
@@ -186,12 +186,12 @@
 
                         if (cacheable)
                         {
-                            if (objectsCache.ContainsKey(type.FullName))
+                            if (objectsCache.ContainsKey(type.AssemblyQualifiedName))
                             {
-                                throw new TypeCreatedTwiceInConatinerException($"Type ${type.FullName} created twice - that should never have happened.");
+                                throw new TypeCreatedTwiceInConatinerException($"Type ${type.AssemblyQualifiedName} created twice - that should never have happened.");
                             }
 
-                            objectsCache.Add(type.FullName, newObject);
+                            objectsCache.Add(type.AssemblyQualifiedName, newObject);
                         }
 
                         return newObject;
@@ -221,7 +221,7 @@
             Check.ArgumentNull(parameterInfo, nameof(parameterInfo));
             Check.ArgumentNull(typeStackCall, nameof(typeStackCall));
 
-            var parameterTypeFullName = parameterInfo.ParameterType.FullName;
+            var parameterTypeFullName = parameterInfo.ParameterType.AssemblyQualifiedName;
             var parameterType = parameterInfo.ParameterType.GetTypeInfo();
 
             // We have to check the full container for a supporting object
@@ -271,7 +271,7 @@
             if (typeStackCall.Contains(type))
             {
                 throw new CyclicDependencyException(
-                    $"Error creating type {type.FullName}\n\nStack was:\n{string.Join("\n", typeStackCall.ToArray().Select(x => x.FullName))}");
+                    $"Error creating type {type.AssemblyQualifiedName}\n\nStack was:\n{string.Join("\n", typeStackCall.ToArray().Select(x => x.AssemblyQualifiedName))}");
             }
         }
     }

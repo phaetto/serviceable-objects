@@ -5,6 +5,7 @@
     using System.IO;
     using System.Linq;
     using System.Text;
+    using Newtonsoft.Json;
 
     public sealed class StreamSession
     {
@@ -123,11 +124,12 @@
             streamState.HasBegunParsingCommand = false;
             streamState.ParsedCommandBuffer = string.Empty;
 
-            streamState.CommandsTextReadyToBeParsedQueue.Enqueue(new ExecutableCommandSpecification
+            streamState.CommandsTextReadyToBeParsedQueue.Enqueue(JsonConvert.SerializeObject(new CommandResultSpecification()
             {
-                Data = exception,
-                DataType = exception.GetType().FullName
-            }.SerializeToJson());
+                ResultDataAsJson = JsonConvert.SerializeObject(exception),
+                CommandType = null,
+                ContainsError = true,
+            }));
         }
     }
 }

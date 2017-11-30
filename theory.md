@@ -289,8 +289,8 @@ namespace TestHttpCompositionConsoleApp
             var configuration = @"
 {
     GraphVertices: [
-        { TypeFullName:'" + typeof(OwinHttpContext).FullName + @"', Id:'server-context' },
-        { TypeFullName:'" + typeof(QueueContext).FullName + @"', Id:'queue-context', ParentId:'server-context' },
+        { TypeFullName:'" + typeof(OwinHttpContext).AssemblyQualifiedName + @"', Id:'server-context' },
+        { TypeFullName:'" + typeof(QueueContext).AssemblyQualifiedName + @"', Id:'queue-context', ParentId:'server-context' },
     ]
 }
 ";

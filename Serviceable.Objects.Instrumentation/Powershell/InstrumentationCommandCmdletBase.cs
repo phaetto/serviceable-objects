@@ -49,7 +49,7 @@ namespace Serviceable.Objects.Instrumentation.Powershell
             var result = namedPipeClientContext.Send(command);
             if (result is Exception exception)
             {
-                ThrowTerminatingError(new ErrorRecord(exception, exception.HResult.ToString(), ErrorCategory.InvalidOperation, namedPipeClientContext));
+                ThrowTerminatingError(new ErrorRecord(exception, exception.HResult.ToString(), ErrorCategory.InvalidOperation, this));
             }
             else
             {

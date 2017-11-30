@@ -35,7 +35,7 @@
         {
             Types.TypeCache.Clear();
 
-            var typeFullName = typeof(GraphContext).FullName;
+            var typeFullName = typeof(GraphContext).AssemblyQualifiedName;
 
             var type = Types.FindType(typeFullName);
 
