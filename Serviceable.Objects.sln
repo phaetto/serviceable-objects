@@ -27,11 +27,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Serviceable.Objects.Instrum
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Serviceable.Objects.IO", "Serviceable.Objects.IO\Serviceable.Objects.IO.csproj", "{349EED11-5DD9-4E95-8315-AA142CF74A14}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Serviceable.Objects.Remote.MultiplePlatforms.Tests", "Serviceable.Objects.Remote.MultiplePlatforms.Tests\Serviceable.Objects.Remote.MultiplePlatforms.Tests.csproj", "{71799D72-F01C-40FB-A0BA-76432AB06174}"
-	ProjectSection(ProjectDependencies) = postProject
-		{D560D552-B2F9-4EF9-9EF6-835FEB9BA3ED} = {D560D552-B2F9-4EF9-9EF6-835FEB9BA3ED}
-	EndProjectSection
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -156,22 +151,6 @@ Global
 		{349EED11-5DD9-4E95-8315-AA142CF74A14}.Release|x64.Build.0 = Release|Any CPU
 		{349EED11-5DD9-4E95-8315-AA142CF74A14}.Release|x86.ActiveCfg = Release|Any CPU
 		{349EED11-5DD9-4E95-8315-AA142CF74A14}.Release|x86.Build.0 = Release|Any CPU
-		{71799D72-F01C-40FB-A0BA-76432AB06174}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{71799D72-F01C-40FB-A0BA-76432AB06174}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{71799D72-F01C-40FB-A0BA-76432AB06174}.Debug|ARM.ActiveCfg = Debug|Any CPU
-		{71799D72-F01C-40FB-A0BA-76432AB06174}.Debug|ARM.Build.0 = Debug|Any CPU
-		{71799D72-F01C-40FB-A0BA-76432AB06174}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{71799D72-F01C-40FB-A0BA-76432AB06174}.Debug|x64.Build.0 = Debug|Any CPU
-		{71799D72-F01C-40FB-A0BA-76432AB06174}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{71799D72-F01C-40FB-A0BA-76432AB06174}.Debug|x86.Build.0 = Debug|Any CPU
-		{71799D72-F01C-40FB-A0BA-76432AB06174}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{71799D72-F01C-40FB-A0BA-76432AB06174}.Release|Any CPU.Build.0 = Release|Any CPU
-		{71799D72-F01C-40FB-A0BA-76432AB06174}.Release|ARM.ActiveCfg = Release|Any CPU
-		{71799D72-F01C-40FB-A0BA-76432AB06174}.Release|ARM.Build.0 = Release|Any CPU
-		{71799D72-F01C-40FB-A0BA-76432AB06174}.Release|x64.ActiveCfg = Release|Any CPU
-		{71799D72-F01C-40FB-A0BA-76432AB06174}.Release|x64.Build.0 = Release|Any CPU
-		{71799D72-F01C-40FB-A0BA-76432AB06174}.Release|x86.ActiveCfg = Release|Any CPU
-		{71799D72-F01C-40FB-A0BA-76432AB06174}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
