@@ -67,7 +67,7 @@
             Assert.IsNotType<ReproducibleTestData>(data);
             Assert.IsType<Exception>(data);
             var exception = data as Exception;
-            Assert.Equal("This is so invalid.", exception.Message);
+            Assert.StartsWith("This is so invalid.", exception.Message);
         }
     }
 }
