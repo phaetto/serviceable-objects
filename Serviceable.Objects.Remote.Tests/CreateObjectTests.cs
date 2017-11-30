@@ -9,7 +9,7 @@
         public void CreateObjectWithParameters_WhenInjectionIsUsed_ThenItemIsBeenSetCorrectly()
         {
             var createdObject = Types.CreateObjectWithParametersAndInjection(
-                typeof(WantedClass).FullName,
+                typeof(WantedClass).AssemblyQualifiedName,
                 new object[]
                 {
                     1, "one"
@@ -28,7 +28,7 @@
         public void CreateObjectWithParameters_WhenInjectionIsUsedWithWrongOrder_ThenItemIsBeenSetCorrectly()
         {
             var createdObject = Types.CreateObjectWithParametersAndInjection(
-                typeof(WantedClass).FullName,
+                typeof(WantedClass).AssemblyQualifiedName,
                 new object[]
                 {
                     1, "one"
@@ -49,7 +49,7 @@
         public void CreateObjectWithParameters_WhenArrayObjectIsUsed_ThenItemIsBeenSetCorrectly()
         {
             var createdObject = Types.CreateObjectWithParametersAndInjection(
-                typeof(WantedClass).FullName,
+                typeof(WantedClass).AssemblyQualifiedName,
                 new object[]
                 {
                     1, new[] { "one" }
@@ -69,7 +69,7 @@
         public void CreateObjectWithParameters_WhenDefaultOptionIsUsed_ThenParameterIsBeenSetCorrectly()
         {
             var createdObject = Types.CreateObjectWithParametersAndInjection(
-                typeof(WantedClass).FullName,
+                typeof(WantedClass).AssemblyQualifiedName,
                 new object[]
                 {
                     1

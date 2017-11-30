@@ -2,7 +2,7 @@
 {
     using System.Collections.Generic;
     using System.Linq;
-    using Serviceable.Objects.Composition;
+    using Composition.Graph;
     using Serviceable.Objects.Dependencies;
     using Serviceable.Objects.Tests.Classes;
     using Xunit;
@@ -14,13 +14,13 @@
         {
             var customObjectsCache = new Dictionary<string, object>();
             var container = new Container(customObjectsCache);
-            var graph = new ContextGraph(container);
+            var graph = new GraphContext(container);
 
             graph.AddInput(typeof(ContextForTest), "node-1");
             graph.AddNode(typeof(ContextForTest2), "node-2");
             graph.ConnectNodes("node-1", "node-2");
 
-            Assert.Empty(customObjectsCache);
+            Assert.Single(customObjectsCache);
         }
 
         [Fact]
@@ -36,7 +36,7 @@
              *
              */
 
-            var graph = new ContextGraph();
+            var graph = new GraphContext();
             var contextForTest2 = new ContextForTest2();
             var contextForTest3 = new ContextForTest3();
 

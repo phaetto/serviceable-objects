@@ -1,10 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard1.2</TargetFramework>
+    <TargetFramework>netstandard1.3</TargetFramework>
     <Authors>Alexander Mantzoukas</Authors>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>0.1.0</Version>
     <Copyright>Alexander Mantzoukas (c) 2017, Rebootify ApS</Copyright>
     <PackageLicenseUrl>https://github.com/phaetto/serviceable-objects/blob/master/license.md</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/phaetto/serviceable-objects/</PackageProjectUrl>
@@ -30,7 +29,7 @@ This framework is developed with testing in mind and every derivable should be f
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Composition\Commands\" />
+    <Folder Include="Composition\Graph\Commands\" />
   </ItemGroup>
 
 </Project>

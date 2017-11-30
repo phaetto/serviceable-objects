@@ -15,12 +15,12 @@
 
         public static TExecutionContext Execute<T, TResultType, TExecutionContext>(
             this TExecutionContext context,
-            IReproducibleAction<T, TResultType> action)
+            IReproducibleCommand<T, TResultType> command)
             where TExecutionContext : Context<TExecutionContext>, IProxyContext
             where T : Context<T>
         {
             var reproducibleCarrier = context.CreateReproducibleCarrier<TExecutionContext, T, TResultType>();
-            reproducibleCarrier.ReproducibleAction = action;
+            reproducibleCarrier.ReproducibleCommand = command;
             return context.Execute(reproducibleCarrier);
         }
     }

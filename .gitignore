@@ -260,3 +260,5 @@ __pycache__/
 *.pyc
 
 !messages/bin
+
+!Serviceable.Objects.sln.DotSettings.user

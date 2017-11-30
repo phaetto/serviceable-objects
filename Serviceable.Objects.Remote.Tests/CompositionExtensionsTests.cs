@@ -2,7 +2,9 @@
 {
     using System.Collections.Generic;
     using System.Linq;
-    using Serviceable.Objects.Composition;
+    using Composition.Graph;
+    using Newtonsoft.Json;
+    using Objects.Composition.Graph;
     using Serviceable.Objects.Remote.Composition;
     using Serviceable.Objects.Tests.Classes;
     using Xunit;
@@ -12,30 +14,30 @@
         [Fact]
         public void FromJson_WhenExecutingAGraphFromJson_ThenItSuccessfullyGetsNodeResponses()
         {
-            var graphSpec = new GraphSpecification
+            var graphSpec = new GraphTemplate
             {
                 GraphNodes = new []
                 {
                     new GraphNode()
                     {
                         Id = "node-1",
-                        TypeFullName = typeof(ContextForTest).FullName,
+                        TypeFullName = typeof(ContextForTest).AssemblyQualifiedName,
                     },
                     new GraphNode()
                     {
                         Id = "node-2",
-                        TypeFullName = typeof(ContextForTest2).FullName,
+                        TypeFullName = typeof(ContextForTest2).AssemblyQualifiedName,
                     },
                     new GraphNode()
                     {
                         Id = "node-3",
-                        TypeFullName = typeof(ContextForTest3).FullName,
+                        TypeFullName = typeof(ContextForTest3).AssemblyQualifiedName,
                     },
                     // Hooks up on the node-2 node and listens to the commands running
                     new GraphNode()
                     {
                         Id = "node-assert",
-                        TypeFullName = typeof(AssertNode).FullName,
+                        TypeFullName = typeof(AssertNode).AssemblyQualifiedName,
                     },
                 },
                 GraphVertices = new []
@@ -58,9 +60,9 @@
                 },
             };
 
-            var json = graphSpec.SerializeToJson();
+            var json = JsonConvert.SerializeObject(graphSpec);
 
-            var graph = new ContextGraph();
+            var graph = new GraphContext();
             graph.FromJson(json);
 
             var resultStacks = graph.Execute(new ActionForTestEventProducer("new-value")).ToList();
@@ -73,7 +75,7 @@
 
         private sealed class AssertNode : Context<AssertNode>, IPostGraphFlowPullControl
         {
-            public void PullNodeExecutionInformation(ContextGraph contextGraph, string executingNodeId, dynamic parentContext,
+            public void PullNodeExecutionInformation(GraphContext graphContext, string executingNodeId, dynamic parentContext,
                 dynamic parentCommandApplied, Stack<EventResult> eventResults)
             {
                 var contextForTest2 = (ContextForTest2) parentContext;

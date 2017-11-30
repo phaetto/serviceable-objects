@@ -8,6 +8,7 @@
 
     public sealed class Container : IDisposable
     {
+        private readonly Container parentContainer;
         private readonly Dictionary<string, object> objectsCache = new Dictionary<string, object>();
         private bool isDisposed;
 
@@ -16,21 +17,63 @@
             objectsCache = customObjectsCache ?? objectsCache;
         }
 
-        public TOut Resolve<TOut>()
+        public Container(Container parentContainer)
         {
-            return (TOut) Resolve(typeof(TOut));
+            this.parentContainer = parentContainer;
         }
 
-        public object Resolve(Type typeRequested)
+        public void Register(object implementation, bool replace = false)
+        {
+            Check.ArgumentNull(implementation, nameof(implementation));
+            var type = implementation.GetType();
+            
+            Register(type, implementation, replace);
+        }
+
+        public void Register(Type type, object implementation, bool replace = false)
+        {
+            Check.ArgumentNull(type, nameof(type));
+            Check.ArgumentNull(implementation, nameof(implementation));
+            Check.Argument(objectsCache.ContainsKey(type.AssemblyQualifiedName) && !replace, nameof(type), "Type already exists in the container");
+
+            objectsCache[type.AssemblyQualifiedName] = implementation;
+
+            if (implementation.GetType().AssemblyQualifiedName != type.AssemblyQualifiedName)
+            {
+                objectsCache[implementation.GetType().AssemblyQualifiedName] = implementation;
+            }
+        }
+
+        public void RegisterWithDefaultInterface(Type type)
+        {
+            Check.ArgumentNull(type, nameof(type));
+
+            RegisterWithDefaultInterface(CreateObject(type));
+        }
+
+        public void RegisterWithDefaultInterface(object instance)
+        {
+            Check.ArgumentNull(instance, nameof(instance));
+
+            var interfaces = instance.GetType().GetTypeInfo().ImplementedInterfaces.ToArray();
+
+            Check.Argument(interfaces.Length != 1, nameof(instance), "Type should support only one interface.");
+
+            objectsCache[interfaces[0].AssemblyQualifiedName] = instance;
+            objectsCache[instance.GetType().AssemblyQualifiedName] = instance;
+        }
+
+        public TOut Resolve<TOut>(bool throwOnError = true)
+        {
+            return (TOut) Resolve(typeof(TOut), throwOnError);
+        }
+
+        public object Resolve(Type typeRequested, bool throwOnError = true)
         {
             Check.ArgumentNull(typeRequested, nameof(typeRequested));
 
-            if (objectsCache.ContainsKey(typeRequested.FullName))
-            {
-                return objectsCache[typeRequested.FullName];
-            }
-
-            return CreateObject(typeRequested, new Stack<Type>(10), true);
+            return ResolveFromCache(typeRequested)
+                ?? CreateObject(typeRequested, new Stack<Type>(10), true, throwOnError);
         }
 
         public object CreateObject(Type type)
@@ -58,55 +101,115 @@
             isDisposed = true;
         }
 
-        private object CreateObject(Type type, Stack<Type> typeStackCall, bool cacheable)
+        private object ResolveFromCache(Type typeRequested)
+        {
+            Check.ArgumentNull(typeRequested, nameof(typeRequested));
+
+            if (objectsCache.ContainsKey(typeRequested.AssemblyQualifiedName))
+            {
+                return objectsCache[typeRequested.AssemblyQualifiedName];
+            }
+
+            return parentContainer?.ResolveFromCache(typeRequested);
+        }
+
+        private object CreateObject(Type type, Stack<Type> typeStackCall, bool cacheable, bool throwOnError = true)
         {
             Check.ArgumentNull(type, nameof(type));
             Check.ArgumentNull(typeStackCall, nameof(typeStackCall));
 
+            var typeInfo = type.GetTypeInfo();
+            if (typeInfo.IsInterface || typeInfo.IsAbstract)
+            {
+                if (typeStackCall.Count > 0 && parentContainer != null)
+                {
+                    var resolvedItem = parentContainer.ResolveFromCache(type);
+                    if (resolvedItem != null)
+                    {
+                        return resolvedItem;
+                    }
+                }
+
+                if (!throwOnError)
+                {
+                    return null;
+                }
+
+                Check.Argument(typeInfo.IsInterface || typeInfo.IsAbstract, nameof(type),
+                    "Cannot instantiate an interface or abstract type.");
+            }
+
             CheckStack(type, typeStackCall);
 
-            typeStackCall.Push(type);
-
-            var constructors = type.GetTypeInfo().DeclaredConstructors.OrderByDescending(x => x.GetParameters().Length);
-            foreach (var constructor in constructors)
+            try
             {
-                try
+                typeStackCall.Push(type);
+
+                var constructors = typeInfo.DeclaredConstructors.OrderByDescending(x => x.GetParameters().Length);
+                foreach (var constructor in constructors)
                 {
-                    var constructorParameters = constructor.GetParameters();
-
-                    // This is a candidate
-                    var transformedObjects = new List<object>(constructorParameters.Length);
-                    foreach (var parameterInfo in constructorParameters)
+                    try
                     {
-                        var parameterTypeFullName = parameterInfo.ParameterType.FullName;
-                        if (objectsCache.ContainsKey(parameterTypeFullName))
+                        var constructorParameters = constructor.GetParameters();
+
+                        // This is a candidate
+                        var transformedObjects = new List<object>(constructorParameters.Length);
+                        foreach (var parameterInfo in constructorParameters)
                         {
-                            transformedObjects.Add(Convert.ChangeType(objectsCache[parameterTypeFullName], parameterInfo.ParameterType));
+                            var parameterTypeFullName = parameterInfo.ParameterType.AssemblyQualifiedName;
+                            var parameterTypeInfo = parameterInfo.ParameterType.GetTypeInfo();
+                            if (objectsCache.ContainsKey(parameterTypeFullName))
+                            {
+                                var objectUnderInverstigation = objectsCache[parameterTypeFullName];
+                                if (parameterTypeInfo.IsInterface && objectUnderInverstigation.GetType().GetTypeInfo()
+                                        .ImplementedInterfaces.Any(x => x == parameterInfo.ParameterType))
+                                {
+                                    transformedObjects.Add(objectUnderInverstigation);
+                                }
+                                else
+                                {
+                                    transformedObjects.Add(Convert.ChangeType(objectUnderInverstigation, parameterInfo.ParameterType));
+                                }
+                            }
+                            else
+                            {
+                                if (parameterTypeInfo.IsValueType)
+                                {
+                                    throw new InvalidCastException("Value types are not allowed");
+                                }
+
+                                ResolveUnknownType(transformedObjects, parameterInfo, typeStackCall, cacheable);
+                            }
                         }
-                        else
+
+                        var newObject = constructor.Invoke(transformedObjects.ToArray());
+
+                        if (cacheable)
                         {
-                            ResolveUnknownType(transformedObjects, parameterInfo, typeStackCall, cacheable);
+                            if (objectsCache.ContainsKey(type.AssemblyQualifiedName))
+                            {
+                                throw new TypeCreatedTwiceInConatinerException($"Type ${type.AssemblyQualifiedName} created twice - that should never have happened.");
+                            }
+
+                            objectsCache.Add(type.AssemblyQualifiedName, newObject);
                         }
+
+                        return newObject;
                     }
-
-                    var newObject = constructor.Invoke(transformedObjects.ToArray());
-
-                    if (cacheable)
+                    catch (InvalidCastException)
                     {
-                        if (objectsCache.ContainsKey(type.FullName))
-                        {
-                            throw new TypeCreatedTwiceInConatinerException($"Type ${type.FullName} created twice - that should never have happened.");
-                        }
-
-                        objectsCache.Add(type.FullName, newObject);
+                        // Go to the next
                     }
+                }
+            }
+            finally
+            {
+                typeStackCall.Pop();
+            }
 
-                    return newObject;
-                }
-                catch (InvalidCastException)
-                {
-                    // Go to the next
-                }
+            if (!throwOnError)
+            {
+                return null;
             }
 
             throw new Exception("No suitable constructor could be found to create the type: " + type.AssemblyQualifiedName);
@@ -118,7 +221,7 @@
             Check.ArgumentNull(parameterInfo, nameof(parameterInfo));
             Check.ArgumentNull(typeStackCall, nameof(typeStackCall));
 
-            var parameterTypeFullName = parameterInfo.ParameterType.FullName;
+            var parameterTypeFullName = parameterInfo.ParameterType.AssemblyQualifiedName;
             var parameterType = parameterInfo.ParameterType.GetTypeInfo();
 
             // We have to check the full container for a supporting object
@@ -142,15 +245,22 @@
                     CheckStack(parameterInfo.ParameterType, typeStackCall);
 
                     var newObject = CreateObject(parameterInfo.ParameterType, typeStackCall, cacheable);
-                    transformedObjects.Add(Convert.ChangeType(newObject, parameterInfo.ParameterType));
+
+                    if (parameterInfo.ParameterType.GetTypeInfo().IsInterface && newObject.GetType().GetTypeInfo()
+                            .ImplementedInterfaces.Any(x => x == parameterInfo.ParameterType))
+                    {
+                        transformedObjects.Add(newObject);
+                    }
+                    else
+                    {
+                        transformedObjects.Add(Convert.ChangeType(newObject, parameterInfo.ParameterType));
+                    }
                 }
                 else
                 {
                     transformedObjects.Add(parameterInfo.DefaultValue);
                 }
             }
-
-            typeStackCall.Pop();
         }
 
         private static void CheckStack(Type type, Stack<Type> typeStackCall)
@@ -161,7 +271,7 @@
             if (typeStackCall.Contains(type))
             {
                 throw new CyclicDependencyException(
-                    $"Error creating type {type.FullName}\n\nStack was:\n{string.Join("\n", typeStackCall.ToArray().Select(x => x.FullName))}");
+                    $"Error creating type {type.AssemblyQualifiedName}\n\nStack was:\n{string.Join("\n", typeStackCall.ToArray().Select(x => x.AssemblyQualifiedName))}");
             }
         }
     }

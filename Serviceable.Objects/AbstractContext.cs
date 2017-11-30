@@ -7,12 +7,12 @@
         public event CommandEventWithResultDelegate CommandEventWithResultPublished;
         public event CommandEventDelegate CommandEventPublished;
 
-        protected virtual void OnCommandEventPublished(IEvent eventpublished)
+        protected virtual void PublishCommandEvent(IEvent eventpublished)
         {
             CommandEventPublished?.Invoke(eventpublished);
         }
 
-        protected virtual IEnumerable<EventResult> OnCommandEventWithResultPublished(IEvent eventpublished)
+        protected virtual IEnumerable<EventResult> PublishCommandEventAndGetResults(IEvent eventpublished)
         {
             return CommandEventWithResultPublished?.Invoke(eventpublished);
         }

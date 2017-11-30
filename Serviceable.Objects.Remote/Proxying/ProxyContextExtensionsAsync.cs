@@ -20,14 +20,14 @@
 
         public static Task<TExecutionContext> Execute<T, TResultType, TExecutionContext>(
             this Task<TExecutionContext> context,
-            IReproducibleAction<T, TResultType> action)
+            IReproducibleCommand<T, TResultType> command)
             where TExecutionContext : Context<TExecutionContext>, IProxyContext
             where T : Context<T>
         {
             return context.ContinueWith(x =>
             {
                 var reproducibleCarrier = x.Result.CreateReproducibleCarrier<TExecutionContext, T, TResultType>();
-                reproducibleCarrier.ReproducibleAction = action;
+                reproducibleCarrier.ReproducibleCommand = command;
                 return x.Result.Execute(reproducibleCarrier);
             });
         }
@@ -48,14 +48,14 @@
 
         public static Task<TExecutionContext> Execute<T, TResultType, TExecutionContext>(
             this Task<TExecutionContext> context,
-            IReproducibleAction<T, Task<TResultType>> action)
+            IReproducibleCommand<T, Task<TResultType>> command)
             where TExecutionContext : Context<TExecutionContext>, IProxyContext
             where T : Context<T>
         {
             return context.ContinueWith(x =>
             {
                 var reproducibleCarrier = x.Result.CreateReproducibleCarrier<TExecutionContext, T, Task<TResultType>>();
-                reproducibleCarrier.ReproducibleAction = action;
+                reproducibleCarrier.ReproducibleCommand = command;
                 return x.Result.Execute(reproducibleCarrier);
             });
         }
@@ -73,12 +73,12 @@
 
         public static Task<TExecutionContext> Execute<T, TResultType, TExecutionContext>(
             this TExecutionContext context,
-            IReproducibleAction<T, Task<TResultType>> action)
+            IReproducibleCommand<T, Task<TResultType>> command)
             where TExecutionContext : Context<TExecutionContext>, IProxyContext
             where T : Context<T>
         {
             var reproducibleCarrier = context.CreateAsyncReproducibleCarrier<TExecutionContext, T, Task<TResultType>>();
-            reproducibleCarrier.ReproducibleAction = action;
+            reproducibleCarrier.ReproducibleCommand = command;
             return context.Execute(reproducibleCarrier);
         }
     }

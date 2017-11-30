@@ -3,6 +3,7 @@
     using System.IO;
     using System.Linq;
     using System.Threading.Tasks;
+    using Commands;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Http;
@@ -12,10 +13,11 @@
     using Microsoft.Extensions.Logging;
     using Newtonsoft.Json;
     using Serviceable.Objects;
-    using Serviceable.Objects.Composition.Events;
+    using Serviceable.Objects.Composition.Graph.Events;
+    using Serviceable.Objects.Composition.Graph.Stages.Initialization;
     using Serviceable.Objects.Remote.Serialization;
 
-    public sealed class OwinHttpContext : Context<OwinHttpContext>
+    public sealed class OwinHttpContext : Context<OwinHttpContext>, IInitializeStageFactory
     {
         public readonly IWebHost Host;
 
@@ -37,6 +39,11 @@
                 .Build();
         }
 
+        public dynamic GenerateInitializeCommand()
+        {
+            return new Run();
+        }
+
         private void SetupRouter(IRouteBuilder routerBuilder)
         {
             routerBuilder.MapPost("test", TestRequestHandler);
@@ -50,11 +57,12 @@
                 data = streamReader.ReadToEnd();
             }
 
-            var spec = DeserializableSpecification<ExecutableCommandSpecification>.DeserializeFromJson(data);
-            var command = spec.CreateFromSpec();
+            var commandSpecification = JsonConvert.DeserializeObject<CommandSpecification>(data);
+            var commandSpecificationService = new CommandSpecificationService();
+            var command = commandSpecificationService.CreateCommandFromSpecification(commandSpecification);
             
             var eventResults =
-                OnCommandEventWithResultPublished(new GraphFlowEventPushControlApplyCommandInsteadOfEvent(command))
+                PublishCommandEventAndGetResults(new GraphFlowEventPushControlApplyCommandInsteadOfEvent(command))
                 .Where(x => x.ResultObject != null).ToList();
 
             if (eventResults.Count > 0)

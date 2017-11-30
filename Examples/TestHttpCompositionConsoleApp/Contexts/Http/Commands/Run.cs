@@ -1,14 +1,18 @@
 ﻿namespace TestHttpCompositionConsoleApp.Contexts.Http.Commands
 {
+    using System.Threading.Tasks;
     using Microsoft.AspNetCore.Hosting;
     using Serviceable.Objects;
 
-    public sealed class Run : ICommand<OwinHttpContext, OwinHttpContext>
+    public sealed class Run : ICommand<OwinHttpContext, Task<OwinHttpContext>>
     {
-        public OwinHttpContext Execute(OwinHttpContext context)
+        public Task<OwinHttpContext> Execute(OwinHttpContext context)
         {
-            context.Host.Run();
-            return context;
+            return Task.Run(() =>
+            {
+                context.Host.Run();
+                return context;
+            });
         }
     }
 }

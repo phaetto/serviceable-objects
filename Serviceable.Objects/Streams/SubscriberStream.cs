@@ -125,7 +125,7 @@
         {
             return itemType == requestedType
                    || itemType.GetTypeInfo().IsSubclassOf(requestedType)
-                   || itemType.GetTypeInfo().ImplementedInterfaces.Any(x => x.FullName == requestedType.FullName);
+                   || itemType.GetTypeInfo().ImplementedInterfaces.Any(x => x.AssemblyQualifiedName == requestedType.AssemblyQualifiedName);
         }
     }
 }

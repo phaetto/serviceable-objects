@@ -1,5 +1,11 @@
-﻿namespace Serviceable.Objects.Tests
+﻿// ReSharper disable ClassNeverInstantiated.Local
+// ReSharper disable MemberCanBePrivate.Local
+// ReSharper disable InconsistentNaming
+// ReSharper disable NotAccessedField.Local
+
+namespace Serviceable.Objects.Tests
 {
+    using System;
     using System.Collections.Generic;
     using Serviceable.Objects.Dependencies;
     using Serviceable.Objects.Exceptions;
@@ -26,6 +32,29 @@
             Assert.Throws<CyclicDependencyException>(
                 () => 
                 container.Resolve(typeof(ContainerTestClassCyclicDependency1)));
+        }
+
+        [Fact]
+        public void CreateObject_WhenCreatingAnObjectWithCyclicDependency_ThenItThrowsEvenIfWeForceItNotTo()
+        {
+            var container = new Container();
+
+            Assert.Throws<CyclicDependencyException>(
+                () =>
+                    container.Resolve(typeof(ContainerTestClassCyclicDependency1), throwOnError: false));
+        }
+
+        [Fact]
+        public void CreateObject_WhenRegisteringWithInjectedInterface_ThenWeCanRetrieveTheObjectSuccessfully()
+        {
+            var container = new Container();
+
+            container.RegisterWithDefaultInterface(typeof(ContainerTestClass1));
+
+            var result = container.CreateObject(typeof(ContainerTestClassWithDepndentIinterface));
+
+            Assert.NotNull(result);
+            Assert.IsType<ContainerTestClassWithDepndentIinterface>(result);
         }
 
         [Fact]
@@ -65,7 +94,71 @@
             Assert.Equal(3, customObjectsCache.Count); // Shares ContainerTestClass1
         }
 
-        private class ContainerTestClass1
+        [Fact]
+        public void Resolve_WhenRegisteringWithDefaultInterface_ThenWeCanRetrieveTheObjectSuccessfully()
+        {
+            var container = new Container();
+
+            container.RegisterWithDefaultInterface(typeof(ContainerTestClass1));
+
+            var result = container.Resolve<IContainerTestClass1>();
+
+            Assert.NotNull(result);
+            Assert.IsType<ContainerTestClass1>(result);
+        }
+
+        [Fact]
+        public void Resolve_WhenTryingToRetrieveAnUnregisteredInterface_ThenItThrowsAnException()
+        {
+            var container = new Container();
+
+            Assert.Throws<ArgumentException>(
+                () =>
+                    container.Resolve(typeof(IContainerTestClass1)));
+        }
+
+        [Fact]
+        public void Resolve_WhenTryingToRetrieveAnUnregisteredInterfaceAndWeSetNoThrow_ThenItReturnsNull()
+        {
+            var container = new Container();
+
+            var result = container.Resolve(typeof(IContainerTestClass1), throwOnError: false);
+
+            Assert.Null(result);
+        }
+
+        [Fact]
+        public void Resolve_WhenRegisteringWithInjectedInterface_ThenWeCanRetrieveTheObjectSuccessfully()
+        {
+            var container = new Container();
+
+            container.RegisterWithDefaultInterface(typeof(ContainerTestClass1));
+
+            var result = container.Resolve<ContainerTestClassWithDepndentIinterface>();
+
+            Assert.NotNull(result);
+            Assert.IsType<ContainerTestClassWithDepndentIinterface>(result);
+        }
+
+        [Fact]
+        public void Resolve_WhenRegisteringOnAParentContainer_ThenWeCanRetrieveTheObjectSuccessfully()
+        {
+            var parentContainer = new Container();
+            var container = new Container(parentContainer);
+
+            parentContainer.RegisterWithDefaultInterface(typeof(ContainerTestClass1));
+
+            var result = container.Resolve<IContainerTestClass1>();
+
+            Assert.NotNull(result);
+            Assert.IsType<ContainerTestClass1>(result);
+        }
+
+        private interface IContainerTestClass1
+        {   
+        }
+
+        private class ContainerTestClass1 : IContainerTestClass1
         {
         }
 
@@ -100,6 +193,16 @@
         {
             public ContainerTestClassCyclicDependency2(ContainerTestClassCyclicDependency1 o)
             {
+            }
+        }
+
+        private class ContainerTestClassWithDepndentIinterface
+        {
+            public readonly IContainerTestClass1 o;
+
+            public ContainerTestClassWithDepndentIinterface(IContainerTestClass1 o)
+            {
+                this.o = o;
             }
         }
     }
