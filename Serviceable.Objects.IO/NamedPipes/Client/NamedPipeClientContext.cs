@@ -3,9 +3,10 @@
     using System;
     using System.Collections.Generic;
     using System.IO.Pipes;
+    using System.Linq;
     using Composition.Graph;
-    using Newtonsoft.Json;
     using Remote;
+    using Remote.Serialization;
     using Remote.Serialization.Streaming;
 
     public sealed class NamedPipeClientContext: Context<NamedPipeClientContext>, IGraphFlowExecutionSink
@@ -33,13 +34,19 @@
 
                 namedPipeClientStream.WaitForPipeDrain();
 
-                streamSession.Read(namedPipeClientStream);
-
-                if (streamSession.CommandsTextReadyToBeParsedQueue.TryDequeue(out var replyString))
+                if (command is IRemotable) // TODO: abstract this to a common command executioner?
                 {
-                    if (!string.IsNullOrWhiteSpace(replyString))
+                    do
                     {
-                        return JsonConvert.DeserializeObject(replyString);
+                        streamSession.Read(namedPipeClientStream);
+                    } while (streamSession.IsCommandBufferWaitingForCompletion);
+
+                    if (streamSession.CommandsTextReadyToBeParsedQueue.TryDequeue(out var replyString))
+                    {
+                        if (!string.IsNullOrWhiteSpace(replyString))
+                        {
+                            return DeserializableSpecification<DataSpecification>.DeserializeManyFromJson(replyString).FirstOrDefault();
+                        }
                     }
                 }
 

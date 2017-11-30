@@ -12,6 +12,8 @@
     [Serializable]
     public abstract class SerializableSpecification
     {
+        private readonly TypeInfo dataSpecTypeInfo = typeof(DataSpecification).GetTypeInfo();
+
         private class FieldsAndPropertiesForClass
         {
             public IEnumerable<FieldInfo> fields;
@@ -29,15 +31,13 @@
                         {
                             properties =
                                 GetType()
-                                .GetTypeInfo()
-                                .DeclaredProperties
+                                .GetProperties()
                                 .Where(x => x.GetSetMethod(true) != null)
                                 .Where(x => x.GetIndexParameters().Length == 0)
                                 .ToList(),
                             fields =
                                 GetType()
-                                .GetTypeInfo()
-                                .DeclaredFields
+                                .GetFields()
                                 .Where(x => x.IsPublic && !x.IsStatic)
                                 .ToList()
                         };
@@ -138,7 +138,7 @@
                     data = NormalizeArrayTypes(field.FieldType, data, jarray);
                 }
 
-                if (data.GetType() == typeof(JObject) && GetType() == typeof(ExecutableCommandSpecification))
+                if (data.GetType() == typeof(JObject) && dataSpecTypeInfo.IsAssignableFrom(GetType().GetTypeInfo()))
                 {
                     var jcontainer = data as JObject;
                     var executableActionSpecification = this as ExecutableCommandSpecification;
@@ -203,7 +203,7 @@
                     data = NormalizeArrayTypes(property.PropertyType, data, jarray);
                 }
 
-                if (data.GetType() == typeof(JObject) && GetType() == typeof(ExecutableCommandSpecification))
+                if (data.GetType() == typeof(JObject) && dataSpecTypeInfo.IsAssignableFrom(GetType().GetTypeInfo()))
                 {
                     var jcontainer = data as JObject;
                     var executableActionSpecification = this as ExecutableCommandSpecification;

@@ -14,6 +14,8 @@
         private const string EndOfStream = "\n";
         private readonly StreamState streamState = new StreamState();
 
+        public bool IsCommandBufferWaitingForCompletion => streamState.HasBegunParsingCommand;
+
         public ConcurrentQueue<string> CommandsTextReadyToBeParsedQueue => streamState.CommandsTextReadyToBeParsedQueue;
 
         public StreamSession(int bufferSize = 256)

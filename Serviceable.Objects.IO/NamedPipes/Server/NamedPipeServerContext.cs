@@ -1,5 +1,6 @@
 ﻿namespace Serviceable.Objects.IO.NamedPipes.Server
 {
+    using System.Collections.Generic;
     using System.IO;
     using System.IO.Pipes;
     using System.Linq;
@@ -10,7 +11,6 @@
     using Composition.Graph.Stages.Initialization;
     using Configuration;
     using Exceptions;
-    using Newtonsoft.Json;
     using Remote.Composition.Configuration;
     using Remote.Serialization;
     using Remote.Serialization.Streaming;
@@ -58,13 +58,22 @@
                             {
                                 var result = PushDataAsCommand(commandString);
 
-                                streamSession.Write(namedPipeServerStream, result);
+                                if (result != null)
+                                {
+                                    var dataSpecifications = result.Where(x => x != null).Select(x => new DataSpecification
+                                    {
+                                        Data = x,
+                                        DataType = x.GetType().AssemblyQualifiedName
+                                    });
+
+                                    streamSession.Write(namedPipeServerStream, SerializableSpecification.SerializeManyToJson(dataSpecifications.ToArray()));
+                                }
                             }
 
                             namedPipeServerStream.WaitForPipeDrain();
                         }
                     }
-                    catch (IOException exception)
+                    catch (IOException)
                     {
                         namedPipeServerStream.Disconnect();
                         // Reconnect
@@ -73,7 +82,7 @@
             }
         }
 
-        private string PushDataAsCommand(string data)
+        private IEnumerable<object> PushDataAsCommand(string data)
         {
             var spec = DeserializableSpecification<ExecutableCommandSpecification>.DeserializeFromJson(data);
             var command = spec.CreateFromSpec();
@@ -85,7 +94,7 @@
             if (eventResults.Count > 0)
             {
                 var results = eventResults.Select(x => x.ResultObject);
-                return JsonConvert.SerializeObject(results);
+                return results;
             }
 
             return null;

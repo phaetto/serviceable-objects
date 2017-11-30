@@ -5,11 +5,9 @@
     using Serviceable.Objects.Security;
 
     [Serializable]
-    public class ExecutableCommandSpecification : SerializableSpecification
+    public class ExecutableCommandSpecification : DataSpecification
     {
         public string Type;
-        public string DataType;
-        public object Data;
         public string Session;
         public string ApiKey;
         public override int DataStructureVersionNumber => 1;

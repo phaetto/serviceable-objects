@@ -1,5 +1,6 @@
 namespace Serviceable.Objects.Instrumentation.Powershell
 {
+    using System;
     using System.Management.Automation;
     using CommonParameters;
     using IO.NamedPipes.Client;
@@ -24,7 +25,7 @@ namespace Serviceable.Objects.Instrumentation.Powershell
             if (!string.IsNullOrWhiteSpace(commonInstrumentationParameters.PipeName))
             {
                 namedPipeClientContext = new NamedPipeClientContext(commonInstrumentationParameters.PipeName, commonInstrumentationParameters.TimeoutInMilliseconds);
-                WriteObject(namedPipeClientContext.Send(GenerateCommand()));
+                ExecuteAndReturnReply(namedPipeClientContext, GenerateCommand());
                 return;
             }
 
@@ -34,13 +35,27 @@ namespace Serviceable.Objects.Instrumentation.Powershell
             namedPipeClientContext =
                 new NamedPipeClientContext(namedPipe, commonInstrumentationParameters.TimeoutInMilliseconds);
             namedPipeClientContext.Send(new SetupCallData(commonInstrumentationParameters));
-            WriteObject(namedPipeClientContext.Send(GenerateCommand()));
+            ExecuteAndReturnReply(namedPipeClientContext, GenerateCommand());
         }
 
         public object GetDynamicParameters()
         {
             // TODO: Change to RuntimeDefinedParameterDictionary so we can provide dynamic responses
             return commonInstrumentationParameters;
+        }
+
+        private void ExecuteAndReturnReply(NamedPipeClientContext namedPipeClientContext, TCommand command)
+        {
+            var result = namedPipeClientContext.Send(command);
+                Console.WriteLine($"Type: {result.GetType().FullName}");
+            if (result is Exception exception)
+            {
+                ThrowTerminatingError(new ErrorRecord(exception, exception.HResult.ToString(), ErrorCategory.InvalidOperation, namedPipeClientContext));
+            }
+            else
+            {
+                WriteObject(result);
+            }
         }
     }
 }
