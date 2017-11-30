@@ -1,17 +1,28 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard1.6</TargetFramework>
+    <TargetFrameworks>netstandard1.6;netcoreapp2.0</TargetFrameworks>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.PowerShell.NanoServer.NetCore.Library" Version="1.0.0" />
+    <PackageReference Include="Microsoft.PowerShell.NanoServer.NetCore.Library" Version="1.0.0" Condition="'$(TargetFramework)'=='netstandard1.6'" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Serviceable.Objects.IO\Serviceable.Objects.IO.csproj" />
     <ProjectReference Include="..\Serviceable.Objects.Remote\Serviceable.Objects.Remote.csproj" />
     <ProjectReference Include="..\Serviceable.Objects\Serviceable.Objects.csproj" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.6'">
+    <PackageReference Include="Microsoft.PowerShell.NanoServer.NetCore.Library" Version="1.0.0" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp2.0'">
+    <PackageReference Include="System.Management.Automation">
+      <Version>6.0.0-rc</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.PowerShell.SDK" Version="6.0.0-rc" />
   </ItemGroup>
 
 </Project>

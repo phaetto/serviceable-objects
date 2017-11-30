@@ -47,7 +47,6 @@ namespace Serviceable.Objects.Instrumentation.Powershell
         private void ExecuteAndReturnReply(NamedPipeClientContext namedPipeClientContext, TCommand command)
         {
             var result = namedPipeClientContext.Send(command);
-                Console.WriteLine($"Type: {result.GetType().FullName}");
             if (result is Exception exception)
             {
                 ThrowTerminatingError(new ErrorRecord(exception, exception.HResult.ToString(), ErrorCategory.InvalidOperation, namedPipeClientContext));

@@ -5,8 +5,12 @@ PowerShell -NoProfile -Command {
         [String] $location
     )
 
-    $folder = "$location\bin\Debug\netcoreapp1.0";
+    $appRuntime = "netcoreapp1.0";
+    $folder = "$location\bin\Debug\$appRuntime";
     Set-Location -Path $folder;
+
+    Copy-Item C:\sources\powershell-binaries-$appRuntime\* -Destination $folder -Force;
+
     Import-Module "$folder\TestHttpCompositionConsoleApp.dll";
 
     #Get-Help Write-Message;
