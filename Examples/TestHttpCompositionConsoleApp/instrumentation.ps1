@@ -1,4 +1,6 @@
-﻿$location = Split-Path $MyInvocation.MyCommand.Path;
+﻿$ErrorActionPreference = "Stop"
+
+$location = Split-Path $MyInvocation.MyCommand.Path;
 
 PowerShell -NoProfile -Command {
     param (
@@ -6,16 +8,20 @@ PowerShell -NoProfile -Command {
     )
 
     $appRuntime = "netcoreapp1.0";
-    $folder = "$location\bin\Debug\$appRuntime";
-    Set-Location -Path $folder;
+    Set-Location -Path $location;
+    #Copy-Item ..\..\..\powershell-binaries-$appRuntime\* -Destination . -Force;
 
-    # Copy-Item C:\sources\powershell-binaries-$appRuntime\* -Destination $folder -Force;
+    $folder = "$location\bin\Debug\$appRuntime";
+    #$folder = "$location\bin\Release\$appRuntime\win-x64\publish";
+    Set-Location -Path $folder;
+    Move-Item "$location\*.dll" $folder -Force;
 
     Import-Module "$folder\TestHttpCompositionConsoleApp.dll";
 
     #Get-Help Write-Message;
     #Get-Help Enqueue-Message;
 
+    # This is an error
     #$message = Dequeue-Message -ServiceOrchestrator "orchestrator-X" -ServiceName "service-X" -ContextId "LALALA- queue-context";
     
     Write-Host "Message 1: '$message'";
