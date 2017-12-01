@@ -24,15 +24,19 @@ PowerShell -NoProfile -Command {
     # This is an error
     #$message = Dequeue-Message -ServiceOrchestrator "orchestrator-X" -ServiceName "service-X" -ContextId "LALALA- queue-context";
     
-    Write-Host "Message 1: '$message'";
-
     Write-Message -Data @{ Message = "Awesome instrumentation" } -PipeName "service-X.namedpipes-log-instrumentation-context";
     Write-Message -Data @{ Message = "Awesome instrumentation - again!" } -PipeName "service-X.namedpipes-log-instrumentation-context";
 
     Enqueue-Message @{ "Data" = "a message" } -ServiceOrchestrator "orchestrator-X" -ServiceName "service-X" -ContextId "queue-context";
-    $message = Dequeue-Message -ServiceOrchestrator "orchestrator-X" -ServiceName "service-X" -ContextId "queue-context";
+    $queueItem = Dequeue-Message -ServiceOrchestrator "orchestrator-X" -ServiceName "service-X" -ContextId "queue-context";
+    $message = if ($queueItem -eq $null) { $null } else { $queueItem.Data };
+
+    Write-Host "Message got: '$message'";
+
+    $queueItem = Dequeue-Message -ServiceOrchestrator "orchestrator-X" -ServiceName "service-X" -ContextId "queue-context";
+    $message = if ($queueItem -eq $null) { $null } else { $queueItem.Data };
     
-    Write-Host "Message 2: '$message'";
+    Write-Host "Message got: '$message'";
 
     Write-Host " --- Done --- ";
 } -args $location;

@@ -12,6 +12,7 @@
     using Configuration;
     using Exceptions;
     using Newtonsoft.Json;
+    using Remote;
     using Remote.Composition.Configuration;
     using Remote.Serialization;
     using Remote.Serialization.Streaming;
@@ -73,6 +74,15 @@
                                         .Select(x => commandSpecificationService.CreateSpecificationForCommandResult(command.GetType(), x));
 
                                     streamSession.Write(namedPipeServerStream, JsonConvert.SerializeObject(commandResultSpecifications.ToArray()));
+                                }
+                                else if (command is IRemotable)
+                                {
+                                    // We have to send something back
+                                    var commandResultSpecification = new[]
+                                    {
+                                        commandSpecificationService.CreateSpecificationForCommandResultWithoutAValue(command.GetType())
+                                    };
+                                    streamSession.Write(namedPipeServerStream, JsonConvert.SerializeObject(commandResultSpecification));
                                 }
                             }
 
