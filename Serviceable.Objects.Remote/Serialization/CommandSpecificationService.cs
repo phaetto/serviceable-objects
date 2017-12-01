@@ -121,6 +121,19 @@
             };
         }
 
+        public CommandResultSpecification CreateSpecificationForCommandResultWithoutAValue(Type remotableCommandType)
+        {
+            Check.ArgumentNull(remotableCommandType, nameof(remotableCommandType));
+
+            var dataAsJson = JsonConvert.SerializeObject(null);
+            return new CommandResultSpecification
+            {
+                CommandType = remotableCommandType.AssemblyQualifiedName,
+                ResultDataAsJson = dataAsJson,
+                ContainsError = false,
+            };
+        }
+
         public object CreateResultDataFromCommandSpecification(CommandResultSpecification commandResultSpecification)
         {
             Check.ArgumentNullOrWhiteSpace(commandResultSpecification.ResultDataAsJson, nameof(commandResultSpecification.ResultDataAsJson));

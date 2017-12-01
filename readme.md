@@ -33,6 +33,9 @@ The responsible part that orchestrates the start, stop and containment of a serv
 
 The runtime connection to a process. A developer can customise it in a custom process.
 
+### Master Status
+![Build Status](https://rebootify.visualstudio.com/_apis/public/build/definitions/0a95c055-5969-49b2-b776-ba11698424b7/4/badge)
+
 ## Versions
 
 Project | Description | Supporting Platform
