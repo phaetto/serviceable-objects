@@ -1,6 +1,7 @@
 ﻿namespace Serviceable.Objects.Remote.Serialization
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using System.Reflection;
     using Dependencies;
@@ -88,6 +89,31 @@
             where T : IReproducible
         {
             return CreateSpecificationForCommand((object)command);
+        }
+
+        public IEnumerable<CommandResultSpecification> CreateSpecificationForEventResults(Type remotableCommandType, IEnumerable<EventResult> eventResults)
+        {
+            Check.ArgumentNull(remotableCommandType, nameof(remotableCommandType));
+
+            var eventResultsAsArray = eventResults.ToArray();
+            if (eventResultsAsArray.Any())
+            {
+                var results = eventResultsAsArray.Select(x => x.ResultObject);
+                return results
+                    .Where(x => x != null)
+                    .Select(x => CreateSpecificationForCommandResult(remotableCommandType, x));
+            }
+
+            if (remotableCommandType.GetTypeInfo().ImplementedInterfaces.Any(x => x.Name == typeof(IRemotable).Name))
+            {
+                // We have to send something back
+                return new[]
+                {
+                    CreateSpecificationForCommandResultWithoutAValue(remotableCommandType)
+                };
+            }
+
+            return new CommandResultSpecification[0];
         }
 
         public CommandResultSpecification CreateSpecificationForCommandResult(Type remotableCommandType, object result)

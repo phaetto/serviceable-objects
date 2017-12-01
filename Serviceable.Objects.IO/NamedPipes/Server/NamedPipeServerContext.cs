@@ -64,26 +64,12 @@
 
                                 var eventResults =
                                     PublishCommandEventAndGetResults(new GraphFlowEventPushControlApplyCommandInsteadOfEvent(command))
-                                        .Where(x => x.ResultObject != null).ToList();
+                                        .Where(x => x.ResultObject != null);
 
-                                if (eventResults.Count > 0)
-                                {
-                                    var results = eventResults.Select(x => x.ResultObject);
-                                    var commandResultSpecifications = results
-                                        .Where(x => x != null)
-                                        .Select(x => commandSpecificationService.CreateSpecificationForCommandResult(command.GetType(), x));
+                                var commandResultSpecifications = commandSpecificationService.CreateSpecificationForEventResults(
+                                    command.GetType(), eventResults);
 
-                                    streamSession.Write(namedPipeServerStream, JsonConvert.SerializeObject(commandResultSpecifications.ToArray()));
-                                }
-                                else if (command is IRemotable)
-                                {
-                                    // We have to send something back
-                                    var commandResultSpecification = new[]
-                                    {
-                                        commandSpecificationService.CreateSpecificationForCommandResultWithoutAValue(command.GetType())
-                                    };
-                                    streamSession.Write(namedPipeServerStream, JsonConvert.SerializeObject(commandResultSpecification));
-                                }
+                                streamSession.Write(namedPipeServerStream, JsonConvert.SerializeObject(commandResultSpecifications));
                             }
 
                             namedPipeServerStream.WaitForPipeDrain();
