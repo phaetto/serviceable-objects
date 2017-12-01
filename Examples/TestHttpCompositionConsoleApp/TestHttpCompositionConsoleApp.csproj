@@ -17,6 +17,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Serviceable.Objects.Instrumentation\Serviceable.Objects.Instrumentation.csproj" />
     <ProjectReference Include="..\..\Serviceable.Objects.IO\Serviceable.Objects.IO.csproj" />
+    <ProjectReference Include="..\..\Serviceable.Objects.Remote.Tests\Serviceable.Objects.Remote.Tests.csproj" />
     <ProjectReference Include="..\..\Serviceable.Objects.Remote\Serviceable.Objects.Remote.csproj" />
     <ProjectReference Include="..\..\Serviceable.Objects\Serviceable.Objects.csproj" />
   </ItemGroup>

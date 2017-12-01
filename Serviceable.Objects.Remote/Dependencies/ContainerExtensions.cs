@@ -7,14 +7,19 @@
     {
         public static void FromJson(this Container container, string json)
         {
-            var template = JsonConvert.DeserializeObject<DependencyInjectionRegistrationTemplate>(json);
+            var dependencyInjectionRegistrationTemplate = JsonConvert.DeserializeObject<DependencyInjectionRegistrationTemplate>(json);
 
-            if (template.Registrations == null)
+            From(container, dependencyInjectionRegistrationTemplate);
+        }
+
+        public static void From(this Container container, DependencyInjectionRegistrationTemplate dependencyInjectionRegistrationTemplate)
+        {
+            if (dependencyInjectionRegistrationTemplate.Registrations == null)
             {
                 return;
             }
 
-            foreach (var dependencyInjectionRegistration in template.Registrations)
+            foreach (var dependencyInjectionRegistration in dependencyInjectionRegistrationTemplate.Registrations)
             {
                 if (dependencyInjectionRegistration.WithDefaultInterface)
                 {
