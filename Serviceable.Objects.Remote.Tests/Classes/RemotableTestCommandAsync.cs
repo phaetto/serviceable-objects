@@ -1,7 +1,7 @@
 ﻿namespace Serviceable.Objects.Remote.Tests.Classes
 {
     using System.Threading.Tasks;
-    using Serviceable.Objects.Tests.Classes;
+    using Objects.Tests.Classes;
 
     public class RemotableTestCommandAsync : RemotableCommandWithData<ReproducibleTestData, Task<ReproducibleTestData>, ContextForTest>
     {

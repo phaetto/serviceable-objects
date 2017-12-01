@@ -3,8 +3,8 @@
     using System.Collections.Generic;
     using System.Linq;
     using Composition.Graph;
-    using Serviceable.Objects.Dependencies;
-    using Serviceable.Objects.Tests.Classes;
+    using Dependencies;
+    using Classes;
     using Xunit;
 
     public sealed class CompositionTests

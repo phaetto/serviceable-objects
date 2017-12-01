@@ -1,7 +1,7 @@
 ﻿namespace TestHttpCompositionConsoleApp.Contexts.Queues.Commands
 {
     using Serviceable.Objects.Remote;
-    using TestHttpCompositionConsoleApp.Contexts.Queues.Commands.Data;
+    using Data;
 
     public sealed class Dequeue : RemotableCommand<QueueItem, QueueContext>
     {

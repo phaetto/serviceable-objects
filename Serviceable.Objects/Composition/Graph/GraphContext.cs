@@ -17,8 +17,8 @@
 
         public GraphContext(Container container = null)
         {
-            this.Container = container ?? new Container();
-            this.Container.Register(this);
+            Container = container ?? new Container();
+            Container.Register(this);
         }
 
         // TODO: break public methods to commands

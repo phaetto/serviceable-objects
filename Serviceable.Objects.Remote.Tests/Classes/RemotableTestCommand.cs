@@ -1,7 +1,7 @@
 ﻿namespace Serviceable.Objects.Remote.Tests.Classes
 {
     using System.Collections.Generic;
-    using Serviceable.Objects.Tests.Classes;
+    using Objects.Tests.Classes;
 
     public class RemotableTestCommand : RemotableCommandWithData<ReproducibleTestData, ReproducibleTestData, ContextForTest>, IEventProducer
     {

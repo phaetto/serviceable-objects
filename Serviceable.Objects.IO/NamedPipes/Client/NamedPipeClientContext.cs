@@ -63,7 +63,7 @@
         {
             if (commandApplied is IReproducible reproducible)
             {
-                return this.Send(reproducible);
+                return Send(reproducible);
             }
 
             throw new NotSupportedException($"Command {commandApplied.GetType().AssemblyQualifiedName} was not IReproducible");

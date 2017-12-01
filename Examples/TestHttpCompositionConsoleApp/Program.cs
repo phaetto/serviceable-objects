@@ -13,9 +13,9 @@ namespace TestHttpCompositionConsoleApp
     using Serviceable.Objects.Remote.Composition.Service;
     using Serviceable.Objects.Remote.Composition.Service.Configuration;
     using Serviceable.Objects.Remote.Composition.ServiceOrchestrator;
-    using TestHttpCompositionConsoleApp.Contexts.ConsoleLog;
-    using TestHttpCompositionConsoleApp.Contexts.Http;
-    using TestHttpCompositionConsoleApp.Contexts.Queues;
+    using Contexts.ConsoleLog;
+    using Contexts.Http;
+    using Contexts.Queues;
 
     class Program
     {
@@ -25,11 +25,9 @@ namespace TestHttpCompositionConsoleApp
 {
     GraphNodes: [
         { TypeFullName:'" + typeof(ServiceOrchestratorContext).AssemblyQualifiedName + @"', Id:'server-orchestrator-context' },
-        { TypeFullName:'" + typeof(NamedPipeServerContext).AssemblyQualifiedName + @"', Id:'named-pipe-instrumentation-context' },
         { TypeFullName:'" + typeof(InstrumentationServerContext).AssemblyQualifiedName + @"', Id:'instrumentation-context' },
     ],
     GraphVertices: [
-        { FromId:'named-pipe-instrumentation-context', ToId:'instrumentation-context',  },
     ],
     Registrations: [
         { Type:'" + typeof(MemoryConfigurationSource).AssemblyQualifiedName + @"', WithDefaultInterface:true },
@@ -44,14 +42,12 @@ namespace TestHttpCompositionConsoleApp
         { TypeFullName:'" + typeof(QueueContext).AssemblyQualifiedName + @"', Id:'queue-context' },
         { TypeFullName:'" + typeof(ConsoleLogContext).AssemblyQualifiedName + @"', Id:'console-log-context' },
         { TypeFullName:'" + typeof(NamedPipeServerContext).AssemblyQualifiedName + @"', Id:'namedpipes-log-instrumentation-context' },
-        { TypeFullName:'" + typeof(NamedPipeServerContext).AssemblyQualifiedName + @"', Id:'namedpipes-instrumentation-context' },
         { TypeFullName:'" + typeof(InstrumentationServerContext).AssemblyQualifiedName + @"', Id:'instrumentation-context' },
     ],
     GraphVertices: [
         { FromId:'server-context', ToId:'queue-context', },
         { FromId:'queue-context', ToId:'console-log-context',  },
         { FromId:'namedpipes-log-instrumentation-context', ToId:'console-log-context',  },
-        { FromId:'namedpipes-instrumentation-context', ToId:'instrumentation-context',  },
     ],
     Registrations: [
         { Type:'" + typeof(ServiceContainerConfigurationSource).AssemblyQualifiedName + @"', WithDefaultInterface:true },
@@ -61,10 +57,12 @@ namespace TestHttpCompositionConsoleApp
             /*
              * Principles:
              * 
+             * Testable
              * Composable
              * Configurable
-             * Testable
              * Intrumentable
+             * Scalable TODO
+             * Updatable TODO
              * 
              */
 

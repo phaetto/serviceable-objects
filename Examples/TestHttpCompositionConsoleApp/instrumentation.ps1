@@ -21,6 +21,8 @@ PowerShell -NoProfile -Command {
     #Get-Help Write-Message;
     #Get-Help Enqueue-Message;
 
+    Dequeue-Message -ServiceOrchestrator "orchestrator-X" -ServiceName "service-X" -ContextId "queue-context";
+
     # This is an error
     #$message = Dequeue-Message -ServiceOrchestrator "orchestrator-X" -ServiceName "service-X" -ContextId "LALALA- queue-context";
     

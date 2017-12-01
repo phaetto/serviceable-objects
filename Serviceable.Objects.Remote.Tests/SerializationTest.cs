@@ -4,8 +4,8 @@
     using Newtonsoft.Json;
     using Objects.Tests.Classes;
     using Serialization.Exceptions;
-    using Serviceable.Objects.Remote.Serialization;
-    using Serviceable.Objects.Remote.Tests.Classes;
+    using Serialization;
+    using Classes;
     using Xunit;
 
     public class SerializationTest

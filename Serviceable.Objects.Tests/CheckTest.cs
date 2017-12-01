@@ -1,7 +1,7 @@
 ﻿namespace Serviceable.Objects.Tests
 {
     using System;
-    using Serviceable.Objects.Exceptions;
+    using Exceptions;
     using Xunit;
 
     public class CheckTest

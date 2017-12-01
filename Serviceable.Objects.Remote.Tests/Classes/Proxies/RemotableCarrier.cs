@@ -1,6 +1,6 @@
 ﻿namespace Serviceable.Objects.Remote.Tests.Classes.Proxies
 {
-    using Serviceable.Objects.Remote.Proxying;
+    using Proxying;
 
     public sealed class RemotableCarrier<TContext, TOtherContext, TReceived> : IRemotableCarrier<TContext, TOtherContext, TReceived>
         where TOtherContext : Context<TOtherContext>
