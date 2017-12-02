@@ -17,8 +17,8 @@
 
         public GraphContext(Container container = null)
         {
-            this.Container = container ?? new Container();
-            this.Container.Register(this);
+            Container = container ?? new Container();
+            Container.Register(this);
         }
 
         // TODO: break public methods to commands
@@ -89,10 +89,13 @@
             return Nodes.Where(x => x.HostedContext is TNodeInContext).Select(x => x.Id);
         }
 
-        public void Configure()
+        public void Configure() // TODO: Configure/Setup/Initialize - create a workflow for those steps (ordering matters)
         {
-            var configurationSource = Container.Resolve<IConfigurationSource>();
-            Nodes.ForEach(x => x.Configure(configurationSource));
+            var configurationSource = Container.Resolve<IConfigurationSource>(throwOnError: false);
+            if (configurationSource != null)
+            {
+                Nodes.ForEach(x => x.Configure(configurationSource));
+            }
         }
 
         public void Setup()

@@ -2,7 +2,7 @@
 {
     using System.Collections.Generic;
     using Serviceable.Objects;
-    using TestHttpCompositionConsoleApp.Contexts.Queues.Commands.Data;
+    using Commands.Data;
 
     public sealed class QueueContext : Context<QueueContext>
     {

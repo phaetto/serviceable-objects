@@ -4,14 +4,10 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Reflection;
-    using Microsoft.DotNet.PlatformAbstractions;
-    using Microsoft.Extensions.DependencyModel;
-    using Serviceable.Objects.Exceptions;
+    using Exceptions;
 
     public static class Types
     {
-        public static readonly Dictionary<string, Type> TypeCache = new Dictionary<string, Type>();
-
         [Obsolete]
         public static object CreateObjectWithParameters(string unqualifiedTypeName, params object[] parameters)
         {
@@ -108,50 +104,7 @@
         {
             Check.ArgumentNullOrWhiteSpace(fullyQualifiedName, nameof(fullyQualifiedName));
 
-            if (TypeCache.ContainsKey(fullyQualifiedName))
-            {
-                return TypeCache[fullyQualifiedName];
-            }
-
-            var type = Type.GetType(fullyQualifiedName, false);
-            if (type != null)
-            {
-                return type;
-            }
-
-            // TODO: remove the following when we get to use only qualified names
-
-#if DOTNETSTANDARD_16
-            var runtimeId = RuntimeEnvironment.GetRuntimeIdentifier();
-            var assemblyNames = DependencyContext.Default.GetRuntimeAssemblyNames(runtimeId);
-
-            foreach (var assemblyName in assemblyNames)
-            {
-                var fullyQualifiedName2 = $"{fullyQualifiedName},{assemblyName}";
-                type = Type.GetType(fullyQualifiedName2, false);
-                if (type != null)
-                {
-                    TypeCache.Add(fullyQualifiedName, type);
-                    return type;
-                }
-            }
-
-            throw new Exception("Type could not be found: " + fullyQualifiedName);
-#elif DOTNET460
-            foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
-            {
-                type = assembly.GetType(fullyQualifiedName, false);
-                if (type != null)
-                {
-                    TypeCache.Add(fullyQualifiedName, type);
-                    return type;
-                }
-            }
-
-            throw new Exception("Type could not be found: " + fullyQualifiedName);
-#else
-            throw new InvalidOperationException($"This version of .net does not support unqualified type access. (Tries to find: {fullyQualifiedName})");
-#endif
+            return Type.GetType(fullyQualifiedName, true);
         }
     }
 }

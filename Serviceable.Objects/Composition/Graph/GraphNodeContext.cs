@@ -20,7 +20,7 @@
 
         public GraphNodeContext(AbstractContext hostedContext, GraphContext graphContext, string id)
         {
-            this.HostedContext = hostedContext;
+            HostedContext = hostedContext;
             this.graphContext = graphContext;
             Id = id;
 

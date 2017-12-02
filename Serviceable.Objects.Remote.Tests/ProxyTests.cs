@@ -1,9 +1,9 @@
 ﻿namespace Serviceable.Objects.Remote.Tests
 {
-    using Serviceable.Objects.Remote.Proxying;
-    using Serviceable.Objects.Remote.Tests.Classes;
-    using Serviceable.Objects.Remote.Tests.Classes.Proxies;
-    using Serviceable.Objects.Tests.Classes;
+    using Proxying;
+    using Classes;
+    using Classes.Proxies;
+    using Objects.Tests.Classes;
     using System.Threading.Tasks;
     using Xunit;
 

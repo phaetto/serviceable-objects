@@ -5,8 +5,8 @@
     using Composition.Graph;
     using Newtonsoft.Json;
     using Objects.Composition.Graph;
-    using Serviceable.Objects.Remote.Composition;
-    using Serviceable.Objects.Tests.Classes;
+    using Composition;
+    using Objects.Tests.Classes;
     using Xunit;
 
     public sealed class CompositionExtensionsTests

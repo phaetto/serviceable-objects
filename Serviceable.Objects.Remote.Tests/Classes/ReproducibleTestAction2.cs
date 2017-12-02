@@ -1,6 +1,6 @@
 ﻿namespace Serviceable.Objects.Remote.Tests.Classes
 {
-    using Serviceable.Objects.Tests.Classes;
+    using Objects.Tests.Classes;
 
     public class ReproducibleTestAction2 : ReproducibleCommandWithData<ContextForTest2, ContextForTest2, ReproducibleTestData>
     {

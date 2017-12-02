@@ -3,7 +3,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
-    using Serviceable.Objects.Exceptions;
+    using Exceptions;
 
     public abstract class Context<TContextType> : AbstractContext where TContextType : Context<TContextType>
     {

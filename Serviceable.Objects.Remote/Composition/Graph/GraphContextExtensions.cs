@@ -9,13 +9,16 @@
     {
         public static void FromJson(this GraphContext graphContext, string json)
         {
-            var specification = JsonConvert.DeserializeObject<GraphTemplate>(json);
+            var graphTemplate = JsonConvert.DeserializeObject<GraphTemplate>(json);
 
-            graphContext.Container.FromJson(json);
+            From(graphContext, graphTemplate);
+        }
 
-            foreach (var graphNode in specification.GraphNodes)
+        public static void From(this GraphContext graphContext, GraphTemplate graphTemplate)
+        {
+            foreach (var graphNode in graphTemplate.GraphNodes)
             {
-                if (specification.GraphVertices.All(x => x.ToId != graphNode.Id))
+                if (graphTemplate.GraphVertices.All(x => x.ToId != graphNode.Id))
                 {
                     graphContext.AddInput(Types.FindType(graphNode.TypeFullName), graphNode.Id);
                 }
@@ -25,7 +28,7 @@
                 }
             }
 
-            foreach (var graphVertex in specification.GraphVertices)
+            foreach (var graphVertex in graphTemplate.GraphVertices)
             {
                 graphContext.ConnectNodes(graphVertex.FromId, graphVertex.ToId);
             }

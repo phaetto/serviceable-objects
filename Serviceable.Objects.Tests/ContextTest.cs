@@ -1,7 +1,7 @@
 ﻿namespace Serviceable.Objects.Tests
 {
     using System.Collections.Generic;
-    using Serviceable.Objects.Tests.Classes;
+    using Classes;
     using Xunit;
 
     public class ContextTest

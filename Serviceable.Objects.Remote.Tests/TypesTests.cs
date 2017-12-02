@@ -10,8 +10,6 @@
         [Fact]
         public void FindType_WhenFindingTypeWithAssemblyQualifiedName_ThenTypeIsFound()
         {
-            Types.TypeCache.Clear();
-
             var typeAssemblyQualifiedName = typeof(GraphContext).AssemblyQualifiedName;
 
             var type = Types.FindType(typeAssemblyQualifiedName);
@@ -22,11 +20,9 @@
         [Fact]
         public void FindType_WhenFindingTypeWithFullName_ThenAnExceptionIsThrown()
         {
-            Types.TypeCache.Clear();
-
             var typeFullName = typeof(GraphContext).FullName;
 
-            Assert.Throws<InvalidOperationException>(() => Types.FindType(typeFullName));
+            Assert.Throws<TypeLoadException>(() => Types.FindType(typeFullName));
         }
     }
 }

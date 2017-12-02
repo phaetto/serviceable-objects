@@ -1,6 +1,6 @@
 ﻿namespace Serviceable.Objects.Remote
 {
-    using Serviceable.Objects.Remote.Serialization;
+    using Serialization;
 
     public interface IReproducible
     {

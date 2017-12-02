@@ -1,7 +1,7 @@
 ﻿namespace Serviceable.Objects.Remote.Tests.Classes.Proxies
 {
     using System.Threading.Tasks;
-    using Serviceable.Objects.Remote.Proxying;
+    using Proxying;
 
     public sealed class ProxyContext : Context<ProxyContext>, IProxyContext
     {

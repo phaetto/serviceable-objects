@@ -1,6 +1,6 @@
 ﻿namespace Serviceable.Objects.Remote.Tests
 {
-    using Serviceable.Objects.Remote.Dependencies;
+    using Dependencies;
     using Xunit;
 
     public class CreateObjectTests
@@ -104,30 +104,30 @@
 
             public WantedClass(bool abool, string[] astrings, InjectedClass injectedClass)
             {
-                this.Abool = abool;
-                this.Astrings = astrings;
+                Abool = abool;
+                Astrings = astrings;
                 InjectedClass = injectedClass;
             }
 
             public WantedClass(bool abool, string astring = "default")
             {
-                this.Abool = abool;
-                this.Astring = astring;
+                Abool = abool;
+                Astring = astring;
             }
 
             public WantedClass(bool abool, string astring, InjectedClass injectedClass)
             {
-                this.Abool = abool;
-                this.Astring = astring;
+                Abool = abool;
+                Astring = astring;
                 InjectedClass = injectedClass;
             }
 
             public WantedClass(bool abool, string astring, InjectedClass injectedClass = null, InjectedClass2 injectedClass2 = null)
             {
-                this.Abool = abool;
-                this.Astring = astring;
+                Abool = abool;
+                Astring = astring;
                 InjectedClass = injectedClass;
-                this.InjectedClass2 = injectedClass2;
+                InjectedClass2 = injectedClass2;
             }
         }
     }

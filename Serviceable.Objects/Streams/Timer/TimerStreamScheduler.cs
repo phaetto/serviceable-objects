@@ -28,7 +28,7 @@
 
         public TimerStreamScheduler()
         {
-            this.timer = new Timer(
+            timer = new Timer(
                 TimerCallback,
                 null,
                 StartNeverTimerValue,

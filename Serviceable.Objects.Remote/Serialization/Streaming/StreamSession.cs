@@ -124,7 +124,7 @@
             streamState.HasBegunParsingCommand = false;
             streamState.ParsedCommandBuffer = string.Empty;
 
-            streamState.CommandsTextReadyToBeParsedQueue.Enqueue(JsonConvert.SerializeObject(new CommandResultSpecification()
+            streamState.CommandsTextReadyToBeParsedQueue.Enqueue(JsonConvert.SerializeObject(new CommandResultSpecification
             {
                 ResultDataAsJson = JsonConvert.SerializeObject(exception),
                 CommandType = null,

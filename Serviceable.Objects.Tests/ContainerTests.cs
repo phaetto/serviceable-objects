@@ -7,8 +7,8 @@ namespace Serviceable.Objects.Tests
 {
     using System;
     using System.Collections.Generic;
-    using Serviceable.Objects.Dependencies;
-    using Serviceable.Objects.Exceptions;
+    using Dependencies;
+    using Exceptions;
     using Xunit;
 
     public sealed class ContainerTests

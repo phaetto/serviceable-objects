@@ -4,7 +4,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Reflection;
-    using Serviceable.Objects.Exceptions;
+    using Exceptions;
 
     public sealed class Container : IDisposable
     {
