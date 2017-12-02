@@ -1,10 +1,10 @@
 ﻿namespace Serviceable.Objects.Instrumentation.Server
 {
     using System;
-    using System.Collections.Generic;
     using Commands;
     using CommonParameters;
     using Composition.Graph;
+    using Composition.Graph.Commands.NodeInstance;
     using Composition.Graph.Stages.Setup;
 
     public sealed class InstrumentationServerContext : Context<InstrumentationServerContext>, IGraphFlowExecutionSink, ISetupStageFactory
@@ -12,13 +12,14 @@
         internal CommonInstrumentationParameters CommonInstrumentationParameters;
 
         public dynamic CustomCommandExecute(GraphContext graphContext, string executingNodeId,
-            dynamic commandApplied, Stack<EventResult> eventResults)
+            dynamic commandApplied)
         {
             try
             {
-                return graphContext.GetNodeById(CommonInstrumentationParameters.ContextId)
-                    .Execute(commandApplied)
-                    .ResultObject;
+                var executionDataResult = (ExecutionCommandResult) graphContext.GetNodeById(CommonInstrumentationParameters.ContextId)
+                    .Execute(commandApplied);
+
+                return executionDataResult.SingleContextExecutionResultWithInfo.ResultObject;
             }
             catch (Exception exception)
             {

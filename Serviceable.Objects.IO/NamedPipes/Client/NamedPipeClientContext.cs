@@ -1,7 +1,6 @@
 ﻿namespace Serviceable.Objects.IO.NamedPipes.Client
 {
     using System;
-    using System.Collections.Generic;
     using System.IO.Pipes;
     using System.Linq;
     using Composition.Graph;
@@ -58,8 +57,7 @@
         }
 
         // TODO: proxy might not need this
-        public dynamic CustomCommandExecute(GraphContext graphContext, string executingNodeId, dynamic commandApplied,
-            Stack<EventResult> eventResults)
+        public dynamic CustomCommandExecute(GraphContext graphContext, string executingNodeId, dynamic commandApplied)
         {
             if (commandApplied is IReproducible reproducible)
             {

@@ -3,9 +3,9 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Commands.NodeInstance;
     using Dependencies;
     using Exceptions;
-    using Microsoft.CSharp.RuntimeBinder;
     using Stages.Configuration;
 
     public sealed class GraphContext : Context<GraphContext> // TODO: IDisposable
@@ -127,52 +127,38 @@
             return Nodes.First(x => x.Id == nodeId);
         }
 
-        public IEnumerable<Stack<EventResult>> Execute(dynamic command)
+        public List<ExecutionCommandResult> Execute(dynamic command)
         {
             Check.ArgumentNull(command, nameof(command));
 
-            var allResultStacks = new List<Stack<EventResult>>(InputNodes.Count);
-            var oneHasRun = false;
+            var contextExecutionResults = new List<ExecutionCommandResult>(InputNodes.Count);
+
             foreach (var inputNode in InputNodes)
             {
-                try
-                {
-                    var resultExecutionStack = new Stack<EventResult>();
-                    inputNode.Execute(command, resultExecutionStack);
-                    allResultStacks.Add(resultExecutionStack);
-                    oneHasRun = true;
-                }
-                catch (NotSupportedException)
-                {
-                    // Only apply to the ones that support that
-                }
+                contextExecutionResults.Add(inputNode.Execute(command));
             }
 
-            if (!oneHasRun)
+            if (contextExecutionResults.All(x => x.IsIdle))
             {
                 throw new NotSupportedException("No context found that support this command");
             }
 
-            return allResultStacks;
+            if (contextExecutionResults.Any(x => x.IsFaulted))
+            {
+                throw new AggregateException("Errors while running command", contextExecutionResults.Select(x => x.Exception));
+            }
+
+            return contextExecutionResults;
         }
 
-        public Stack<EventResult> Execute(dynamic command, string uniqueId)
+        public ExecutionCommandResult Execute(dynamic command, string uniqueId)
         {
             Check.ArgumentNull(command, nameof(command));
             Check.ArgumentNullOrWhiteSpace(uniqueId, nameof(uniqueId));
 
-            try
-            {
-                var resultExecutionStack = new Stack<EventResult>();
-                InputNodes.First(x => x.Id == uniqueId).Execute(command, resultExecutionStack);
-                return resultExecutionStack;
-            }
-            catch (RuntimeBinderException ex)
-            {
-                throw new NotSupportedException(
-                    "This type of command is not supported by context (Tip: Only one implementation of ICommand<,> can be inferred automatically)",
-                    ex);
-            }
+            // TODO: error reporting?
+
+            return InputNodes.First(x => x.Id == uniqueId).Execute(command);
         }
 
         public IEnumerable<GraphNodeContext> GetChildren(string id)

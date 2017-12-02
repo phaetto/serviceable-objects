@@ -4,19 +4,17 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Reflection;
+    using Commands.NodeInstance;
     using Microsoft.CSharp.RuntimeBinder;
-    using Service;
     using Stages.Configuration;
-    using Stages.Initialization;
-    using Stages.Setup;
 
-    public sealed class GraphNodeContext
+    public sealed class GraphNodeContext : Context<GraphNodeContext>
     {
         public readonly string Id;
         internal dynamic HostedContext { get; }
         private readonly GraphContext graphContext;
-        private Stack<EventResult> localExecutionStack;
         private AbstractContext HostedContextAsAbstractContext => HostedContext;
+        private readonly GraphNodeInstanceContext graphNodeInstanceContext;
 
         public GraphNodeContext(AbstractContext hostedContext, GraphContext graphContext, string id)
         {
@@ -24,119 +22,74 @@
             this.graphContext = graphContext;
             Id = id;
 
+            graphNodeInstanceContext = new GraphNodeInstanceContext(hostedContext, graphContext, this, Id);
+
             hostedContext.CommandEventWithResultPublished += HostedContext_CommandEventWithResultPublished;
-        }
-
-        private IEnumerable<EventResult> HostedContext_CommandEventWithResultPublished(IEvent eventPublished)
-        {
-            if (eventPublished is IGraphFlowEventPushControl controlFlowEvent)
-            {
-                return controlFlowEvent.OverrideEventPropagationLogic(graphContext, Id, HostedContext);
-            }
-
-            return graphContext.GetChildren(Id)
-                .Select(childNode => childNode.EventPropagated(eventPublished, localExecutionStack))
-                .Where(eventResult => eventResult != null).ToList();
         }
 
         // TODO: break public methods to commands
 
         public void Configure(IConfigurationSource configurationSource)
         {
-            if (HostedContext is IConfigurableStageFactory configurable && !configurable.HasBeenConfigured)
-            {
-                var command = configurable.GenerateConfigurationCommand(
-                    graphContext.Container.Resolve<IService>(throwOnError: false),
-                    graphContext,
-                    this);
-
-                HostedContext.Execute(command); // TODO: immutability concerns
-            }
+            graphNodeInstanceContext.Configure(configurationSource);
         }
 
         public void Setup()
         {
-            if (HostedContext is ISetupStageFactory graphSetup)
-            {
-                var command = graphSetup.GenerateSetupCommand(graphContext, this);
-                HostedContext.Execute(command);
-            }
+            graphNodeInstanceContext.Setup();
         }
 
         public void Initialize()
         {
-            if (HostedContext is IInitializeStageFactory initialization)
-            {
-                var command = initialization.GenerateInitializeCommand();
-                HostedContext.Execute(command);
-            }
+            graphNodeInstanceContext.Initialize();
         }
 
-        public EventResult Execute(dynamic command, Stack<EventResult> resultExecutionStack = null)
+        public ExecutionCommandResult Execute(dynamic command)
         {
-            try
+            // Events are propagated here and handled from HostedContext_CommandEventWithResultPublished
+            // We need this to invoke events from within the objects without any graph knowledge
+            var contextExecutionResult = graphNodeInstanceContext.Execute(new ExecuteCommand(command));
+
+            foreach (var childNode in graphContext.GetChildren(Id))
             {
-                localExecutionStack = resultExecutionStack;
-
-                dynamic resultObject;
-                try
-                {
-                    resultObject = HostedContext.Execute(command);
-                }
-                catch (RuntimeBinderException)
-                {
-                    if (HostedContextAsAbstractContext is IGraphFlowExecutionSink graphFlowExecutionSink)
-                    {
-                        resultObject = graphFlowExecutionSink.CustomCommandExecute(graphContext, Id, command, localExecutionStack);
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-
-                foreach (var childNode in graphContext.GetChildren(Id))
-                {
-                    childNode.CheckPostGraphFlowPullControl(Id, HostedContext, command, localExecutionStack);
-                }
-
-                localExecutionStack = null;
-
-                if (resultObject is AbstractContext)
-                {
-                    resultObject = null; // TODO: maybe replace the current hosted context if it is the same type? (respecting immutability)
-                }
-
-                var eventResult = new EventResult
-                {
-                    NodeId = Id,
-                    ContextType = HostedContextAsAbstractContext.GetType(),
-                    ResultObject = (object) resultObject,
-                };
-
-                resultExecutionStack?.Push(eventResult);
-
-                return eventResult;
+                childNode.CheckPostGraphFlowPullControl(Id, HostedContext, command);
             }
-            catch (RuntimeBinderException ex)
-            {
-                // TODO: Create a warning and error pool instead of throwing and catching?
 
-                throw new NotSupportedException(
-                    "This type of command is not supported by context (Tip: Only one implementation of ICommand<,> can be inferred automatically)",
-                    ex);
-            }
+            return contextExecutionResult;
         }
 
-        private void CheckPostGraphFlowPullControl(string id, dynamic parentContext, dynamic parentCommandApplied, Stack<EventResult> eventResults)
+        private IEnumerable<EventResult> HostedContext_CommandEventWithResultPublished(IEvent eventPublished)
+        {
+            // Implement DFS - because of the dependency in internal event generation
+            return graphContext.GetChildren(Id)
+                .Select(x => ExecuteEventPropagationLogic(eventPublished, x))
+                .SelectMany(x => x.Select(y => y))
+                .Where(x => x != null)
+                .Select(x => new EventResult
+                {
+                    ResultObject = x.SingleContextExecutionResultWithInfo.ResultObject
+                });
+        }
+
+        private void CheckPostGraphFlowPullControl(string id, dynamic parentContext, dynamic parentCommandApplied)
         {
             if (HostedContext is IPostGraphFlowPullControl hostedContextWithPullControl)
             {
-                hostedContextWithPullControl.PullNodeExecutionInformation(graphContext, id, parentContext, parentCommandApplied, eventResults);
+                hostedContextWithPullControl.GetAttachNodeCommandExecutionInformation(graphContext, id, parentContext, parentCommandApplied);
             }
         }
 
-        private EventResult EventPropagated(IEvent eventPublished, Stack<EventResult> parentResultExecutionStack)
+        private IEnumerable<ExecutionCommandResult> ExecuteEventPropagationLogic(IEvent eventPublished, GraphNodeContext graphNodeContext)
+        {
+            if (eventPublished is IGraphFlowEventPushControl controlFlowEvent)
+            {
+                return controlFlowEvent.OverrideEventPropagationLogic(graphContext, Id, HostedContext);
+            }
+
+            return new[] { graphNodeContext.EventPropagated(eventPublished) };
+        }
+
+        private ExecutionCommandResult EventPropagated(IEvent eventPublished)
         {
             var isEventTypeSupported =
                 HostedContextAsAbstractContext.GetType().GetTypeInfo().ImplementedInterfaces.Any(x => InterfaceSupportsEventHandler(eventPublished, x));
@@ -153,7 +106,7 @@
                     throw new InvalidOperationException($"Could not get command for event {eventPublished.GetType().AssemblyQualifiedName} on context {HostedContextAsAbstractContext.GetType().AssemblyQualifiedName}", ex);
                 }
 
-                return Execute(command, parentResultExecutionStack);
+                return Execute(command);
             }
 
             return null;

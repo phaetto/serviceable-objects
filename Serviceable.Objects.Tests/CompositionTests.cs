@@ -46,14 +46,13 @@
             graph.ConnectNodes("node-1", "node-2");
             graph.ConnectNodes("node-1", "node-3");
 
-            var resultStacks = graph.Execute(new ActionForTestEventProducer("new-value")).ToList();
+            var executionDataResults = graph.Execute(new ActionForTestEventProducer("new-value")).ToList();
 
             Assert.Equal("new-value", contextForTest2.ContextVariable);
             Assert.Null(contextForTest3.ContextVariable);
-            Assert.Single(resultStacks);
-            Assert.Equal(2, resultStacks[0].Count);
-            Assert.Equal(typeof(ContextForTest), resultStacks[0].ElementAt(0).ContextType);
-            Assert.Equal(typeof(ContextForTest2), resultStacks[0].ElementAt(1).ContextType);
+            Assert.Single(executionDataResults);
+            Assert.NotNull(executionDataResults[0]);
+            Assert.Equal(typeof(ContextForTest), executionDataResults[0].SingleContextExecutionResultWithInfo.ContextType);
         }
 
         // TODO: add interface tests

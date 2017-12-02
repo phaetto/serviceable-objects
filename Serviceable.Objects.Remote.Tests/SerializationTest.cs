@@ -3,7 +3,6 @@
     using System;
     using Newtonsoft.Json;
     using Objects.Tests.Classes;
-    using Serialization.Exceptions;
     using Serialization;
     using Classes;
     using Xunit;
