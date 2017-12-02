@@ -8,21 +8,9 @@
 
     public static class Types
     {
-        [Obsolete]
-        public static object CreateObjectWithParameters(string unqualifiedTypeName, params object[] parameters)
-        {
-            return CreateObjectWithParametersAndInjection(FindType(unqualifiedTypeName), parameters);
-        }
-
         public static object CreateObjectWithParameters(Type type, params object[] parameters)
         {
             return CreateObjectWithParametersAndInjection(type, parameters);
-        }
-
-        [Obsolete]
-        public static object CreateObjectWithParametersAndInjection(string unqualifiedTypeName, object[] parameters, object[] injectedParameters = null)
-        {
-            return CreateObjectWithParametersAndInjection(FindType(unqualifiedTypeName), parameters, injectedParameters);
         }
 
         public static object CreateObjectWithParametersAndInjection(Type type, object[] parameters, object[] injectedParameters = null)
