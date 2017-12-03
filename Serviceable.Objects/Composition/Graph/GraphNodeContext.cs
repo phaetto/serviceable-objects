@@ -2,7 +2,7 @@
 {
     using Commands.Node;
     using Commands.NodeInstance;
-    using Stages.Configuration;
+    using Commands.NodeInstance.ExecutionData;
 
     public sealed class GraphNodeContext : Context<GraphNodeContext>
     {
@@ -11,6 +11,8 @@
         internal readonly GraphContext GraphContext;
         internal readonly GraphNodeInstanceContext GraphNodeInstanceContext;
 
+        // TODO: define the algirithmic extensions
+
         public GraphNodeContext(AbstractContext hostedContext, GraphContext graphContext, string id)
         {
             HostedContext = hostedContext;
@@ -18,23 +20,6 @@
             Id = id;
 
             GraphNodeInstanceContext = new GraphNodeInstanceContext(hostedContext, graphContext, this, Id);
-        }
-
-        // TODO: break public methods to commands
-
-        public void Configure(IConfigurationSource configurationSource)
-        {
-            GraphNodeInstanceContext.Configure(configurationSource);
-        }
-
-        public void Setup()
-        {
-            GraphNodeInstanceContext.Setup();
-        }
-
-        public void Initialize()
-        {
-            GraphNodeInstanceContext.Initialize();
         }
 
         public ExecutionCommandResult ExecuteGraphCommand(dynamic command)

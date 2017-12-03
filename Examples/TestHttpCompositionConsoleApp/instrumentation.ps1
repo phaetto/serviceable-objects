@@ -31,12 +31,12 @@ PowerShell -NoProfile -Command {
 
     Enqueue-Message @{ "Data" = "a message" } -ServiceOrchestrator "orchestrator-X" -ServiceName "service-X" -ContextId "queue-context";
     $queueItem = Dequeue-Message -ServiceOrchestrator "orchestrator-X" -ServiceName "service-X" -ContextId "queue-context";
-    $message = if ($queueItem -eq $null) { $null } else { $queueItem.Data };
+    $message = if ($queueItem -eq $null) { "<was null>" } else { $queueItem.Data };
 
     Write-Host "Message got: '$message'";
 
     $queueItem = Dequeue-Message -ServiceOrchestrator "orchestrator-X" -ServiceName "service-X" -ContextId "queue-context";
-    $message = if ($queueItem -eq $null) { $null } else { $queueItem.Data };
+    $message = if ($queueItem -eq $null) { "<was null>" } else { $queueItem.Data };
     
     Write-Host "Message got: '$message'";
 

@@ -5,6 +5,7 @@
     using CommonParameters;
     using Composition.Graph;
     using Composition.Graph.Commands.NodeInstance;
+    using Composition.Graph.Commands.NodeInstance.ExecutionData;
     using Composition.Graph.Stages.Setup;
 
     public sealed class InstrumentationServerContext : Context<InstrumentationServerContext>, IGraphFlowExecutionSink, ISetupStageFactory

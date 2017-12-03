@@ -1,6 +1,7 @@
 ﻿namespace Serviceable.Objects.Composition.Graph.Commands.NodeInstance
 {
     using System;
+    using ExecutionData;
     using Microsoft.CSharp.RuntimeBinder;
 
     public sealed class ExecuteCommand : ICommand<GraphNodeInstanceContext, ExecutionCommandResult>

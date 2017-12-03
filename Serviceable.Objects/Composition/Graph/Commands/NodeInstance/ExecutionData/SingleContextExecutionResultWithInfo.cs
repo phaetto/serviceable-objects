@@ -1,4 +1,4 @@
-﻿namespace Serviceable.Objects.Composition.Graph.Commands.NodeInstance
+﻿namespace Serviceable.Objects.Composition.Graph.Commands.NodeInstance.ExecutionData
 {
     using System;
 

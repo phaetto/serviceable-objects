@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Reflection;
+    using ExecutionData;
     using Microsoft.CSharp.RuntimeBinder;
 
     public sealed class ProcessNodeInstanceEventLogic : ICommand<GraphNodeInstanceContext, IEnumerable<ExecutionCommandResult>>

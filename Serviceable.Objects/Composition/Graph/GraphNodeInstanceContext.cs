@@ -3,10 +3,6 @@
     using System.Collections.Generic;
     using System.Linq;
     using Commands.NodeInstance;
-    using Service;
-    using Stages.Configuration;
-    using Stages.Initialization;
-    using Stages.Setup;
 
     public sealed class GraphNodeInstanceContext : Context<GraphNodeInstanceContext>
     {
@@ -24,39 +20,6 @@
             Id = id;
 
             hostedContext.ContextEventPublished += OnContextEventPublished;
-        }
-
-        // TODO: break public methods to commands
-
-        public void Configure(IConfigurationSource configurationSource)
-        {
-            if (HostedContext is IConfigurableStageFactory configurable && !configurable.HasBeenConfigured)
-            {
-                var command = configurable.GenerateConfigurationCommand(
-                    GraphContext.Container.Resolve<IService>(throwOnError: false),
-                    GraphContext,
-                    GraphNodeContext);
-
-                HostedContext.Execute(command); // TODO: immutability concerns
-            }
-        }
-
-        public void Setup()
-        {
-            if (HostedContext is ISetupStageFactory graphSetup)
-            {
-                var command = graphSetup.GenerateSetupCommand(GraphContext, GraphNodeContext);
-                HostedContext.Execute(command);
-            }
-        }
-
-        public void Initialize()
-        {
-            if (HostedContext is IInitializeStageFactory initialization)
-            {
-                var command = initialization.GenerateInitializeCommand();
-                HostedContext.Execute(command);
-            }
         }
 
         private IList<EventResult> OnContextEventPublished(IEvent eventPublished)

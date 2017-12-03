@@ -3,7 +3,9 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Commands.Node;
     using Commands.NodeInstance;
+    using Commands.NodeInstance.ExecutionData;
     using Dependencies;
     using Exceptions;
     using Stages.Configuration;
@@ -91,34 +93,29 @@
 
         public void Configure() // TODO: Configure/Setup/Initialize - create a workflow for those steps (ordering matters)
         {
-            var configurationSource = Container.Resolve<IConfigurationSource>(throwOnError: false);
-            if (configurationSource != null)
-            {
-                Nodes.ForEach(x => x.Configure(configurationSource));
-            }
+            Nodes.ForEach(x => x.Execute(new ConfigureNode()));
         }
 
         public void Setup()
         {
-            Nodes.ToList().ForEach(x => x.Setup());
+            Nodes.ToList().ForEach(x => x.Execute(new SetupNode()));
         }
 
         public void Initialize()
         {
-            Nodes.ForEach(x => x.Initialize());
+            Nodes.ForEach(x => x.Execute(new InitializeNode()));
         }
 
         public void ConfigureNode(string nodeId)
         {
             Check.ArgumentNullOrWhiteSpace(nodeId, nameof(nodeId));
-            var configurationSource = Container.Resolve<IConfigurationSource>();
-            Nodes.First(x => x.Id == nodeId).Configure(configurationSource);
+            Nodes.First(x => x.Id == nodeId).Execute(new ConfigureNode());
         }
 
         public void InitializeNode(string nodeId)
         {
             Check.ArgumentNullOrWhiteSpace(nodeId, nameof(nodeId));
-            Nodes.First(x => x.Id == nodeId).Initialize();
+            Nodes.First(x => x.Id == nodeId).Execute(new InitializeNode());
         }
 
         public GraphNodeContext GetNodeById(string nodeId)
