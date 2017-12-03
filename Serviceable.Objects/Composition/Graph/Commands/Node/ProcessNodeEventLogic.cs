@@ -5,7 +5,7 @@
     using NodeInstance;
     using NodeInstance.ExecutionData;
 
-    public sealed class ProcessNodeEventLogic : ICommand<GraphNodeContext, IEnumerable<ExecutionCommandResult>>
+    public sealed class ProcessNodeEventLogic : ICommand<GraphNodeContext, IList<ExecutionCommandResult>>
     {
         private readonly IEvent eventPublished;
 
@@ -14,11 +14,11 @@
             this.eventPublished = eventPublished;
         }
 
-        public IEnumerable<ExecutionCommandResult> Execute(GraphNodeContext context)
+        public IList<ExecutionCommandResult> Execute(GraphNodeContext context)
         {
             return context.GraphContext.GetChildren(context.Id)
                 .Select(x => x.GraphNodeInstanceContext.Execute(new ProcessNodeInstanceEventLogic(eventPublished, context.GraphNodeInstanceContext)))
-                .SelectMany(x => x.Select(y => y));
+                .SelectMany(x => x.Select(y => y)).ToArray();
         }
     }
 }
