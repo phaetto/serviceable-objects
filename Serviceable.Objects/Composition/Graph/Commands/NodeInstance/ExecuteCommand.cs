@@ -53,7 +53,7 @@
                         {
                             NodeId = context.Id,
                             ContextType = context.HostedContextAsAbstractContext.GetType(),
-                            ResultObject = (object) resultObject,
+                            ResultObject = null,
                         };
                     executionCommandResult.IsFaulted = true;
                     executionCommandResult.Exception = exception;

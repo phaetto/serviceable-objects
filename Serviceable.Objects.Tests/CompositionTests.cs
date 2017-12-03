@@ -48,11 +48,12 @@
 
             var executionDataResults = graph.Execute(new ActionForTestEventProducer("new-value")).ToList();
 
-            Assert.Equal("new-value", contextForTest2.ContextVariable);
-            Assert.Null(contextForTest3.ContextVariable);
             Assert.Single(executionDataResults);
             Assert.NotNull(executionDataResults[0]);
+            Assert.Null(executionDataResults[0].Exception);
             Assert.Equal(typeof(ContextForTest), executionDataResults[0].SingleContextExecutionResultWithInfo.ContextType);
+            Assert.Equal("new-value", contextForTest2.ContextVariable);
+            Assert.Null(contextForTest3.ContextVariable);
         }
 
         // TODO: add interface tests

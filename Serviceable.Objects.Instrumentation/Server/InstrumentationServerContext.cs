@@ -17,7 +17,7 @@
             try
             {
                 var executionDataResult = (ExecutionCommandResult) graphContext.GetNodeById(CommonInstrumentationParameters.ContextId)
-                    .Execute(commandApplied);
+                    .ExecuteGraphCommand(commandApplied);
 
                 return executionDataResult.SingleContextExecutionResultWithInfo.ResultObject;
             }

@@ -4,17 +4,17 @@
 
     public abstract class AbstractContext
     {
-        public event CommandEventWithResultDelegate CommandEventWithResultPublished;
+        public event ContextEventDelegate ContextEventPublished;
         public event CommandEventDelegate CommandEventPublished;
 
-        protected virtual void PublishCommandEvent(IEvent eventpublished)
+        protected IList<EventResult> PublishCommandEvent(IEvent eventpublished)
         {
-            CommandEventPublished?.Invoke(eventpublished);
+            return CommandEventPublished?.Invoke(eventpublished);
         }
 
-        protected virtual IEnumerable<EventResult> PublishCommandEventAndGetResults(IEvent eventpublished)
+        protected IList<EventResult> PublishContextEvent(IEvent eventpublished)
         {
-            return CommandEventWithResultPublished?.Invoke(eventpublished);
+            return ContextEventPublished?.Invoke(eventpublished);
         }
     }
 }

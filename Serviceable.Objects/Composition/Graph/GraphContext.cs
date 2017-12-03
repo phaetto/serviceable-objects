@@ -135,7 +135,7 @@
 
             foreach (var inputNode in InputNodes)
             {
-                contextExecutionResults.Add(inputNode.Execute(command));
+                contextExecutionResults.Add(inputNode.ExecuteGraphCommand(command));
             }
 
             if (contextExecutionResults.All(x => x.IsIdle))
@@ -158,7 +158,7 @@
 
             // TODO: error reporting?
 
-            return InputNodes.First(x => x.Id == uniqueId).Execute(command);
+            return InputNodes.First(x => x.Id == uniqueId).ExecuteGraphCommand(command);
         }
 
         public IEnumerable<GraphNodeContext> GetChildren(string id)

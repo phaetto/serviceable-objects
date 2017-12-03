@@ -21,7 +21,7 @@
 
         private ExecutionCommandResult ExecuteCommand(GraphNodeContext childNode)
         {
-            return childNode.Execute(commandToExecute);
+            return childNode.ExecuteGraphCommand(commandToExecute);
         }
     }
 }
