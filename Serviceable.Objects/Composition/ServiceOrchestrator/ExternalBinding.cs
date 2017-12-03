@@ -5,6 +5,6 @@
     public class ExternalBinding
     {
         public string ServiceName { get; set; }
-        public IList<Binding> ScaleSetBindings { get; set; }
+        public IList<AlgorithmBinding> AlgorithmBindings { get; set; }
     }
 }

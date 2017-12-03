@@ -1,8 +1,11 @@
 ﻿namespace Serviceable.Objects.Composition.Graph.Commands.Node
 {
+    using System.Collections.Generic;
+    using System.Linq;
     using NodeInstance;
+    using NodeInstance.ExecutionData;
 
-    public sealed class ProcessNodeEventLogic : ICommand<GraphNodeContext, GraphNodeContext>
+    public sealed class ProcessNodeEventLogic : ICommand<GraphNodeContext, IEnumerable<ExecutionCommandResult>>
     {
         private readonly IEvent eventPublished;
 
@@ -11,15 +14,11 @@
             this.eventPublished = eventPublished;
         }
 
-        public GraphNodeContext Execute(GraphNodeContext context)
+        public IEnumerable<ExecutionCommandResult> Execute(GraphNodeContext context)
         {
-            // Algorithically, this will need to run in all hosted conexts (all graph node instances)
-            foreach (var childNode in context.GraphContext.GetChildren(context.Id))
-            {
-                childNode.GraphNodeInstanceContext.Execute(new ProcessNodeInstanceEventLogic(eventPublished, context.GraphNodeInstanceContext));
-            }
-
-            return context;
+            return context.GraphContext.GetChildren(context.Id)
+                .Select(x => x.GraphNodeInstanceContext.Execute(new ProcessNodeInstanceEventLogic(eventPublished, context.GraphNodeInstanceContext)))
+                .SelectMany(x => x.Select(y => y));
         }
     }
 }

@@ -9,6 +9,9 @@
         {
             if (context.HostedContext is IConfigurableStageFactory configurable && !configurable.HasBeenConfigured)
             {
+                // TODO: Check if multiple configurations are available
+                // TODO: The extend the instances of this node (not instance) to the number of the available configurations
+
                 var command = configurable.GenerateConfigurationCommand(
                     context.GraphContext.Container.Resolve<IService>(throwOnError: false),
                     context.GraphContext,

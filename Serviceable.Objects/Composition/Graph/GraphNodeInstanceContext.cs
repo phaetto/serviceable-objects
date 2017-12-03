@@ -2,6 +2,7 @@
 {
     using System.Collections.Generic;
     using System.Linq;
+    using Commands.Node;
     using Commands.NodeInstance;
 
     public sealed class GraphNodeInstanceContext : Context<GraphNodeInstanceContext>
@@ -25,9 +26,7 @@
         private IList<EventResult> OnContextEventPublished(IEvent eventPublished)
         {
             // Implement DFS on event propagation - because of the dependency in internal event generation
-            return GraphContext.GetChildren(Id)
-                .Select(x => x.GraphNodeInstanceContext.Execute(new ProcessNodeInstanceEventLogic(eventPublished, this)))
-                .SelectMany(x => x.Select(y => y))
+            return GraphNodeContext.Execute(new ProcessNodeEventLogic(eventPublished))
                 .Where(x => x != null)
                 .Select(x => new EventResult
                 {
