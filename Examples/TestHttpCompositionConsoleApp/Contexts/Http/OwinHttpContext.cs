@@ -62,7 +62,7 @@
             var command = commandSpecificationService.CreateCommandFromSpecification(commandSpecification);
             
             var eventResults =
-                PublishCommandEventAndGetResults(new GraphFlowEventPushControlApplyCommandInsteadOfEvent(command))
+                PublishContextEvent(new GraphFlowEventPushControlApplyCommandInsteadOfEvent(command))
                 .Where(x => x.ResultObject != null).ToList();
 
             if (eventResults.Count > 0)
