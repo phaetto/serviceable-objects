@@ -1,6 +1,5 @@
 ﻿namespace Serviceable.Objects.Remote.Tests
 {
-    using System.Collections.Generic;
     using System.Linq;
     using Composition.Graph;
     using Newtonsoft.Json;
