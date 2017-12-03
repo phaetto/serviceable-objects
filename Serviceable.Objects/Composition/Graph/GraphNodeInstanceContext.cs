@@ -26,10 +26,10 @@
         {
             // Implement DFS on event propagation - because of the dependency in internal event generation
             return GraphNodeContext.Execute(new ProcessNodeEventLogic(eventPublished))
-                .Where(x => x != null)
+                .Where(x => !x.IsIdle)
                 .Select(x => new EventResult
                 {
-                    ResultObject = x.SingleContextExecutionResultWithInfo.ResultObject
+                    ResultObject =  x.IsFaulted ? x.Exception : x.SingleContextExecutionResultWithInfo.ResultObject
                 })
                 .ToList();
         }

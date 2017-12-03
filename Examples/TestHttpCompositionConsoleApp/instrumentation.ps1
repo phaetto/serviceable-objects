@@ -25,7 +25,9 @@ PowerShell -NoProfile -Command {
 
     # This is an error
     #$message = Dequeue-Message -ServiceOrchestrator "orchestrator-X" -ServiceName "service-X" -ContextId "LALALA- queue-context";
-    
+    #$message = if ($queueItem -eq $null) { "<was null>" } else { $queueItem.Data };
+    #Write-Host "Error got: '$message'";
+
     Write-Message -Data @{ Message = "Awesome instrumentation" } -PipeName "service-X.namedpipes-log-instrumentation-context";
     Write-Message -Data @{ Message = "Awesome instrumentation - again!" } -PipeName "service-X.namedpipes-log-instrumentation-context";
 
