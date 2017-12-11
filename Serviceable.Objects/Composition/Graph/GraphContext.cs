@@ -153,7 +153,19 @@
 
             // TODO: error reporting?
 
-            return InputNodes.First(x => x.Id == uniqueId).ExecuteGraphCommand(command);
+            var contextExecutionResult = InputNodes.First(x => x.Id == uniqueId).ExecuteGraphCommand(command);
+
+            if (contextExecutionResult.IsIdle)
+            {
+                throw new NotSupportedException("No context found that support this command");
+            }
+
+            if (contextExecutionResult.IsFaulted)
+            {
+                throw new AggregateException("Errors while running command", contextExecutionResult.Exception);
+            }
+
+            return contextExecutionResult;
         }
 
         public IEnumerable<GraphNodeContext> GetChildren(string id)

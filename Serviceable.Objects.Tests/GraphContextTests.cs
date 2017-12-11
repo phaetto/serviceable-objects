@@ -7,10 +7,10 @@
     using Classes;
     using Xunit;
 
-    public sealed class CompositionTests
+    public sealed class GraphContextTests
     {
         [Fact]
-        public void ContextGraph_WhenCreatingAGraph_ThenTheMainObjectDependenciesAreNotInsertedToContainer()
+        public void AddInputConnectNodes_WhenCreatingAGraph_ThenTheMainObjectDependenciesAreNotInsertedToContainer()
         {
             var customObjectsCache = new Dictionary<string, object>();
             var container = new Container(customObjectsCache);
@@ -55,8 +55,5 @@
             Assert.Equal("new-value", contextForTest2.ContextVariable);
             Assert.Null(contextForTest3.ContextVariable);
         }
-
-        // TODO: add interface tests
-        // IGraphFlowEventPushControl, IPostGraphFlowPullControl
     }
 }

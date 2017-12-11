@@ -12,6 +12,7 @@
         internal readonly GraphNodeInstanceContext GraphNodeInstanceContext;
 
         // TODO: define the algorithmic extensions
+        // TODO: move the creation of the context on this level
 
         public GraphNodeContext(AbstractContext hostedContext, GraphContext graphContext, string id)
         {
