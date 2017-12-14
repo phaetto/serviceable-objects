@@ -2,14 +2,14 @@
 {
     public sealed class CheckNodeInstancePostGraphFlowPullControl : ICommand<GraphNodeInstanceContext, GraphNodeInstanceContext>
     {
-        private readonly dynamic parentContext;
+        private readonly object parentContext;
         private readonly dynamic parentCommandApplied;
         private readonly string parentNodeId;
 
-        public CheckNodeInstancePostGraphFlowPullControl(string parentNodeId, dynamic parentContext, dynamic parentCommandApplied)
+        public CheckNodeInstancePostGraphFlowPullControl(string parentNodeId, dynamic parentCommandApplied, object parentContext)
         {
-            this.parentContext = parentContext;
             this.parentCommandApplied = parentCommandApplied;
+            this.parentContext = parentContext;
             this.parentNodeId = parentNodeId;
         }
 

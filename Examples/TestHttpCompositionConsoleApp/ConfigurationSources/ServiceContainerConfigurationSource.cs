@@ -18,7 +18,7 @@
                         PipeName  = string.Join(".", serviceName, graphNodeId) // TODO: centralise the configuration discovery
                     });
                 default:
-                    throw new InvalidOperationException($"Type {typeName} is not supported.");
+                    return null;
             }
         }
     }

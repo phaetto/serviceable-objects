@@ -8,8 +8,8 @@
         IList<ServiceRegistration> ServiceRegistrations { get; }
         string OrchestratorName { get; }
         Container ServiceOrchestratorContainer { get; }
-        Binding ServiceOrchestratorBinding { get; }
-        IList<ExternalBinding> ExternalBindings { get; }
+        Binding Binding { get; }
+        ExternalBinding ExternalBinding { get; }
         IDictionary<string, string> GraphTemplatesDictionary { get; }
     }
 }

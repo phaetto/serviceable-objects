@@ -65,10 +65,8 @@
                 {
                     GraphContext.Container.From(configuration.DependencyInjectionRegistrationTemplate);
                 }
-                Check.ArgumentNull(configuration.ServiceGraphTemplate, nameof(configuration.OrchestratorOverrideTemplate), "Service template cannot be empty.");
+                Check.ArgumentNull(configuration.ServiceGraphTemplate, nameof(configuration.ServiceGraphTemplate), "Service template cannot be empty.");
                 GraphContext.From(configuration.ServiceGraphTemplate);
-                // TODO: How load the graph here with template-id? The process barrier does not fit with the Remote module
-                // TODO: Seems like this could be IO thing (connect to orchestrator process and get the template f.ex)
             }
             else
             {
@@ -89,7 +87,6 @@
                     GraphContext.Container.FromJson(DefaultOrchestratorTemplate);
                     GraphContext.FromJson(DefaultOrchestratorTemplate);
                 }
-                ServiceOrchestrator = container.Resolve<ServiceOrchestratorContext>();
             }
         }
     }

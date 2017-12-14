@@ -1,12 +1,16 @@
 ﻿namespace Serviceable.Objects.Composition.Graph.Commands.Node
 {
+    using System.Linq;
     using NodeInstance;
 
     public sealed class InitializeNode : ICommand<GraphNodeContext, GraphNodeContext>
     {
         public GraphNodeContext Execute(GraphNodeContext context)
         {
-            context.GraphNodeInstanceContext.Execute(new InitializeNodeInstance());
+            context.GraphNodeInstanceContextListPerAlgorithm
+                .SelectMany(x => x.Value)
+                .ToList().ForEach(x => x.Execute(new InitializeNodeInstance()));
+
             return context;
         }
     }

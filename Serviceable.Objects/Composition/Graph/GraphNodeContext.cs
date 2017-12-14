@@ -1,5 +1,8 @@
 ﻿namespace Serviceable.Objects.Composition.Graph
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
     using Commands.Node;
     using Commands.NodeInstance;
     using Commands.NodeInstance.ExecutionData;
@@ -7,34 +10,47 @@
     public sealed class GraphNodeContext : Context<GraphNodeContext>
     {
         public readonly string Id;
-        internal dynamic HostedContext { get; }
+        public bool IsConfigured => GraphNodeInstanceContextListPerAlgorithm.Any();
         internal readonly GraphContext GraphContext;
-        internal readonly GraphNodeInstanceContext GraphNodeInstanceContext;
+        internal readonly Type ContextType;
+        internal readonly Dictionary<string, List<GraphNodeInstanceContext>> GraphNodeInstanceContextListPerAlgorithm = new Dictionary<string, List<GraphNodeInstanceContext>>();
+        internal readonly AbstractContext AbstractContext;
 
         // TODO: define the algorithmic extensions
         // TODO: move the creation of the context on this level
 
-        public GraphNodeContext(AbstractContext hostedContext, GraphContext graphContext, string id)
+        public GraphNodeContext(Type contextType, GraphContext graphContext, string id)
         {
-            HostedContext = hostedContext;
+            ContextType = contextType;
             GraphContext = graphContext;
             Id = id;
+        }
 
-            GraphNodeInstanceContext = new GraphNodeInstanceContext(hostedContext, graphContext, this, Id);
+        public GraphNodeContext(AbstractContext abstractContext, GraphContext graphContext, string id)
+        {
+            ContextType = abstractContext.GetType();
+            GraphContext = graphContext;
+            Id = id;
+            AbstractContext = abstractContext;
         }
 
         public ExecutionCommandResult ExecuteGraphCommand(dynamic command)
         {
-            var contextExecutionResult = GraphNodeInstanceContext.Execute(new ExecuteCommand(command));
+            // TODO: algorithmic execution
 
-            foreach (var publishedEvent in contextExecutionResult.PublishedEvents)
+            return GraphNodeInstanceContextListPerAlgorithm.First().Value.Select(x =>
             {
-                Execute(new ProcessNodeEventLogic(publishedEvent));
-            }
+                var contextExecutionResult = x.Execute(new ExecuteCommand(command));
 
-            Execute(new CheckNodePostGraphFlowPullControl(command));
+                foreach (var publishedEvent in contextExecutionResult.PublishedEvents)
+                {
+                    Execute(new ProcessNodeEventLogic(publishedEvent, x));
+                }
 
-            return contextExecutionResult;
+                Execute(new CheckNodePostGraphFlowPullControl(command, x.HostedContext));
+
+                return contextExecutionResult;
+            }).FirstOrDefault();
         }
     }
 }

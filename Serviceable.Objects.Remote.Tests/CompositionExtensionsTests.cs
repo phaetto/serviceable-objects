@@ -62,6 +62,7 @@
 
             var graph = new GraphContext();
             graph.FromJson(json);
+            graph.ConfigureSetupAndInitialize();
 
             var execetionResultsFromMultipleNodes = graph.Execute(new ActionForTestEventProducer("new-value")).ToList();
 

@@ -5,6 +5,7 @@
     using Objects.Composition.Graph;
     using Objects.Composition.Graph.Stages.Configuration;
     using Objects.Composition.Service;
+    using Objects.Composition.ServiceOrchestrator;
     using Objects.Dependencies;
 
     public sealed class ServiceContext : ConfigurableContext<ServiceContextConfiguration, ServiceContext>, IService
@@ -12,6 +13,8 @@
         public string OrchestratorName => Configuration.OrchestratorName;
         public string ServiceName => Configuration.ServiceName;
         public string TemplateName => Configuration.TemplateName;
+        public Binding Binding => Configuration.Binding;
+        public ExternalBinding ExternalBinding => Configuration.ExternalBinding;
         public GraphContext GraphContext { get; }
         public Container ServiceContainer { get; } = new Container();
 

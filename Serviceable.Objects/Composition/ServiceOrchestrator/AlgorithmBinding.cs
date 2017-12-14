@@ -4,7 +4,7 @@
 
     public class AlgorithmBinding
     {
-        public string AlgorithmName { get; set; }
+        public string AlgorithmTypeName { get; set; }
         public IList<Binding> ScaleSetBindings { get; set; }
     }
 }

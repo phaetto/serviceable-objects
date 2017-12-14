@@ -4,10 +4,7 @@
     {
         public ApplicationHost Execute(ApplicationHost context)
         {
-            context.GraphContext.Configure();
-            context.GraphContext.Setup();
-            context.GraphContext.Initialize();
-
+            context.GraphContext.ConfigureSetupAndInitialize();
             context.CancellationTokenSource.Token.Register(CancellationRequested, context);
             context.EventWaitHandle.WaitOne();
             return context;

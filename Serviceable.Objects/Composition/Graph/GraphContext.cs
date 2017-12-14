@@ -7,6 +7,8 @@
     using Commands.NodeInstance.ExecutionData;
     using Dependencies;
     using Exceptions;
+    using Service;
+    using Stages.Configuration;
 
     public sealed class GraphContext : Context<GraphContext> // TODO: IDisposable
     {
@@ -28,10 +30,9 @@
             Check.ArgumentNull(type, nameof(type));
             Check.ArgumentNullOrWhiteSpace(id, nameof(id));
 
-            var abstractContext = Container.CreateObject(type) as AbstractContext;
-            Check.ArgumentNull(abstractContext, nameof(type), "Type should be derived from Context");
-
-            AddInput(abstractContext, id);
+            var node = new GraphNodeContext(type, this, id);
+            InputNodes.Add(node);
+            Nodes.Add(node);
         }
 
         public void AddInput(AbstractContext context, string id)
@@ -49,10 +50,8 @@
             Check.ArgumentNull(type, nameof(type));
             Check.ArgumentNullOrWhiteSpace(id, nameof(id));
 
-            var abstractContext = Container.CreateObject(type) as AbstractContext;
-            Check.ArgumentNull(abstractContext, nameof(type), "Type should be derived from Context");
-
-            AddNode(abstractContext, id);
+            var node = new GraphNodeContext(type, this, id);
+            Nodes.Add(node);
         }
 
         public void AddNode(AbstractContext context, string id)
@@ -86,28 +85,26 @@
 
         public IEnumerable<string> GetNodeIds<TNodeInContext>()
         {
-            return Nodes.Where(x => x.HostedContext is TNodeInContext).Select(x => x.Id);
+            return Nodes.Where(x => x.ContextType == typeof(TNodeInContext)).Select(x => x.Id);
         }
 
-        public void Configure() // TODO: Configure/Setup/Initialize - create a workflow for those steps (ordering matters)
+        public void ConfigureSetupAndInitialize() 
         {
-            Nodes.ForEach(x => x.Execute(new ConfigureNode()));
-        }
-
-        public void Setup()
-        {
+            // Configure/Setup/Initialize - cordering matters
+            var service = Container.Resolve<IService>(throwOnError: false);
+            var configurationSource = Container.Resolve<IConfigurationSource>(throwOnError: false);
+            Nodes.ForEach(x => x.Execute(new ConfigureNode(service, configurationSource)));
             Nodes.ToList().ForEach(x => x.Execute(new SetupNode()));
-        }
-
-        public void Initialize()
-        {
+            Nodes.Where(x => !x.IsConfigured).ToList().ForEach(x => x.Execute(new ConfigureNode(service, configurationSource)));
             Nodes.ForEach(x => x.Execute(new InitializeNode()));
         }
 
         public void ConfigureNode(string nodeId)
         {
             Check.ArgumentNullOrWhiteSpace(nodeId, nameof(nodeId));
-            Nodes.First(x => x.Id == nodeId).Execute(new ConfigureNode());
+            var service = Container.Resolve<IService>(throwOnError: false);
+            var configurationSource = Container.Resolve<IConfigurationSource>(throwOnError: false);
+            Nodes.First(x => x.Id == nodeId).Execute(new ConfigureNode(service, configurationSource));
         }
 
         public void InitializeNode(string nodeId)
