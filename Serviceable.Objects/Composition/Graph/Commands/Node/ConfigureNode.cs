@@ -21,15 +21,8 @@
         {
             var possibleConfigurations = context.Execute(new ExpandConfiguration(service, configurationSource));
 
-            if (context.AbstractContext is IConfigurableStageFactory configurableStageFactory && configurableStageFactory.HasBeenConfigured)
-            {
-                var contextNodeInstance = new GraphNodeInstanceContext(context.AbstractContext, context.GraphContext, context, context.Id);
-                context.GraphNodeInstanceContextListPerAlgorithm.Add(ExpandConfiguration.DefaultAlgorithmicService, new List<GraphNodeInstanceContext> { contextNodeInstance });
-
-                return context;
-            }
-
-            if (possibleConfigurations.Count == 0)
+            if (context.AbstractContext is IConfigurableStageFactory configurableStageFactory && configurableStageFactory.HasBeenConfigured
+                || possibleConfigurations.Count == 0)
             {
                 var abstractContext = context.AbstractContext ?? context.GraphContext.Container.CreateObject(context.ContextType) as AbstractContext;
 
