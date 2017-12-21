@@ -1,5 +1,6 @@
 ﻿namespace Serviceable.Objects.Composition.Service
 {
+    using System.Collections.Generic;
     using Dependencies;
     using Graph;
     using ServiceOrchestrator;
@@ -10,7 +11,7 @@
         string ServiceName { get; }
         string TemplateName { get; }
         Binding Binding { get; }
-        ExternalBinding ExternalBinding { get; }
+        IList<ExternalBinding> ExternalBindings { get; }
         Container ServiceContainer { get; }
         GraphContext GraphContext { get; }
     }

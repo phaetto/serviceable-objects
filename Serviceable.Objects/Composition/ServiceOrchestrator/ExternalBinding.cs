@@ -4,7 +4,7 @@
 
     public class ExternalBinding
     {
-        public string ServiceName { get; set; }
+        public string ContextTypeName { get; set; }
         public IList<AlgorithmBinding> AlgorithmBindings { get; set; }
     }
 }

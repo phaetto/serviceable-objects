@@ -1,5 +1,6 @@
 ﻿namespace Serviceable.Objects.Remote.Composition.Service
 {
+    using System.Collections.Generic;
     using Composition.Configuration;
     using Configuration;
     using Objects.Composition.Graph;
@@ -14,7 +15,7 @@
         public string ServiceName => Configuration.ServiceName;
         public string TemplateName => Configuration.TemplateName;
         public Binding Binding => Configuration.Binding;
-        public ExternalBinding ExternalBinding => Configuration.ExternalBinding;
+        public IList<ExternalBinding> ExternalBindings => Configuration.ExternalBindings;
         public GraphContext GraphContext { get; }
         public Container ServiceContainer { get; } = new Container();
 
