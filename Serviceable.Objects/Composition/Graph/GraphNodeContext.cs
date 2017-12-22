@@ -13,12 +13,9 @@
         public bool IsConfigured => GraphNodeInstanceContextListPerAlgorithm.Any();
         internal readonly GraphContext GraphContext;
         internal readonly Type ContextType;
-        // TODO: change to ordered algorithmic execution (or add another list)
-        internal readonly Dictionary<string, List<GraphNodeInstanceContext>> GraphNodeInstanceContextListPerAlgorithm = new Dictionary<string, List<GraphNodeInstanceContext>>();
+        internal readonly List<IAlgorithmicInstanceExecution> AlgorithmicInstanceExecutions = new List<IAlgorithmicInstanceExecution>();
+        internal readonly Dictionary<Type, List<GraphNodeInstanceContext>> GraphNodeInstanceContextListPerAlgorithm = new Dictionary<Type, List<GraphNodeInstanceContext>>();
         internal readonly AbstractContext AbstractContext;
-
-        // TODO: define the algorithmic extensions
-        // TODO: move the creation of the context on this level
 
         public GraphNodeContext(Type contextType, GraphContext graphContext, string id)
         {
@@ -37,22 +34,63 @@
 
         public ExecutionCommandResult ExecuteGraphCommand(dynamic command)
         {
-            // TODO: algorithmic execution
-            // TODO: start from the first and move the results to the second so it can decide execution
-
-            return GraphNodeInstanceContextListPerAlgorithm.First().Value.Select(x =>
+            if (!AlgorithmicInstanceExecutions.Any())
             {
-                var contextExecutionResult = x.Execute(new ExecuteCommand(command));
+                // Default execution - find first and run it
+                return GraphNodeInstanceContextListPerAlgorithm.First().Value.Select(x => ExecutionLogicOnNodeInstance(command, x)).FirstOrDefault();
+            }
 
-                foreach (var publishedEvent in contextExecutionResult.PublishedEvents)
+            // The first algorithm runs and the others are inspecting
+            IList<ExecutionCommandResult> firstExecutionCommandResults = null;
+            foreach (var algorithmicInstanceExecution in AlgorithmicInstanceExecutions)
+            {
+                var algorithmType = algorithmicInstanceExecution.GetType();
+
+                if (firstExecutionCommandResults == null)
                 {
-                    Execute(new ProcessNodeEventLogic(publishedEvent, x));
+                    // The first execution is the master algorithm
+                    var nodeInstancesToBeExecuted =
+                        algorithmicInstanceExecution.FindGraphNodeInstanceContextsToBeExecuted(
+                            GraphNodeInstanceContextListPerAlgorithm[algorithmType]
+                        );
+
+                    firstExecutionCommandResults = nodeInstancesToBeExecuted.Select(x => ExecutionLogicOnNodeInstance(command, x)).Cast<ExecutionCommandResult>().ToList();
                 }
+                else
+                {
+                    // Select nodes that would need to run
+                    var nodeInstancesToBeExecuted =
+                        algorithmicInstanceExecution.ContinueExecutionGraphNodeInstanceContextsToBeExecuted(
+                            firstExecutionCommandResults,
+                            GraphNodeInstanceContextListPerAlgorithm[algorithmType]
+                        );
 
-                Execute(new CheckNodePostGraphFlowPullControl(command, x.HostedContext));
+                    // Execute them
+                    var newExecutionCommandResults = nodeInstancesToBeExecuted.Select(x => ExecutionLogicOnNodeInstance(command, x)).Cast<ExecutionCommandResult>().ToList();
 
-                return contextExecutionResult;
-            }).FirstOrDefault();
+                    // Possibly manipulate the returned results
+                    firstExecutionCommandResults =
+                        algorithmicInstanceExecution.FilterExecutionResults(firstExecutionCommandResults,
+                            newExecutionCommandResults);
+                }
+            }
+
+            // ReSharper disable once AssignNullToNotNullAttribute
+            return firstExecutionCommandResults.FirstOrDefault(x => x != null);
+        }
+
+        private ExecutionCommandResult ExecutionLogicOnNodeInstance(dynamic command, GraphNodeInstanceContext graphNodeInstanceContext)
+        {
+            var contextExecutionResult = graphNodeInstanceContext.Execute(new ExecuteCommand(command));
+
+            foreach (var publishedEvent in contextExecutionResult.PublishedEvents)
+            {
+                Execute(new ProcessNodeEventLogic(publishedEvent, graphNodeInstanceContext));
+            }
+
+            Execute(new CheckNodePostGraphFlowPullControl(command, graphNodeInstanceContext.HostedContext));
+
+            return contextExecutionResult;
         }
     }
 }

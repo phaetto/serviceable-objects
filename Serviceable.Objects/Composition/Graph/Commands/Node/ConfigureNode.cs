@@ -1,5 +1,6 @@
 ﻿namespace Serviceable.Objects.Composition.Graph.Commands.Node
 {
+    using System;
     using System.Collections.Generic;
     using NodeInstance;
     using Service;
@@ -7,7 +8,6 @@
 
     public sealed class ConfigureNode : ICommand<GraphNodeContext, GraphNodeContext>
     {
-        public const string OrchestratorService = "orchestrator";
         private readonly IService service;
         private readonly IConfigurationSource configurationSource;
 
@@ -27,14 +27,25 @@
                 var abstractContext = context.AbstractContext ?? context.GraphContext.Container.CreateObject(context.ContextType) as AbstractContext;
 
                 var contextNodeInstance = new GraphNodeInstanceContext(abstractContext, context.GraphContext, context, context.Id);
-                context.GraphNodeInstanceContextListPerAlgorithm.Add(ExpandConfiguration.DefaultAlgorithmicService, new List<GraphNodeInstanceContext> { contextNodeInstance });
+                context.GraphNodeInstanceContextListPerAlgorithm.Add(GetType(), new List<GraphNodeInstanceContext> { contextNodeInstance });
 
                 return context;
             }
 
             foreach (var configuration in possibleConfigurations)
             {
-                context.GraphNodeInstanceContextListPerAlgorithm.Add(configuration.Key, new List<GraphNodeInstanceContext>());
+                var algorithmicInstanceExecutionType = Type.GetType(configuration.Key, false);
+                if (algorithmicInstanceExecutionType != null)
+                {
+                    var algorithmicInstanceExecution =
+                        context.GraphContext.Container.CreateObject(algorithmicInstanceExecutionType) as IAlgorithmicInstanceExecution;
+
+                    context.AlgorithmicInstanceExecutions.Add(algorithmicInstanceExecution);
+                }
+
+                algorithmicInstanceExecutionType = algorithmicInstanceExecutionType ?? GetType();
+
+                context.GraphNodeInstanceContextListPerAlgorithm.Add(algorithmicInstanceExecutionType, new List<GraphNodeInstanceContext>());
 
                 foreach (var externalConfigurationSetting in configuration.Value)
                 {
@@ -43,7 +54,7 @@
 
                     var contextNodeInstance = new GraphNodeInstanceContext(abstractContext, context.GraphContext,
                         context, context.Id);
-                    context.GraphNodeInstanceContextListPerAlgorithm[configuration.Key].Add(contextNodeInstance);
+                    context.GraphNodeInstanceContextListPerAlgorithm[algorithmicInstanceExecutionType].Add(contextNodeInstance);
                     contextNodeInstance.Execute(new ConfigureNodeInstance(externalConfigurationSetting));
                 }
             }
