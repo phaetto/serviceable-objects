@@ -1,11 +1,9 @@
 ﻿namespace Serviceable.Objects.Remote.Tests
 {
-    using System.Collections.Generic;
     using System.Linq;
     using Composition.Graph;
     using Newtonsoft.Json;
     using Objects.Composition.Graph;
-    using Composition;
     using Objects.Tests.Classes;
     using Xunit;
 
@@ -64,19 +62,19 @@
 
             var graph = new GraphContext();
             graph.FromJson(json);
+            graph.ConfigureSetupAndInitialize();
 
-            var resultStacks = graph.Execute(new ActionForTestEventProducer("new-value")).ToList();
+            var execetionResultsFromMultipleNodes = graph.Execute(new ActionForTestEventProducer("new-value")).ToList();
 
-            Assert.Single(resultStacks);
-            Assert.Equal(2, resultStacks[0].Count);
-            Assert.Equal(typeof(ContextForTest), resultStacks[0].ElementAt(0).ContextType);
-            Assert.Equal(typeof(ContextForTest2), resultStacks[0].ElementAt(1).ContextType);
+            Assert.Single(execetionResultsFromMultipleNodes);
+            Assert.NotNull(execetionResultsFromMultipleNodes[0]);
+            Assert.Equal(typeof(ContextForTest), execetionResultsFromMultipleNodes[0].SingleContextExecutionResultWithInfo.ContextType);
         }
 
         private sealed class AssertNode : Context<AssertNode>, IPostGraphFlowPullControl
         {
-            public void PullNodeExecutionInformation(GraphContext graphContext, string executingNodeId, dynamic parentContext,
-                dynamic parentCommandApplied, Stack<EventResult> eventResults)
+            public void GetAttachNodeCommandExecutionInformation(GraphContext graphContext, string executingNodeId, dynamic parentContext,
+                dynamic parentCommandApplied)
             {
                 var contextForTest2 = (ContextForTest2) parentContext;
                 Assert.Equal("new-value", contextForTest2.ContextVariable);

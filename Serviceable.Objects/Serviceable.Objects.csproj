@@ -28,8 +28,4 @@ This framework is developed with testing in mind and every derivable should be f
     <PackageReference Include="System.Dynamic.Runtime" Version="4.3.0" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Composition\Graph\Commands\" />
-  </ItemGroup>
-
 </Project>

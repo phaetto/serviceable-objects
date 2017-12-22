@@ -50,7 +50,7 @@
         }
 
         [Fact]
-        public void Execute_WhenDoingActionWithEvents_ThenEventsAreReceived()
+        public void Execute_WhenDoingActionWithEvents_ThenCommandEventsAreReceived()
         {
             var contextForTest = new ContextForTest();
             var eventList = new List<ActionForTestEventProducerCalledEvent>();
@@ -58,6 +58,7 @@
             contextForTest.CommandEventPublished += eventPublished =>
             {
                 eventList.Add((ActionForTestEventProducerCalledEvent)eventPublished);
+                return null;
             };
 
             var result =

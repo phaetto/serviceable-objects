@@ -7,10 +7,10 @@
     using Classes;
     using Xunit;
 
-    public sealed class CompositionTests
+    public sealed class GraphContextTests
     {
         [Fact]
-        public void ContextGraph_WhenCreatingAGraph_ThenTheMainObjectDependenciesAreNotInsertedToContainer()
+        public void AddInputConnectNodes_WhenCreatingAGraph_ThenTheMainObjectDependenciesAreNotInsertedToContainer()
         {
             var customObjectsCache = new Dictionary<string, object>();
             var container = new Container(customObjectsCache);
@@ -46,17 +46,18 @@
             graph.ConnectNodes("node-1", "node-2");
             graph.ConnectNodes("node-1", "node-3");
 
-            var resultStacks = graph.Execute(new ActionForTestEventProducer("new-value")).ToList();
+            graph.ConfigureSetupAndInitialize();
 
+            var executionDataResults = graph.Execute(new ActionForTestEventProducer("new-value")).ToList();
+
+            Assert.Single(executionDataResults);
+            Assert.NotNull(executionDataResults[0]);
+            Assert.Null(executionDataResults[0].Exception);
+            Assert.Equal(typeof(ContextForTest), executionDataResults[0].SingleContextExecutionResultWithInfo.ContextType);
             Assert.Equal("new-value", contextForTest2.ContextVariable);
             Assert.Null(contextForTest3.ContextVariable);
-            Assert.Single(resultStacks);
-            Assert.Equal(2, resultStacks[0].Count);
-            Assert.Equal(typeof(ContextForTest), resultStacks[0].ElementAt(0).ContextType);
-            Assert.Equal(typeof(ContextForTest2), resultStacks[0].ElementAt(1).ContextType);
         }
 
-        // TODO: add interface tests
-        // IGraphFlowEventPushControl, IPostGraphFlowPullControl
+        // TODO: ProcessNodeInstanceEventLogic/IGraphFlowEventPushControl tests
     }
 }

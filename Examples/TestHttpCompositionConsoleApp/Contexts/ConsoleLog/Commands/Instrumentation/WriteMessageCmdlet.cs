@@ -1,5 +1,4 @@
 ﻿using System.Management.Automation;
-using Serviceable.Objects.Instrumentation;
 
 namespace TestHttpCompositionConsoleApp.Contexts.ConsoleLog.Commands.Instrumentation
 {

@@ -3,9 +3,7 @@
     using System;
     using Commands;
     using Exceptions;
-    using Objects.Composition.Graph;
     using Objects.Composition.Graph.Stages.Configuration;
-    using Objects.Composition.Service;
 
     public abstract class ConfigurableContext<TConfiguration, TContextType> : Context<TContextType>, IConfigurableStageFactory
         where TConfiguration : struct
@@ -48,9 +46,9 @@
             return base.InvokeExecute(action);
         }
 
-        public dynamic GenerateConfigurationCommand(IService service, GraphContext graphContext, GraphNodeContext graphNodeContext)
+        public dynamic GenerateConfigurationCommand(string serializedConfigurationString)
         {
-            return new ApplyConfiguration<TConfiguration, TContextType>(service, graphNodeContext);
+            return new ApplyConfiguration<TConfiguration, TContextType>(serializedConfigurationString);
         }
     }
 }

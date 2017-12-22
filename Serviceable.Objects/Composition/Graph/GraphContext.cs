@@ -3,9 +3,11 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Commands.Node;
+    using Commands.NodeInstance.ExecutionData;
     using Dependencies;
     using Exceptions;
-    using Microsoft.CSharp.RuntimeBinder;
+    using Service;
     using Stages.Configuration;
 
     public sealed class GraphContext : Context<GraphContext> // TODO: IDisposable
@@ -28,10 +30,9 @@
             Check.ArgumentNull(type, nameof(type));
             Check.ArgumentNullOrWhiteSpace(id, nameof(id));
 
-            var abstractContext = Container.CreateObject(type) as AbstractContext;
-            Check.ArgumentNull(abstractContext, nameof(type), "Type should be derived from Context");
-
-            AddInput(abstractContext, id);
+            var node = new GraphNodeContext(type, this, id);
+            InputNodes.Add(node);
+            Nodes.Add(node);
         }
 
         public void AddInput(AbstractContext context, string id)
@@ -49,10 +50,8 @@
             Check.ArgumentNull(type, nameof(type));
             Check.ArgumentNullOrWhiteSpace(id, nameof(id));
 
-            var abstractContext = Container.CreateObject(type) as AbstractContext;
-            Check.ArgumentNull(abstractContext, nameof(type), "Type should be derived from Context");
-
-            AddNode(abstractContext, id);
+            var node = new GraphNodeContext(type, this, id);
+            Nodes.Add(node);
         }
 
         public void AddNode(AbstractContext context, string id)
@@ -86,39 +85,32 @@
 
         public IEnumerable<string> GetNodeIds<TNodeInContext>()
         {
-            return Nodes.Where(x => x.HostedContext is TNodeInContext).Select(x => x.Id);
+            return Nodes.Where(x => x.ContextType == typeof(TNodeInContext)).Select(x => x.Id);
         }
 
-        public void Configure() // TODO: Configure/Setup/Initialize - create a workflow for those steps (ordering matters)
+        public void ConfigureSetupAndInitialize() 
         {
+            // Configure/Setup/Initialize - cordering matters
+            var service = Container.Resolve<IService>(throwOnError: false);
             var configurationSource = Container.Resolve<IConfigurationSource>(throwOnError: false);
-            if (configurationSource != null)
-            {
-                Nodes.ForEach(x => x.Configure(configurationSource));
-            }
-        }
-
-        public void Setup()
-        {
-            Nodes.ToList().ForEach(x => x.Setup());
-        }
-
-        public void Initialize()
-        {
-            Nodes.ForEach(x => x.Initialize());
+            Nodes.ForEach(x => x.Execute(new ConfigureNode(service, configurationSource)));
+            Nodes.ToList().ForEach(x => x.Execute(new SetupNode()));
+            Nodes.Where(x => !x.IsConfigured).ToList().ForEach(x => x.Execute(new ConfigureNode(service, configurationSource)));
+            Nodes.ForEach(x => x.Execute(new InitializeNode()));
         }
 
         public void ConfigureNode(string nodeId)
         {
             Check.ArgumentNullOrWhiteSpace(nodeId, nameof(nodeId));
-            var configurationSource = Container.Resolve<IConfigurationSource>();
-            Nodes.First(x => x.Id == nodeId).Configure(configurationSource);
+            var service = Container.Resolve<IService>(throwOnError: false);
+            var configurationSource = Container.Resolve<IConfigurationSource>(throwOnError: false);
+            Nodes.First(x => x.Id == nodeId).Execute(new ConfigureNode(service, configurationSource));
         }
 
         public void InitializeNode(string nodeId)
         {
             Check.ArgumentNullOrWhiteSpace(nodeId, nameof(nodeId));
-            Nodes.First(x => x.Id == nodeId).Initialize();
+            Nodes.First(x => x.Id == nodeId).Execute(new InitializeNode());
         }
 
         public GraphNodeContext GetNodeById(string nodeId)
@@ -127,52 +119,48 @@
             return Nodes.First(x => x.Id == nodeId);
         }
 
-        public IEnumerable<Stack<EventResult>> Execute(dynamic command)
+        public List<ExecutionCommandResult> Execute(dynamic command)
         {
             Check.ArgumentNull(command, nameof(command));
 
-            var allResultStacks = new List<Stack<EventResult>>(InputNodes.Count);
-            var oneHasRun = false;
+            var contextExecutionResults = new List<ExecutionCommandResult>(InputNodes.Count);
+
             foreach (var inputNode in InputNodes)
             {
-                try
-                {
-                    var resultExecutionStack = new Stack<EventResult>();
-                    inputNode.Execute(command, resultExecutionStack);
-                    allResultStacks.Add(resultExecutionStack);
-                    oneHasRun = true;
-                }
-                catch (NotSupportedException)
-                {
-                    // Only apply to the ones that support that
-                }
+                contextExecutionResults.Add(inputNode.ExecuteGraphCommand(command));
             }
 
-            if (!oneHasRun)
+            if (contextExecutionResults.All(x => x.IsIdle))
             {
                 throw new NotSupportedException("No context found that support this command");
             }
 
-            return allResultStacks;
+            if (contextExecutionResults.Any(x => x.IsFaulted))
+            {
+                throw new AggregateException("Errors while running command", contextExecutionResults.Select(x => x.Exception));
+            }
+
+            return contextExecutionResults;
         }
 
-        public Stack<EventResult> Execute(dynamic command, string uniqueId)
+        public ExecutionCommandResult Execute(dynamic command, string uniqueId)
         {
             Check.ArgumentNull(command, nameof(command));
             Check.ArgumentNullOrWhiteSpace(uniqueId, nameof(uniqueId));
 
-            try
+            var contextExecutionResult = InputNodes.First(x => x.Id == uniqueId).ExecuteGraphCommand(command);
+
+            if (contextExecutionResult.IsIdle)
             {
-                var resultExecutionStack = new Stack<EventResult>();
-                InputNodes.First(x => x.Id == uniqueId).Execute(command, resultExecutionStack);
-                return resultExecutionStack;
+                throw new NotSupportedException("No context found that support this command");
             }
-            catch (RuntimeBinderException ex)
+
+            if (contextExecutionResult.IsFaulted)
             {
-                throw new NotSupportedException(
-                    "This type of command is not supported by context (Tip: Only one implementation of ICommand<,> can be inferred automatically)",
-                    ex);
+                throw new AggregateException("Errors while running command", contextExecutionResult.Exception);
             }
+
+            return contextExecutionResult;
         }
 
         public IEnumerable<GraphNodeContext> GetChildren(string id)

@@ -3,177 +3,94 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Reflection;
-    using Microsoft.CSharp.RuntimeBinder;
-    using Service;
-    using Stages.Configuration;
-    using Stages.Initialization;
-    using Stages.Setup;
+    using Commands.Node;
+    using Commands.NodeInstance;
+    using Commands.NodeInstance.ExecutionData;
 
-    public sealed class GraphNodeContext
+    public sealed class GraphNodeContext : Context<GraphNodeContext>
     {
         public readonly string Id;
-        internal dynamic HostedContext { get; }
-        private readonly GraphContext graphContext;
-        private Stack<EventResult> localExecutionStack;
-        private AbstractContext HostedContextAsAbstractContext => HostedContext;
+        public bool IsConfigured => GraphNodeInstanceContextListPerAlgorithm.Any();
+        internal readonly GraphContext GraphContext;
+        internal readonly Type ContextType;
+        internal readonly List<IAlgorithmicInstanceExecution> AlgorithmicInstanceExecutions = new List<IAlgorithmicInstanceExecution>();
+        internal readonly Dictionary<Type, List<GraphNodeInstanceContext>> GraphNodeInstanceContextListPerAlgorithm = new Dictionary<Type, List<GraphNodeInstanceContext>>();
+        internal readonly AbstractContext AbstractContext;
 
-        public GraphNodeContext(AbstractContext hostedContext, GraphContext graphContext, string id)
+        public GraphNodeContext(Type contextType, GraphContext graphContext, string id)
         {
-            HostedContext = hostedContext;
-            this.graphContext = graphContext;
+            ContextType = contextType;
+            GraphContext = graphContext;
             Id = id;
-
-            hostedContext.CommandEventWithResultPublished += HostedContext_CommandEventWithResultPublished;
         }
 
-        private IEnumerable<EventResult> HostedContext_CommandEventWithResultPublished(IEvent eventPublished)
+        public GraphNodeContext(AbstractContext abstractContext, GraphContext graphContext, string id)
         {
-            if (eventPublished is IGraphFlowEventPushControl controlFlowEvent)
+            ContextType = abstractContext.GetType();
+            GraphContext = graphContext;
+            Id = id;
+            AbstractContext = abstractContext;
+        }
+
+        public ExecutionCommandResult ExecuteGraphCommand(dynamic command)
+        {
+            if (!AlgorithmicInstanceExecutions.Any())
             {
-                return controlFlowEvent.OverrideEventPropagationLogic(graphContext, Id, HostedContext);
+                // Default execution - find first and run it
+                return GraphNodeInstanceContextListPerAlgorithm.First().Value.Select(x => ExecutionLogicOnNodeInstance(command, x)).FirstOrDefault();
             }
 
-            return graphContext.GetChildren(Id)
-                .Select(childNode => childNode.EventPropagated(eventPublished, localExecutionStack))
-                .Where(eventResult => eventResult != null).ToList();
-        }
-
-        // TODO: break public methods to commands
-
-        public void Configure(IConfigurationSource configurationSource)
-        {
-            if (HostedContext is IConfigurableStageFactory configurable && !configurable.HasBeenConfigured)
+            // The first algorithm runs and the others are inspecting
+            IList<ExecutionCommandResult> firstExecutionCommandResults = null;
+            foreach (var algorithmicInstanceExecution in AlgorithmicInstanceExecutions)
             {
-                var command = configurable.GenerateConfigurationCommand(
-                    graphContext.Container.Resolve<IService>(throwOnError: false),
-                    graphContext,
-                    this);
+                var algorithmType = algorithmicInstanceExecution.GetType();
 
-                HostedContext.Execute(command); // TODO: immutability concerns
-            }
-        }
-
-        public void Setup()
-        {
-            if (HostedContext is ISetupStageFactory graphSetup)
-            {
-                var command = graphSetup.GenerateSetupCommand(graphContext, this);
-                HostedContext.Execute(command);
-            }
-        }
-
-        public void Initialize()
-        {
-            if (HostedContext is IInitializeStageFactory initialization)
-            {
-                var command = initialization.GenerateInitializeCommand();
-                HostedContext.Execute(command);
-            }
-        }
-
-        public EventResult Execute(dynamic command, Stack<EventResult> resultExecutionStack = null)
-        {
-            try
-            {
-                localExecutionStack = resultExecutionStack;
-
-                dynamic resultObject;
-                try
+                if (firstExecutionCommandResults == null)
                 {
-                    resultObject = HostedContext.Execute(command);
+                    // The first execution is the master algorithm
+                    var nodeInstancesToBeExecuted =
+                        algorithmicInstanceExecution.FindGraphNodeInstanceContextsToBeExecuted(
+                            GraphNodeInstanceContextListPerAlgorithm[algorithmType]
+                        );
+
+                    firstExecutionCommandResults = nodeInstancesToBeExecuted.Select(x => ExecutionLogicOnNodeInstance(command, x)).Cast<ExecutionCommandResult>().ToList();
                 }
-                catch (RuntimeBinderException)
+                else
                 {
-                    if (HostedContextAsAbstractContext is IGraphFlowExecutionSink graphFlowExecutionSink)
-                    {
-                        resultObject = graphFlowExecutionSink.CustomCommandExecute(graphContext, Id, command, localExecutionStack);
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    // Select nodes that would need to run
+                    var nodeInstancesToBeExecuted =
+                        algorithmicInstanceExecution.ContinueExecutionGraphNodeInstanceContextsToBeExecuted(
+                            firstExecutionCommandResults,
+                            GraphNodeInstanceContextListPerAlgorithm[algorithmType]
+                        );
+
+                    // Execute them
+                    var newExecutionCommandResults = nodeInstancesToBeExecuted.Select(x => ExecutionLogicOnNodeInstance(command, x)).Cast<ExecutionCommandResult>().ToList();
+
+                    // Possibly manipulate the returned results
+                    firstExecutionCommandResults =
+                        algorithmicInstanceExecution.FilterExecutionResults(firstExecutionCommandResults,
+                            newExecutionCommandResults);
                 }
-
-                foreach (var childNode in graphContext.GetChildren(Id))
-                {
-                    childNode.CheckPostGraphFlowPullControl(Id, HostedContext, command, localExecutionStack);
-                }
-
-                localExecutionStack = null;
-
-                if (resultObject is AbstractContext)
-                {
-                    resultObject = null; // TODO: maybe replace the current hosted context if it is the same type? (respecting immutability)
-                }
-
-                var eventResult = new EventResult
-                {
-                    NodeId = Id,
-                    ContextType = HostedContextAsAbstractContext.GetType(),
-                    ResultObject = (object) resultObject,
-                };
-
-                resultExecutionStack?.Push(eventResult);
-
-                return eventResult;
             }
-            catch (RuntimeBinderException ex)
+
+            // ReSharper disable once AssignNullToNotNullAttribute
+            return firstExecutionCommandResults.FirstOrDefault(x => x != null);
+        }
+
+        private ExecutionCommandResult ExecutionLogicOnNodeInstance(dynamic command, GraphNodeInstanceContext graphNodeInstanceContext)
+        {
+            var contextExecutionResult = graphNodeInstanceContext.Execute(new ExecuteCommand(command));
+
+            foreach (var publishedEvent in contextExecutionResult.PublishedEvents)
             {
-                // TODO: Create a warning and error pool instead of throwing and catching?
-
-                throw new NotSupportedException(
-                    "This type of command is not supported by context (Tip: Only one implementation of ICommand<,> can be inferred automatically)",
-                    ex);
-            }
-        }
-
-        private void CheckPostGraphFlowPullControl(string id, dynamic parentContext, dynamic parentCommandApplied, Stack<EventResult> eventResults)
-        {
-            if (HostedContext is IPostGraphFlowPullControl hostedContextWithPullControl)
-            {
-                hostedContextWithPullControl.PullNodeExecutionInformation(graphContext, id, parentContext, parentCommandApplied, eventResults);
-            }
-        }
-
-        private EventResult EventPropagated(IEvent eventPublished, Stack<EventResult> parentResultExecutionStack)
-        {
-            var isEventTypeSupported =
-                HostedContextAsAbstractContext.GetType().GetTypeInfo().ImplementedInterfaces.Any(x => InterfaceSupportsEventHandler(eventPublished, x));
-
-            if (isEventTypeSupported)
-            {
-                dynamic command;
-                try
-                {
-                    command = HostedContext.GetCommandForEvent((dynamic)eventPublished);
-                }
-                catch (RuntimeBinderException ex)
-                {
-                    throw new InvalidOperationException($"Could not get command for event {eventPublished.GetType().AssemblyQualifiedName} on context {HostedContextAsAbstractContext.GetType().AssemblyQualifiedName}", ex);
-                }
-
-                return Execute(command, parentResultExecutionStack);
+                Execute(new ProcessNodeEventLogic(publishedEvent, graphNodeInstanceContext));
             }
 
-            return null;
-        }
+            Execute(new CheckNodePostGraphFlowPullControl(command, graphNodeInstanceContext.HostedContext));
 
-        private static bool InterfaceSupportsEventHandler(IEvent eventPublished, Type interfaceType)
-        {
-            return interfaceType.GetGenericTypeDefinition() == typeof(IEventHandler<>) &&
-                   interfaceType.GenericTypeArguments.Length == 1 &&
-                   (
-                       interfaceType.GenericTypeArguments[0] == eventPublished.GetType()
-                       || interfaceType.GenericTypeArguments[0].GetTypeInfo().IsSubclassOf(eventPublished.GetType())
-                       || GenericTypeSupportsDeclaredInterface(eventPublished, interfaceType)
-                   );
-        }
-
-        private static bool GenericTypeSupportsDeclaredInterface(IEvent eventPublished, Type interfaceType)
-        {
-            return eventPublished.GetType().GetTypeInfo().ImplementedInterfaces.Any(y => y == interfaceType.GenericTypeArguments[0])
-                   && interfaceType.GenericTypeArguments[0].GetTypeInfo().IsInterface;
+            return contextExecutionResult;
         }
     }
 }

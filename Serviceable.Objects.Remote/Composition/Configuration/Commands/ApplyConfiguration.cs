@@ -2,21 +2,16 @@
 {
     using System;
     using Newtonsoft.Json;
-    using Objects.Composition.Graph;
-    using Objects.Composition.Service;
 
     public sealed class ApplyConfiguration<TConfiguration, TContextType> : ICommand<ConfigurableContext<TConfiguration, TContextType>, ConfigurableContext<TConfiguration, TContextType>>
         where TConfiguration : struct
         where TContextType : Context<TContextType>
     {
-        private const string OrchestratorService = "orchestrator";
-        private readonly IService service;
-        private readonly GraphNodeContext graphNodeContext;
+        private readonly string configurationString;
 
-        public ApplyConfiguration(IService service, GraphNodeContext graphNodeContext)
+        public ApplyConfiguration(string configurationString)
         {
-            this.service = service;
-            this.graphNodeContext = graphNodeContext;
+            this.configurationString = configurationString;
         }
 
         public ConfigurableContext<TConfiguration, TContextType> Execute(ConfigurableContext<TConfiguration, TContextType> context)
@@ -25,8 +20,6 @@
             {
                 if (context.ConfigurationSource != null)
                 {
-                    var configurationString =
-                        context.ConfigurationSource.GetConfigurationValueForKey(service?.ServiceName ?? OrchestratorService, graphNodeContext.Id, context.GetType().AssemblyQualifiedName);
                     context.SetConfiguration(JsonConvert.DeserializeObject<TConfiguration>(configurationString));
                 }
                 else

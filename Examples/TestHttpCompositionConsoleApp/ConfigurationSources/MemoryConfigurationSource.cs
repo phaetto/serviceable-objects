@@ -1,7 +1,6 @@
 ﻿namespace TestHttpCompositionConsoleApp.ConfigurationSources
 {
     using System;
-    using System.Collections.Generic;
     using Newtonsoft.Json;
     using Serviceable.Objects.Composition.Graph.Stages.Configuration;
     using Serviceable.Objects.Composition.ServiceOrchestrator;
@@ -26,10 +25,10 @@
                     {
                         OrchestratorName = "orchestrator-X",
                         ServiceOrchestratorBinding = new Binding {Host = "localhost"},
-                        ExternalBindings = new List<ExternalBinding>(),
+                        ExternalBinding = new ExternalBinding(),
                     });
                 default:
-                    throw new InvalidOperationException($"Type {typeName} is not supported.");
+                    return null;
             }
         }
     }

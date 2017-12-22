@@ -2,7 +2,6 @@
 {
     using System.Management.Automation;
     using Data;
-    using Serviceable.Objects.Instrumentation;
     using Serviceable.Objects.Instrumentation.Powershell;
 
     [Cmdlet("Enqueue", "Message")]

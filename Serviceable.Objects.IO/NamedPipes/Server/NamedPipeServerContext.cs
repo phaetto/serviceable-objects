@@ -1,6 +1,5 @@
 ﻿namespace Serviceable.Objects.IO.NamedPipes.Server
 {
-    using System.Collections.Generic;
     using System.IO;
     using System.IO.Pipes;
     using System.Linq;
@@ -12,7 +11,6 @@
     using Configuration;
     using Exceptions;
     using Newtonsoft.Json;
-    using Remote;
     using Remote.Composition.Configuration;
     using Remote.Serialization;
     using Remote.Serialization.Streaming;
@@ -63,7 +61,7 @@
                                 var command = commandSpecificationService.CreateCommandFromSpecification(commandSpecification);
 
                                 var eventResults =
-                                    PublishCommandEventAndGetResults(new GraphFlowEventPushControlApplyCommandInsteadOfEvent(command))
+                                    PublishContextEvent(new GraphFlowEventPushControlApplyCommandInsteadOfEvent(command))
                                         .Where(x => x.ResultObject != null);
 
                                 var commandResultSpecifications = commandSpecificationService.CreateSpecificationForEventResults(
