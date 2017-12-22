@@ -66,16 +66,12 @@
 
         private string ConfigureInString(string setting, Binding binding)
         {
-            return setting.Replace("$in.host", binding.Host)
-                .Replace("$in.port", binding.Port.ToString())
-                .Replace("$in.path", binding.Path);
+            return binding.Aggregate(setting, (current, keyValuePair) => current.Replace($"$in.{keyValuePair.Key}", keyValuePair.Value));
         }
 
         private string ConfigureOutString(string setting, Binding binding)
         {
-            return setting.Replace("$out.host", binding.Host)
-                .Replace("$out.port", binding.Port.ToString())
-                .Replace("$out.path", binding.Path);
+            return binding.Aggregate(setting, (current, keyValuePair) => current.Replace($"$out.{keyValuePair.Key}", keyValuePair.Value));
         }
     }
 }

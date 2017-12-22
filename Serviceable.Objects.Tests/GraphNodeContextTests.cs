@@ -44,6 +44,7 @@
 
         public struct TestContextConfiguration
         {
+            public string CustomValue { get; set; }
             public string InValue { get; set; }
             public string OutValue { get; set; }
         }
@@ -62,7 +63,12 @@
         {
             public string GetConfigurationValueForKey(string serviceName, string graphNodeId, string typeName)
             {
-                return JsonConvert.SerializeObject(new TestContextConfiguration { InValue = "$in.host", OutValue = "$out.host"});
+                return JsonConvert.SerializeObject(new TestContextConfiguration
+                {
+                    CustomValue = "$in.Custom",
+                    InValue = "$in.Host",
+                    OutValue = "$out.Host",
+                });
             }
         }
 
@@ -88,6 +94,9 @@
                 context.HasBeenConfigured = true;
                 context.TestContextConfiguration =
                     JsonConvert.DeserializeObject<TestContextConfiguration>(serializedConfigurationString);
+
+                Assert.Equal("custom-value", context.TestContextConfiguration.CustomValue);
+
                 return context;
             }
         }
@@ -106,11 +115,13 @@
                     {
                         new Binding
                         {
-                            Host = "in-host-1"
+                            Host = "in-host-1",
+                            ["Custom"] = "custom-value",
                         },
                         new Binding
                         {
-                            Host = "in-host-2"
+                            Host = "in-host-2",
+                            ["Custom"] = "custom-value",
                         }
                     }
                 }

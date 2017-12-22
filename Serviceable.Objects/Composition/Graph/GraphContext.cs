@@ -148,8 +148,6 @@
             Check.ArgumentNull(command, nameof(command));
             Check.ArgumentNullOrWhiteSpace(uniqueId, nameof(uniqueId));
 
-            // TODO: error reporting?
-
             var contextExecutionResult = InputNodes.First(x => x.Id == uniqueId).ExecuteGraphCommand(command);
 
             if (contextExecutionResult.IsIdle)
