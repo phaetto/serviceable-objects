@@ -14,7 +14,7 @@
         public string OrchestratorName => Configuration.OrchestratorName;
         public string ServiceName => Configuration.ServiceName;
         public string TemplateName => Configuration.TemplateName;
-        public Binding Binding => Configuration.Binding;
+        public IList<InBinding> InBindings => Configuration.InBindings;
         public IList<ExternalBinding> ExternalBindings => Configuration.ExternalBindings;
         public GraphContext GraphContext { get; }
         public Container ServiceContainer { get; } = new Container();

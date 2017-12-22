@@ -13,6 +13,7 @@
         public bool IsConfigured => GraphNodeInstanceContextListPerAlgorithm.Any();
         internal readonly GraphContext GraphContext;
         internal readonly Type ContextType;
+        // TODO: change to ordered algorithmic execution (or add another list)
         internal readonly Dictionary<string, List<GraphNodeInstanceContext>> GraphNodeInstanceContextListPerAlgorithm = new Dictionary<string, List<GraphNodeInstanceContext>>();
         internal readonly AbstractContext AbstractContext;
 
@@ -37,6 +38,7 @@
         public ExecutionCommandResult ExecuteGraphCommand(dynamic command)
         {
             // TODO: algorithmic execution
+            // TODO: start from the first and move the results to the second so it can decide execution
 
             return GraphNodeInstanceContextListPerAlgorithm.First().Value.Select(x =>
             {

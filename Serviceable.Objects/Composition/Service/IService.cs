@@ -10,7 +10,7 @@
         string OrchestratorName { get; }
         string ServiceName { get; }
         string TemplateName { get; }
-        Binding Binding { get; }
+        IList<InBinding> InBindings { get; }
         IList<ExternalBinding> ExternalBindings { get; }
         Container ServiceContainer { get; }
         GraphContext GraphContext { get; }

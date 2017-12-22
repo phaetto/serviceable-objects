@@ -8,7 +8,7 @@
         public string OrchestratorName { get; set; }
         public string ServiceName { get; set; }
         public string TemplateName { get; set; }
-        public Binding Binding { get; set; }
+        public List<InBinding> InBindings { get; set; }
         public List<ExternalBinding> ExternalBindings { get; set; }
     }
 }

@@ -33,32 +33,49 @@
                 return new Dictionary<string, IEnumerable<string>>();
             }
 
-            if (service?.Binding != null)
-            {
-                nodeConfiguration = ConfigureString(nodeConfiguration, service.Binding);
-            }
+            var contextInBindings =
+                service?.InBindings?.FirstOrDefault(x =>
+                    x.ContextTypeName == context.ContextType.AssemblyQualifiedName);
 
-            var contextBindings =
+            var contextExternalBindings =
                 service?.ExternalBindings?.FirstOrDefault(x =>
                     x.ContextTypeName == context.ContextType.AssemblyQualifiedName);
 
-            if ((contextBindings?.AlgorithmBindings.Count ?? 0) == 0)
+            var configurations = new List<string> {nodeConfiguration};
+
+            if (contextInBindings != null)
+            {
+                configurations = contextInBindings.ScaleSetBindings.Select(x => ConfigureInString(nodeConfiguration, x))
+                    .ToList();
+            }
+
+            if ((contextExternalBindings?.AlgorithmBindings?.Count ?? 0) == 0)
             {
                 return new Dictionary<string, IEnumerable<string>>
                 {
-                    {DefaultAlgorithmicService, new[] {nodeConfiguration}}
+                    {DefaultAlgorithmicService, configurations}
                 };
             }
 
-            return contextBindings.AlgorithmBindings
-                .ToDictionary(x => x.AlgorithmTypeName, y => y.ScaleSetBindings.Select(x => ConfigureString(nodeConfiguration, x)));
+            return contextExternalBindings.AlgorithmBindings
+                .ToDictionary(
+                    x => x.AlgorithmTypeName, 
+                    y => configurations.SelectMany(z => y.ScaleSetBindings.Select(x => ConfigureOutString(z, x)))
+                );
         }
 
-        private string ConfigureString(string setting, Binding binding)
+        private string ConfigureInString(string setting, Binding binding)
         {
-            return setting.Replace("$external.host", binding.Host)
-                .Replace("$external.port", binding.Port.ToString())
-                .Replace("$external.path", binding.Path);
+            return setting.Replace("$in.host", binding.Host)
+                .Replace("$in.port", binding.Port.ToString())
+                .Replace("$in.path", binding.Path);
+        }
+
+        private string ConfigureOutString(string setting, Binding binding)
+        {
+            return setting.Replace("$out.host", binding.Host)
+                .Replace("$out.port", binding.Port.ToString())
+                .Replace("$out.path", binding.Path);
         }
     }
 }
