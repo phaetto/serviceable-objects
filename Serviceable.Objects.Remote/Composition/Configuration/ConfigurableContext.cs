@@ -40,7 +40,7 @@
         {
             if (!HasBeenConfigured && !(action is ApplyConfiguration<TConfiguration, TContextType>))
             {
-                throw new InvalidOperationException($"The instance {GetType().AssemblyQualifiedName} has already been configured yet.");
+                throw new InvalidOperationException($"The instance {GetType().AssemblyQualifiedName} has not been configured yet.");
             }
 
             return base.InvokeExecute(action);

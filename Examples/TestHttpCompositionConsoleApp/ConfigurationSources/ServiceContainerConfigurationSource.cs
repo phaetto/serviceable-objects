@@ -1,6 +1,7 @@
 ﻿namespace TestHttpCompositionConsoleApp.ConfigurationSources
 {
-    using System;
+    using Contexts.Http;
+    using Contexts.Http.Configuration;
     using Newtonsoft.Json;
     using Serviceable.Objects.Composition.Graph.Stages.Configuration;
     using Serviceable.Objects.IO.NamedPipes.Server;
@@ -16,6 +17,12 @@
                     return JsonConvert.SerializeObject(new NamedPipeServerConfiguration
                     {
                         PipeName  = string.Join(".", serviceName, graphNodeId) // TODO: centralise the configuration discovery
+                    });
+                case var s when s == typeof(OwinHttpContext).AssemblyQualifiedName:
+                    return JsonConvert.SerializeObject(new OwinHttpContextConfiguration()
+                    {
+                        Host = "$in.Host",
+                        Port = "$in.Port",
                     });
                 default:
                     return null;

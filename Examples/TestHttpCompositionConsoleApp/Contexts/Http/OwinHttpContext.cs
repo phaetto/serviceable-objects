@@ -4,39 +4,26 @@
     using System.Linq;
     using System.Threading.Tasks;
     using Commands;
-    using Microsoft.AspNetCore.Builder;
+    using Configuration;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Routing;
-    using Microsoft.Extensions.Configuration;
-    using Microsoft.Extensions.DependencyInjection;
-    using Microsoft.Extensions.Logging;
     using Newtonsoft.Json;
-    using Serviceable.Objects;
     using Serviceable.Objects.Composition.Graph.Events;
     using Serviceable.Objects.Composition.Graph.Stages.Initialization;
+    using Serviceable.Objects.Remote.Composition.Configuration;
     using Serviceable.Objects.Remote.Serialization;
 
-    public sealed class OwinHttpContext : Context<OwinHttpContext>, IInitializeStageFactory
+    public sealed class OwinHttpContext : ConfigurableContext<OwinHttpContextConfiguration, OwinHttpContext>, IInitializeStageFactory
     {
-        public readonly IWebHost Host;
+        internal IWebHost Host;
 
-        public OwinHttpContext()
+        public OwinHttpContext(OwinHttpContextConfiguration configuration) : base(configuration)
         {
-            var config = new ConfigurationBuilder()
-                .AddEnvironmentVariables().Build();
+        }
 
-            Host = new WebHostBuilder()
-                .UseKestrel()
-                .UseConfiguration(config)
-                .UseContentRoot(Directory.GetCurrentDirectory())
-                .ConfigureLogging(l => l.AddConsole())
-                .ConfigureServices(s => s.AddRouting())
-                .Configure(app =>
-                {
-                    app.UseRouter(SetupRouter);
-                })
-                .Build();
+        public OwinHttpContext(Serviceable.Objects.Composition.Graph.Stages.Configuration.IConfigurationSource configurationSource) : base(configurationSource)
+        {
         }
 
         public dynamic GenerateInitializeCommand()
@@ -44,7 +31,7 @@
             return new Run();
         }
 
-        private void SetupRouter(IRouteBuilder routerBuilder)
+        internal void SetupRouter(IRouteBuilder routerBuilder)
         {
             routerBuilder.MapPost("test", TestRequestHandler);
         }

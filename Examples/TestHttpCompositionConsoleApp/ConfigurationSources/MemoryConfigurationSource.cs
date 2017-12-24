@@ -1,6 +1,5 @@
 ﻿namespace TestHttpCompositionConsoleApp.ConfigurationSources
 {
-    using System;
     using Newtonsoft.Json;
     using Serviceable.Objects.Composition.Graph.Stages.Configuration;
     using Serviceable.Objects.Composition.ServiceOrchestrator;

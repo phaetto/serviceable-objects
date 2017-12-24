@@ -1,6 +1,7 @@
 ﻿
 namespace TestHttpCompositionConsoleApp
 {
+    using System.Collections.Generic;
     using System.Threading.Tasks;
     using ConfigurationSources;
     using Serviceable.Objects.Instrumentation.Server;
@@ -13,6 +14,7 @@ namespace TestHttpCompositionConsoleApp
     using Contexts.Http;
     using Contexts.Queues;
     using Newtonsoft.Json;
+    using Serviceable.Objects.Composition.ServiceOrchestrator;
     using Serviceable.Objects.Remote.Composition.Graph;
     using Serviceable.Objects.Remote.Composition.Host.Configuration;
     using Serviceable.Objects.Remote.Composition.ServiceOrchestrator.Configuration;
@@ -61,8 +63,8 @@ namespace TestHttpCompositionConsoleApp
              * Testable
              * Composable
              * Configurable
-             * Intrumentable
-             * Scalable TODO
+             * Instrumentable
+             * Scalable
              * Updatable TODO
              * 
              */
@@ -95,6 +97,18 @@ namespace TestHttpCompositionConsoleApp
                 ServiceName = "service-X",
                 OrchestratorName = "orchestrator-X",
                 TemplateName = "template-X",
+                InBindings = new List<InBinding>
+                {
+                    new InBinding
+                    {
+                        ContextTypeName = typeof(OwinHttpContext).AssemblyQualifiedName,
+                        ScaleSetBindings = new List<Binding>
+                        {
+                            new Binding { Host = "localhost", Port = "5000" },
+                            new Binding { Host = "localhost", Port = "5001" },
+                        }
+                    }
+                }
             };
 
             new ApplicationHost(JsonConvert.SerializeObject(new ApplicationHostDataConfiguration
