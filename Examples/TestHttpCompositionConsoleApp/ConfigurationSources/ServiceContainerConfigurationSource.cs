@@ -16,7 +16,7 @@
                 case var s when s == typeof(NamedPipeServerContext).AssemblyQualifiedName:
                     return JsonConvert.SerializeObject(new NamedPipeServerConfiguration
                     {
-                        PipeName  = string.Join(".", serviceName, graphNodeId) // TODO: centralise the configuration discovery
+                        PipeName  = string.Join(".", serviceName, graphNodeId)
                     });
                 case var s when s == typeof(OwinHttpContext).AssemblyQualifiedName:
                     return JsonConvert.SerializeObject(new OwinHttpContextConfiguration()
