@@ -99,20 +99,6 @@
             Nodes.ForEach(x => x.Execute(new InitializeNode()));
         }
 
-        public void ConfigureNode(string nodeId)
-        {
-            Check.ArgumentNullOrWhiteSpace(nodeId, nameof(nodeId));
-            var service = Container.Resolve<IService>(throwOnError: false);
-            var configurationSource = Container.Resolve<IConfigurationSource>(throwOnError: false);
-            Nodes.First(x => x.Id == nodeId).Execute(new ConfigureNode(service, configurationSource));
-        }
-
-        public void InitializeNode(string nodeId)
-        {
-            Check.ArgumentNullOrWhiteSpace(nodeId, nameof(nodeId));
-            Nodes.First(x => x.Id == nodeId).Execute(new InitializeNode());
-        }
-
         public GraphNodeContext GetNodeById(string nodeId)
         {
             Check.ArgumentNullOrWhiteSpace(nodeId, nameof(nodeId));

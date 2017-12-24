@@ -26,10 +26,10 @@
             graphContext.Container.RegisterWithDefaultInterface(new TestConfigurationSource());
 
             // Configure
-            graphContext.ConfigureNode("test-node");
-
+            graphContext.ConfigureSetupAndInitialize();
             Assert.True(graphNodeContext.IsConfigured);
 
+            // Execute
             var result = graphNodeContext.ExecuteGraphCommand(command);
 
             Assert.NotNull(result);
