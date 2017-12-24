@@ -90,7 +90,7 @@
 
         public void ConfigureSetupAndInitialize() 
         {
-            // Configure/Setup/Initialize - cordering matters
+            // Configure/Setup/Initialize - ordering matters
             var service = Container.Resolve<IService>(throwOnError: false);
             var configurationSource = Container.Resolve<IConfigurationSource>(throwOnError: false);
             Nodes.ForEach(x => x.Execute(new ConfigureNode(service, configurationSource)));
