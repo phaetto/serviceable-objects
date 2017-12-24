@@ -13,7 +13,7 @@
     public sealed class GraphContext : Context<GraphContext> // TODO: IDisposable
     {
         public readonly Container Container;
-        internal readonly List<GraphNodeContext> InputNodes = new List<GraphNodeContext>();
+        internal readonly List<GraphNodeContext> InputNodes = new List<GraphNodeContext>(); // TODO: fields can be made private
         internal readonly List<GraphVertexContext> Vertices = new List<GraphVertexContext>();
         internal readonly List<GraphNodeContext> Nodes = new List<GraphNodeContext>();
 

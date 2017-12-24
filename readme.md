@@ -4,7 +4,17 @@ A library that attempts to lower the total complexity of a system by introducing
 
 Instead of the system objects to call each stage by wrapping them in functions, this library provides a layer of a bus-like system that provides the communication with each object (that acts as a kind of internal long running service). The responsibility of each of those objects is to use commands and events as a service, to provide the signals and the means programmatically and dynamically to the whole system of objects.
 
-Concepts
+## Principles
+This library has been designed according the following principles on the service level:
+
+- Testable
+- Composable
+- Configurable
+- Instrumentable
+- Scalable
+- Updatable (TODO)
+
+## Concepts
 - *Contexts:*
 
 Contexts are the heart of the system. They provide the necessary abstraction to allow commands to apply on them, either synchronous or asynchronous, and they provide a chainable developer experience.
