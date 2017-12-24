@@ -5,6 +5,7 @@
     using NodeInstance;
     using Service;
     using Stages.Configuration;
+    using Stages.Setup;
 
     public sealed class ConfigureNode : ICommand<GraphNodeContext, GraphNodeContext>
     {
@@ -49,8 +50,15 @@
 
                 foreach (var externalConfigurationSetting in configuration.Value)
                 {
-                    var abstractContext =
-                        context.GraphContext.Container.CreateObject(context.ContextType) as AbstractContext;
+                    AbstractContext abstractContext;
+                    try
+                    {
+                        abstractContext = context.GraphContext.Container.CreateObject(context.ContextType) as AbstractContext;
+                    }
+                    catch (Exception exception)
+                    {
+                        throw new InvalidOperationException($"Type '{context.ContextType.FullName}' could not be instantiated. Either add a constructor without arguments or use {typeof(ISetupStageFactory)} to initialize your type manually.", exception);
+                    }
 
                     var contextNodeInstance = new GraphNodeInstanceContext(abstractContext, context.GraphContext,
                         context, context.Id);

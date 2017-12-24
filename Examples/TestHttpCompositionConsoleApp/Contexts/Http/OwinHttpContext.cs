@@ -22,7 +22,7 @@
         {
         }
 
-        public OwinHttpContext(Serviceable.Objects.Composition.Graph.Stages.Configuration.IConfigurationSource configurationSource) : base(configurationSource)
+        public OwinHttpContext()
         {
         }
 

@@ -6,7 +6,6 @@
     using System.Threading.Tasks;
     using Commands;
     using Composition.Graph.Events;
-    using Composition.Graph.Stages.Configuration;
     using Composition.Graph.Stages.Initialization;
     using Configuration;
     using Exceptions;
@@ -25,10 +24,6 @@
         }
 
         public NamedPipeServerContext(NamedPipeServerConfiguration configuration) : base(configuration)
-        {
-        }
-
-        public NamedPipeServerContext(IConfigurationSource configurationSource) : base(configurationSource)
         {
         }
 
