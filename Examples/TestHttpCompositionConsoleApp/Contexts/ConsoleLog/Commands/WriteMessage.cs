@@ -1,6 +1,7 @@
 ﻿namespace TestHttpCompositionConsoleApp.Contexts.ConsoleLog.Commands
 {
     using System;
+    using Data;
     using Serviceable.Objects.Remote;
 
     public sealed class WriteMessage : ReproducibleCommandWithData<ConsoleLogContext, ConsoleLogContext, WriteMessageData>

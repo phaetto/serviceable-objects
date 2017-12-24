@@ -2,6 +2,7 @@
 
 namespace TestHttpCompositionConsoleApp.Contexts.ConsoleLog.Commands.Instrumentation
 {
+    using Data;
     using Serviceable.Objects.Instrumentation.Powershell;
 
     [Cmdlet("Write", "Message")]
