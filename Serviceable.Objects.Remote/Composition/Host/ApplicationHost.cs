@@ -23,7 +23,6 @@
     GraphVertices: [
     ],
     Registrations: [
-        { Type:'" + typeof(ServiceOrchestratorDefaultConfigurationSource).AssemblyQualifiedName + @"', WithDefaultInterface:true },
     ],
 }
 ";
@@ -70,9 +69,9 @@
             else
             {
                 // This is an orchestrator
-                var container = new Container();
-                container.Register(new ServiceOrchestratorDefaultConfigurationSource(configuration.ServiceOrchestratorConfiguration));
-                GraphContext = new GraphContext(container);
+                Service = new ServiceContext(configuration.ServiceContextConfiguration);
+                Service.ServiceContainer.RegisterWithDefaultInterface(new ServiceOrchestratorDefaultConfigurationSource(configuration.ServiceOrchestratorConfiguration));
+                GraphContext = Service.GraphContext;
                 if (configuration.OrchestratorOverrideTemplate != null)
                 {
                     if (configuration.DependencyInjectionRegistrationTemplate != null)

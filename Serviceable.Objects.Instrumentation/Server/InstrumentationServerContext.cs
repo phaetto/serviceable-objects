@@ -1,11 +1,13 @@
 ﻿namespace Serviceable.Objects.Instrumentation.Server
 {
     using System;
+    using System.Linq;
     using Commands;
     using CommonParameters;
-    using Composition.Graph;
-    using Composition.Graph.Commands.NodeInstance.ExecutionData;
-    using Composition.Graph.Stages.Setup;
+    using Objects.Composition.Graph;
+    using Objects.Composition.Graph.Commands.NodeInstance.ExecutionData;
+    using Objects.Composition.Graph.Stages.Setup;
+    using Remote.Composition.ServiceOrchestrator;
 
     public sealed class InstrumentationServerContext : Context<InstrumentationServerContext>, IGraphFlowExecutionSink, ISetupStageFactory
     {
@@ -16,10 +18,22 @@
         {
             try
             {
-                var executionDataResult = (ExecutionCommandResult) graphContext.GetNodeById(CommonInstrumentationParameters.ContextId)
-                    .ExecuteGraphCommand(commandApplied);
+                GraphNodeContext graphNodeContextForExecution;
+                if (string.IsNullOrWhiteSpace(CommonInstrumentationParameters.ServiceName)
+                    && string.IsNullOrWhiteSpace(CommonInstrumentationParameters.ContextId))
+                {
+                    // This needs to reach orchestrator
+                    graphNodeContextForExecution = graphContext.GetNodeById(graphContext.GetNodeIds<ServiceOrchestratorContext>().First());
+                }
+                else
+                {
+                    // We need to find the target context node to execute
+                    graphNodeContextForExecution = graphContext.GetNodeById(CommonInstrumentationParameters.ContextId);
+                }
 
-                return executionDataResult.SingleContextExecutionResultWithInfo.ResultObject;
+                var executionDataResult = (ExecutionCommandResult) graphNodeContextForExecution.ExecuteGraphCommand(commandApplied);
+
+                return executionDataResult.SingleContextExecutionResultWithInfo?.ResultObject ?? executionDataResult.Exception;
             }
             catch (Exception exception)
             {

@@ -4,10 +4,12 @@
 
     public sealed class CommonInstrumentationParameters
     {
+        public const string OrchestratorParameterSet = "Orchestrator";
         public const string NodeParameterSet = "Node";
         public const string CustomPipeParameterSet = "Custom Pipe";
 
         [ValidateNotNullOrEmpty]
+        [Parameter(Mandatory = true, HelpMessage = "The orchestrator that you want to connect to, or the service within that group", ParameterSetName = OrchestratorParameterSet)]
         [Parameter(Mandatory = true, HelpMessage = "The orchestrator that you want to connect to, or the service within that group", ParameterSetName = NodeParameterSet)]
         public string ServiceOrchestrator { get; set; }
 

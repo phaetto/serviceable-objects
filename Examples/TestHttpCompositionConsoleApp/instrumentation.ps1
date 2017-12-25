@@ -16,7 +16,10 @@ PowerShell -NoProfile -Command {
     Set-Location -Path $folder;
     Move-Item "$location\*.dll" $folder -Force;
 
-    Import-Module "$folder\TestHttpCompositionConsoleApp.dll";
+    Import-Module "$folder\TestHttpCompositionConsoleApp.dll"; # Extended
+    Import-Module "$folder\Serviceable.Objects.Instrumentation.dll"; # Standard
+
+    New-Service -ServiceOrchestrator "orchestrator-X" -Data @{ ServiceName='service-X' };
 
     #Get-Help Write-Message;
     #Get-Help Enqueue-Message;

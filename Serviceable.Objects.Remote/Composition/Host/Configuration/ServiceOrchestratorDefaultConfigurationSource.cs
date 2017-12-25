@@ -1,6 +1,5 @@
 ﻿namespace Serviceable.Objects.Remote.Composition.Host.Configuration
 {
-    using System;
     using Newtonsoft.Json;
     using Objects.Composition.Graph.Stages.Configuration;
     using ServiceOrchestrator;
@@ -22,7 +21,7 @@
                 return JsonConvert.SerializeObject(serviceOrchestratorConfiguration);
             }
 
-            throw new InvalidOperationException("ServiceOrchestratorDefaultConfigurationSource only auto-configures ServiceOrchestrator");
+            return null;
         }
     }
 }

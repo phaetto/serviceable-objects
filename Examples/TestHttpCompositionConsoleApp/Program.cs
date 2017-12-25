@@ -33,7 +33,6 @@ namespace TestHttpCompositionConsoleApp
     GraphVertices: [
     ],
     Registrations: [
-        { Type:'" + typeof(MemoryConfigurationSource).AssemblyQualifiedName + @"', WithDefaultInterface:true },
     ],
 }
 ";
@@ -79,33 +78,22 @@ namespace TestHttpCompositionConsoleApp
             var serviceOrchestratorConfiguration = new ServiceOrchestratorConfiguration
             {
                 OrchestratorName = "orchestrator-X",
-            };
-
-            Task.Run(() =>
-            {
-                new ApplicationHost(JsonConvert.SerializeObject(new ApplicationHostDataConfiguration
+                GraphTemplatesDictionary = new Dictionary<string, string>
                 {
-                    DependencyInjectionRegistrationTemplate = JsonConvert.DeserializeObject<DependencyInjectionRegistrationTemplate>(serviceOrchestratorGraphTemplate),
-                    OrchestratorOverrideTemplate = JsonConvert.DeserializeObject<GraphTemplate>(serviceOrchestratorGraphTemplate),
-                    ServiceOrchestratorConfiguration = serviceOrchestratorConfiguration,
-                }))
-                .Execute(new RunAndBlock());
-            });
-
-            var serviceContextConfiguration = new ServiceContextConfiguration
-            {
-                ServiceName = "service-X",
-                OrchestratorName = "orchestrator-X",
-                TemplateName = "template-X",
-                InBindings = new List<InBinding>
+                    ["service-X"] = serviceGraphTemplate,
+                },
+                InBindingsPerService = new Dictionary<string, List<InBinding>>
                 {
-                    new InBinding
+                    ["service-X"] = new List<InBinding>
                     {
-                        ContextTypeName = typeof(OwinHttpContext).AssemblyQualifiedName,
-                        ScaleSetBindings = new List<Binding>
+                        new InBinding
                         {
-                            new Binding { Host = "localhost", Port = "5000" },
-                            new Binding { Host = "localhost", Port = "5001" },
+                            ContextTypeName = typeof(OwinHttpContext).AssemblyQualifiedName,
+                            ScaleSetBindings = new List<Binding>
+                            {
+                                new Binding { Host = "localhost", Port = "5000" },
+                                new Binding { Host = "localhost", Port = "5001" },
+                            }
                         }
                     }
                 }
@@ -114,11 +102,37 @@ namespace TestHttpCompositionConsoleApp
             new ApplicationHost(JsonConvert.SerializeObject(new ApplicationHostDataConfiguration
             {
                 ServiceOrchestratorConfiguration = serviceOrchestratorConfiguration,
-                ServiceContextConfiguration = serviceContextConfiguration,
-                DependencyInjectionRegistrationTemplate = JsonConvert.DeserializeObject<DependencyInjectionRegistrationTemplate>(serviceGraphTemplate),
-                ServiceGraphTemplate = JsonConvert.DeserializeObject<GraphTemplate>(serviceGraphTemplate),
+                OrchestratorOverrideTemplate = JsonConvert.DeserializeObject<GraphTemplate>(serviceOrchestratorGraphTemplate),
             }))
             .Execute(new RunAndBlock());
+
+            //var serviceContextConfiguration = new ServiceContextConfiguration
+            //{
+            //    ServiceName = "service-X",
+            //    OrchestratorName = "orchestrator-X",
+            //    TemplateName = "template-X",
+            //    InBindings = new List<InBinding>
+            //    {
+            //        new InBinding
+            //        {
+            //            ContextTypeName = typeof(OwinHttpContext).AssemblyQualifiedName,
+            //            ScaleSetBindings = new List<Binding>
+            //            {
+            //                new Binding { Host = "localhost", Port = "5000" },
+            //                new Binding { Host = "localhost", Port = "5001" },
+            //            }
+            //        }
+            //    }
+            //};
+
+            //new ApplicationHost(JsonConvert.SerializeObject(new ApplicationHostDataConfiguration
+            //{
+            //    ServiceOrchestratorConfiguration = serviceOrchestratorConfiguration,
+            //    ServiceContextConfiguration = serviceContextConfiguration,
+            //    DependencyInjectionRegistrationTemplate = JsonConvert.DeserializeObject<DependencyInjectionRegistrationTemplate>(serviceGraphTemplate),
+            //    ServiceGraphTemplate = JsonConvert.DeserializeObject<GraphTemplate>(serviceGraphTemplate),
+            //}))
+            //.Execute(new RunAndBlock());
         }
     }
 }

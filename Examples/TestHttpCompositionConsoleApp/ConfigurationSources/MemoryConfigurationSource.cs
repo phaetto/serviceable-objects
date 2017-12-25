@@ -2,7 +2,6 @@
 {
     using Newtonsoft.Json;
     using Serviceable.Objects.Composition.Graph.Stages.Configuration;
-    using Serviceable.Objects.Composition.ServiceOrchestrator;
     using Serviceable.Objects.IO.NamedPipes.Server;
     using Serviceable.Objects.IO.NamedPipes.Server.Configuration;
     using Serviceable.Objects.Remote.Composition.ServiceOrchestrator;
@@ -23,8 +22,6 @@
                     return JsonConvert.SerializeObject(new ServiceOrchestratorConfiguration
                     {
                         OrchestratorName = "orchestrator-X",
-                        ServiceOrchestratorBinding = new Binding {Host = "localhost"},
-                        ExternalBinding = new ExternalBinding(),
                     });
                 default:
                     return null;
