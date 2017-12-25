@@ -13,7 +13,7 @@
     using Service;
     using ServiceOrchestrator;
 
-    public sealed class ApplicationHost : Context<ApplicationHost> // TODO: consider moving it to IO
+    public sealed class ApplicationHost : Context<ApplicationHost>
     {
         public readonly string DefaultOrchestratorTemplate = @"
 {
@@ -54,7 +54,6 @@
 
         public ApplicationHost(string jsonString)
         {
-            // TODO: Add console integration (debug print, redirection etc)
             var configuration = JsonConvert.DeserializeObject<ApplicationHostDataConfiguration>(jsonString);
             if (!string.IsNullOrWhiteSpace(configuration.ServiceContextConfiguration.ServiceName))
             {

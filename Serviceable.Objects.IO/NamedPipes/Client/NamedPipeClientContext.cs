@@ -34,7 +34,7 @@
 
                 namedPipeClientStream.WaitForPipeDrain();
 
-                if (command is IRemotable) // TODO: abstract this to a common command executioner?
+                if (command is IRemotable)
                 {
                     do
                     {

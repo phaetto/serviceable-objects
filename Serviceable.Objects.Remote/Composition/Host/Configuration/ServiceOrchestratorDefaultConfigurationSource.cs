@@ -19,7 +19,7 @@
         {
             if (typeName == typeof(ServiceOrchestratorContext).AssemblyQualifiedName)
             {
-                return JsonConvert.SerializeObject(serviceOrchestratorConfiguration); // TODO: just send an object/TConfigurationType?
+                return JsonConvert.SerializeObject(serviceOrchestratorConfiguration);
             }
 
             throw new InvalidOperationException("ServiceOrchestratorDefaultConfigurationSource only auto-configures ServiceOrchestrator");

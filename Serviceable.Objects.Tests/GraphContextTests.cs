@@ -57,7 +57,5 @@
             Assert.Equal("new-value", contextForTest2.ContextVariable);
             Assert.Null(contextForTest3.ContextVariable);
         }
-
-        // TODO: ProcessNodeInstanceEventLogic/IGraphFlowEventPushControl tests
     }
 }
