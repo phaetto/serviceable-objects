@@ -1,14 +1,13 @@
 ﻿
 namespace TestHttpCompositionConsoleApp
 {
+    using System;
     using System.Collections.Generic;
-    using System.Threading.Tasks;
     using ConfigurationSources;
     using Serviceable.Objects.Instrumentation.Server;
     using Serviceable.Objects.IO.NamedPipes.Server;
     using Serviceable.Objects.Remote.Composition.Host;
     using Serviceable.Objects.Remote.Composition.Host.Commands;
-    using Serviceable.Objects.Remote.Composition.Service.Configuration;
     using Serviceable.Objects.Remote.Composition.ServiceOrchestrator;
     using Contexts.ConsoleLog;
     using Contexts.Http;
@@ -18,7 +17,6 @@ namespace TestHttpCompositionConsoleApp
     using Serviceable.Objects.Remote.Composition.Graph;
     using Serviceable.Objects.Remote.Composition.Host.Configuration;
     using Serviceable.Objects.Remote.Composition.ServiceOrchestrator.Configuration;
-    using Serviceable.Objects.Remote.Dependencies;
 
     class Program
     {
@@ -68,12 +66,16 @@ namespace TestHttpCompositionConsoleApp
              * 
              */
 
-            // TODO: Add process orchestrator
+            Console.WriteLine($"Entering process with '{string.Join(" ", args)}' arguments");
 
-            //// TODO: should be a command
-            //var serviceOrchestratorContext = serviceOrchestratorContainer.Resolve<ServiceOrchestratorContext>();
-            //serviceOrchestratorContext.GraphTemplatesDictionary.Add("template-X", graphTemplate);
-            //serviceOrchestratorContext.ServiceRegistrations.Add(new ServiceRegistration { ServiceName = "service-X" });
+            if (args.Length > 0)
+            {
+                Console.WriteLine("Starting service...");
+                new ApplicationHost(args).Execute(new RunAndBlock());
+                return;
+            }
+
+            Console.WriteLine("Starting orchestrator...");
 
             var serviceOrchestratorConfiguration = new ServiceOrchestratorConfiguration
             {

@@ -21,6 +21,8 @@ PowerShell -NoProfile -Command {
 
     New-Service -ServiceOrchestrator "orchestrator-X" -Data @{ ServiceName='service-X' };
 
+    Start-Sleep -s 5;
+
     #Get-Help Write-Message;
     #Get-Help Enqueue-Message;
 
