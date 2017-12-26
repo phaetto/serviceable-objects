@@ -57,6 +57,7 @@
             {
                 // This is a service
                 Service = new ServiceContext(configuration.ServiceContextConfiguration);
+                Service.ServiceContainer.Register(this);
                 GraphContext = Service.GraphContext;
                 if (configuration.DependencyInjectionRegistrationTemplate != null)
                 {
@@ -69,6 +70,7 @@
             {
                 // This is an orchestrator
                 Service = new ServiceContext(configuration.ServiceContextConfiguration);
+                Service.ServiceContainer.Register(this);
                 Service.ServiceContainer.RegisterWithDefaultInterface(new ServiceOrchestratorDefaultConfigurationSource(configuration.ServiceOrchestratorConfiguration));
                 GraphContext = Service.GraphContext;
                 if (configuration.OrchestratorOverrideTemplate != null)
