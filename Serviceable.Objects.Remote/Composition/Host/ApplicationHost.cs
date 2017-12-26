@@ -9,7 +9,6 @@
     using Objects.Composition.Graph;
     using Objects.Composition.Service;
     using Objects.Composition.ServiceOrchestrator;
-    using Objects.Dependencies;
     using Service;
     using ServiceOrchestrator;
 

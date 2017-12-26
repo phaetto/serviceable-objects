@@ -107,34 +107,6 @@ namespace TestHttpCompositionConsoleApp
                 OrchestratorOverrideTemplate = JsonConvert.DeserializeObject<GraphTemplate>(serviceOrchestratorGraphTemplate),
             }))
             .Execute(new RunAndBlock());
-
-            //var serviceContextConfiguration = new ServiceContextConfiguration
-            //{
-            //    ServiceName = "service-X",
-            //    OrchestratorName = "orchestrator-X",
-            //    TemplateName = "template-X",
-            //    InBindings = new List<InBinding>
-            //    {
-            //        new InBinding
-            //        {
-            //            ContextTypeName = typeof(OwinHttpContext).AssemblyQualifiedName,
-            //            ScaleSetBindings = new List<Binding>
-            //            {
-            //                new Binding { Host = "localhost", Port = "5000" },
-            //                new Binding { Host = "localhost", Port = "5001" },
-            //            }
-            //        }
-            //    }
-            //};
-
-            //new ApplicationHost(JsonConvert.SerializeObject(new ApplicationHostDataConfiguration
-            //{
-            //    ServiceOrchestratorConfiguration = serviceOrchestratorConfiguration,
-            //    ServiceContextConfiguration = serviceContextConfiguration,
-            //    DependencyInjectionRegistrationTemplate = JsonConvert.DeserializeObject<DependencyInjectionRegistrationTemplate>(serviceGraphTemplate),
-            //    ServiceGraphTemplate = JsonConvert.DeserializeObject<GraphTemplate>(serviceGraphTemplate),
-            //}))
-            //.Execute(new RunAndBlock());
         }
     }
 }

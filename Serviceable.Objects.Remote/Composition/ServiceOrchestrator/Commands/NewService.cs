@@ -32,7 +32,7 @@
 
             // TODO: check for dotnet.exe
 
-            // TODO: add the entry dll to config (orchestrator)
+            // TODO: add the full path to the entry dll to config (orchestrator)
             var entryAssembly =
                 "C:\\sources\\serviceable-objects\\Examples\\TestHttpCompositionConsoleApp\\bin\\Debug\\netcoreapp1.0\\TestHttpCompositionConsoleApp.dll";
 
@@ -64,7 +64,8 @@
                     Arguments = $"\"{entryAssembly}\" \"" + applicationHostDataConfigurationAsJsonForCommandLine + "\"",
                 }
             };
-            var started = serviceProcess.Start();
+
+            serviceProcess.Start();
 
             return context;
         }
