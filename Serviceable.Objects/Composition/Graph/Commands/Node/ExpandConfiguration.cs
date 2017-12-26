@@ -34,6 +34,8 @@
                 return new Dictionary<string, IEnumerable<string>>();
             }
 
+            // TODO: add another generic In/Out without ContextTypeName after the specialized configuration that targets the type
+
             var contextInBindings =
                 service?.InBindings?.FirstOrDefault(x =>
                     x.ContextTypeName == context.ContextType.AssemblyQualifiedName);
