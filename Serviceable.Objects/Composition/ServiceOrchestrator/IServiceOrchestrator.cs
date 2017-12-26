@@ -7,6 +7,7 @@
     {
         IList<ServiceRegistration> ServiceRegistrations { get; }
         string OrchestratorName { get; }
+        string EntryAssemblyFullPath { get; }
         Container ServiceOrchestratorContainer { get; }
         IDictionary<string, string> GraphTemplatesDictionary { get; }
         IDictionary<string, List<InBinding>> InBindingsPerService { get; }

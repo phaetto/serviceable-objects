@@ -2,6 +2,7 @@
 {
     using System;
     using System.Diagnostics;
+    using System.IO;
     using Data;
     using Dependencies;
     using Graph;
@@ -11,6 +12,7 @@
 
     public class NewService : ReproducibleCommandWithData<ServiceOrchestratorContext, ServiceOrchestratorContext, NewServiceData>
     {
+        private const string DotNetCoreExecutable = "dotnet.exe";
         private readonly JsonSerializerSettings jsonSerializerSettings = new JsonSerializerSettings
         {
             NullValueHandling = NullValueHandling.Ignore
@@ -29,12 +31,7 @@
 
             var template = context.GraphTemplatesDictionary[Data.ServiceName];
             var existingProcess = Process.GetCurrentProcess();
-
-            // TODO: check for dotnet.exe
-
-            // TODO: add the full path to the entry dll to config (orchestrator)
-            var entryAssembly =
-                "C:\\sources\\serviceable-objects\\Examples\\TestHttpCompositionConsoleApp\\bin\\Debug\\netcoreapp1.0\\TestHttpCompositionConsoleApp.dll";
+            var executableFile = Path.GetFileName(existingProcess.MainModule.FileName);
 
             var applicationHostDataConfiguration = new ApplicationHostDataConfiguration
             {
@@ -54,16 +51,33 @@
                 JsonConvert.SerializeObject(applicationHostDataConfiguration, jsonSerializerSettings)
                 .Replace('\"', '\'');
 
-            var serviceProcess = new Process
+            Process serviceProcess;
+            if (executableFile == DotNetCoreExecutable)
             {
-                StartInfo =
+                serviceProcess = new Process
                 {
-                    UseShellExecute = false,
-                    FileName = existingProcess.MainModule.FileName, // This is dotnet running
-                    CreateNoWindow = true,
-                    Arguments = $"\"{entryAssembly}\" \"" + applicationHostDataConfigurationAsJsonForCommandLine + "\"",
-                }
-            };
+                    StartInfo =
+                    {
+                        UseShellExecute = false,
+                        FileName = existingProcess.MainModule.FileName, // This is dotnet running (.NET core)
+                        CreateNoWindow = true,
+                        Arguments = $"\"{context.EntryAssemblyFullPath}\" \"{applicationHostDataConfigurationAsJsonForCommandLine}\"",
+                    }
+                };
+            }
+            else
+            {
+                serviceProcess = new Process
+                {
+                    StartInfo =
+                    {
+                        UseShellExecute = false,
+                        FileName = existingProcess.MainModule.FileName, // This is custom executable wrapping host (.NET Framework)
+                        CreateNoWindow = true,
+                        Arguments = $"\"{applicationHostDataConfigurationAsJsonForCommandLine}\"",
+                    }
+                };
+            }
 
             serviceProcess.Start();
 

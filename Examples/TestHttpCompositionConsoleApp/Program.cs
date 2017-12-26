@@ -66,8 +66,6 @@ namespace TestHttpCompositionConsoleApp
              * 
              */
 
-            Console.WriteLine($"Entering process with '{string.Join(" ", args)}' arguments");
-
             if (args.Length > 0)
             {
                 Console.WriteLine("Starting service...");
@@ -79,6 +77,7 @@ namespace TestHttpCompositionConsoleApp
 
             var serviceOrchestratorConfiguration = new ServiceOrchestratorConfiguration
             {
+                EntryAssemblyFullPath = "C:\\sources\\serviceable-objects\\Examples\\TestHttpCompositionConsoleApp\\bin\\Debug\\netcoreapp1.0\\TestHttpCompositionConsoleApp.dll",
                 OrchestratorName = "orchestrator-X",
                 GraphTemplatesDictionary = new Dictionary<string, string>
                 {
