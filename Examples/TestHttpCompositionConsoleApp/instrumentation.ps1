@@ -18,10 +18,13 @@ PowerShell -NoProfile -Command {
 
     Import-Module "$folder\TestHttpCompositionConsoleApp.dll"; # Extended
     Import-Module "$folder\Serviceable.Objects.Instrumentation.dll"; # Standard
+    
+    # Start services
 
+    echo "Starting service-X...";
     New-Service -ServiceOrchestrator "orchestrator-X" -Data @{ ServiceName='service-X' };
 
-    Start-Sleep -s 5;
+    Start-Sleep -s 2;
 
     #Get-Help Write-Message;
     #Get-Help Enqueue-Message;

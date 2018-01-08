@@ -1,5 +1,6 @@
 ﻿namespace Serviceable.Objects.Remote.Composition.Host
 {
+    using System;
     using System.Threading;
     using Configuration;
     using Dependencies;
@@ -52,7 +53,13 @@
 
         public ApplicationHost(string jsonString)
         {
+            if (string.IsNullOrWhiteSpace(jsonString))
+            {
+                throw new InvalidOperationException("Configuration json must be provided");
+            }
+
             var configuration = JsonConvert.DeserializeObject<ApplicationHostDataConfiguration>(jsonString);
+
             if (!string.IsNullOrWhiteSpace(configuration.ServiceContextConfiguration.ServiceName))
             {
                 // This is a service
