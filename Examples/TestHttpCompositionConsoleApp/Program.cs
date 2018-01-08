@@ -19,7 +19,9 @@ namespace TestHttpCompositionConsoleApp
              * Updatable TODO
              * 
              */
-
+            
+            // Sample host should minimal like that.
+            // Override templates or data from args before reaching the host execution
             new ApplicationHost(args).Execute(new RunAndBlock());
         }
     }
