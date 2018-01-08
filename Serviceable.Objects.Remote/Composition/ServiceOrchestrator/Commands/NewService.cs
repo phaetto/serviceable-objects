@@ -54,6 +54,11 @@
             Process serviceProcess;
             if (executableFile == DotNetCoreExecutable)
             {
+                if (string.IsNullOrWhiteSpace(context.EntryAssemblyFullPath))
+                {
+                    throw new InvalidOperationException("EntryAssemblyFullPath should be defined in configuration for dotnet core apps");
+                }
+
                 serviceProcess = new Process
                 {
                     StartInfo =
