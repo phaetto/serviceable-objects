@@ -11,8 +11,8 @@
 
         public override ServiceOrchestratorContext Execute(ServiceOrchestratorContext context)
         {
-            context.InBindingsPerService[Data.ServiceName] = Data.InBindings.ToList();
-            context.ExternalBindingsPerService[Data.ServiceName] = Data.ExternalBindings.ToList();
+            context.InBindingsPerService[Data.ServiceName] = Data.InBindings?.ToList() ?? context.InBindingsPerService[Data.ServiceName];
+            context.ExternalBindingsPerService[Data.ServiceName] = Data.ExternalBindings?.ToList() ?? context.ExternalBindingsPerService[Data.ServiceName];
             return context;
         }
     }
