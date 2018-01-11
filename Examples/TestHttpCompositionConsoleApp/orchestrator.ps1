@@ -70,5 +70,4 @@ $orchTemplateJson = $orchTemplateJson -replace "\s+", " ";
 
 echo $orchTemplateJson;
 
-#dotnet.exe "$folder\TestHttpCompositionConsoleApp.dll" "$orchTemplateJson";
 Start-Process -FilePath "c:\Program Files\dotnet\dotnet.exe" -Verb Open -ArgumentList "$folder\TestHttpCompositionConsoleApp.dll", "$orchTemplateJson";
