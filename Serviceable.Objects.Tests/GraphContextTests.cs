@@ -2,9 +2,9 @@
 {
     using System.Collections.Generic;
     using System.Linq;
+    using Classes;
     using Composition.Graph;
     using Dependencies;
-    using Classes;
     using Xunit;
 
     public sealed class GraphContextTests

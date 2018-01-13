@@ -21,7 +21,7 @@
                 case var s when s == typeof(ServiceOrchestratorContext).AssemblyQualifiedName:
                     return JsonConvert.SerializeObject(new ServiceOrchestratorConfiguration
                     {
-                        OrchestratorName = "orchestrator-X",
+                        OrchestratorName = "orchestrator-X"
                     });
                 default:
                     return null;

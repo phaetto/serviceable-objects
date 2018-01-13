@@ -69,7 +69,7 @@
             var commandSpecification = new CommandSpecification
             {
                 CommandType = command.GetType().AssemblyQualifiedName,
-                DataAsJson = data,
+                DataAsJson = data
             };
 
             if (command is ISessionAuthorizableCommand sessionAuthorizableCommand)
@@ -127,14 +127,14 @@
                 {
                     Message = exception.Message,
                     RealExceptionType = exception.GetType().FullName,
-                    StackTrace = exception.StackTrace,
+                    StackTrace = exception.StackTrace
                 });
 
                 return new CommandResultSpecification
                 {
                     CommandType = remotableCommandType.AssemblyQualifiedName,
                     ResultDataAsJson = errorAsJson,
-                    ContainsError = true,
+                    ContainsError = true
                 };
             }
 
@@ -143,7 +143,7 @@
             {
                 CommandType = remotableCommandType.AssemblyQualifiedName,
                 ResultDataAsJson = dataAsJson,
-                ContainsError = false,
+                ContainsError = false
             };
         }
 
@@ -156,7 +156,7 @@
             {
                 CommandType = remotableCommandType.AssemblyQualifiedName,
                 ResultDataAsJson = dataAsJson,
-                ContainsError = false,
+                ContainsError = false
             };
         }
 

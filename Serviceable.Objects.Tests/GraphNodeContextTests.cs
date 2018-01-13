@@ -1,5 +1,6 @@
 ﻿namespace Serviceable.Objects.Tests
 {
+    using System;
     using System.Collections.Generic;
     using Composition.Graph;
     using Composition.Graph.Commands.Node;
@@ -67,7 +68,7 @@
                 {
                     CustomValue = "$in.Custom",
                     InValue = "$in.Host",
-                    OutValue = "$out.Host",
+                    OutValue = "$out.Host"
                 });
             }
         }
@@ -116,12 +117,12 @@
                         new Binding
                         {
                             Host = "in-host-1",
-                            ["Custom"] = "custom-value",
+                            ["Custom"] = "custom-value"
                         },
                         new Binding
                         {
                             Host = "in-host-2",
-                            ["Custom"] = "custom-value",
+                            ["Custom"] = "custom-value"
                         }
                     }
                 }
@@ -166,12 +167,12 @@
             public IList<GraphNodeInstanceContext> ContinueExecutionGraphNodeInstanceContextsToBeExecuted(IList<ExecutionCommandResult> previousExecutionCommandResults,
                 List<GraphNodeInstanceContext> graphNodeInstanceContexts)
             {
-                throw new System.NotImplementedException();
+                throw new NotImplementedException();
             }
 
             public IList<ExecutionCommandResult> FilterExecutionResults(IList<ExecutionCommandResult> previousExecutionCommandResults, IList<ExecutionCommandResult> currentExecutionCommandResults)
             {
-                throw new System.NotImplementedException();
+                throw new NotImplementedException();
             }
         }
     }

@@ -15,8 +15,8 @@
 
         public IEnumerable<object> SubscribeToInfiniteStream(CancellationToken cancellationToken)
         {
-            var newSubscription = new PublisherSubscription()
-                {
+            var newSubscription = new PublisherSubscription
+            {
                     CancellationToken = cancellationToken,
                     SubscriberStream = new SubscriberStream()
                 };
@@ -37,7 +37,7 @@
 
         public IEnumerable<TType> SubscribeToInfiniteStream<TType>(CancellationToken cancellationToken)
         {
-            var newSubscription = new PublisherSubscription()
+            var newSubscription = new PublisherSubscription
             {
                 CancellationToken = cancellationToken,
                 SubscriberStream = new SubscriberStream()

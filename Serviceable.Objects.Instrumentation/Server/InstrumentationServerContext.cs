@@ -5,7 +5,6 @@
     using Commands;
     using CommonParameters;
     using Objects.Composition.Graph;
-    using Objects.Composition.Graph.Commands.NodeInstance.ExecutionData;
     using Objects.Composition.Graph.Stages.Setup;
     using Remote.Composition.ServiceOrchestrator;
 
@@ -31,7 +30,7 @@
                     graphNodeContextForExecution = graphContext.GetNodeById(CommonInstrumentationParameters.ContextId);
                 }
 
-                var executionDataResult = (ExecutionCommandResult) graphNodeContextForExecution.ExecuteGraphCommand(commandApplied);
+                var executionDataResult = graphNodeContextForExecution.ExecuteGraphCommand(commandApplied);
 
                 return executionDataResult.SingleContextExecutionResultWithInfo?.ResultObject ?? executionDataResult.Exception;
             }

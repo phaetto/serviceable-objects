@@ -11,8 +11,8 @@
         {
             Console.WriteLine("\n*** Executed ***" +
                               $"\n\tNode '{executingNodeId}'," +
-                              $"\n\tContext: '{((object)parentContext).GetType().FullName}'," +
-                              $"\n\tCommand: '{((object)parentCommandApplied).GetType().FullName}'" +
+                              $"\n\tContext: '{parentContext.GetType().FullName}'," +
+                              $"\n\tCommand: '{parentCommandApplied.GetType().FullName}'" +
                               "\n\n");
         }
     }

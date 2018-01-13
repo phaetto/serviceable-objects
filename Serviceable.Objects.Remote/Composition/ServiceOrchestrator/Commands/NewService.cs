@@ -43,8 +43,8 @@
                     ServiceName = Data.ServiceName,
                     TemplateName = Data.ServiceName,
                     ExternalBindings = context.ExternalBindingsPerService?[Data.ServiceName],
-                    InBindings = context.InBindingsPerService?[Data.ServiceName],
-                },
+                    InBindings = context.InBindingsPerService?[Data.ServiceName]
+                }
             };
 
             var applicationHostDataConfigurationAsJsonForCommandLine =
@@ -66,7 +66,7 @@
                         UseShellExecute = false,
                         FileName = existingProcess.MainModule.FileName, // This is dotnet running (.NET core)
                         CreateNoWindow = true,
-                        Arguments = $"\"{context.EntryAssemblyFullPath}\" \"{applicationHostDataConfigurationAsJsonForCommandLine}\"",
+                        Arguments = $"\"{context.EntryAssemblyFullPath}\" \"{applicationHostDataConfigurationAsJsonForCommandLine}\""
                     }
                 };
             }
@@ -79,7 +79,7 @@
                         UseShellExecute = false,
                         FileName = existingProcess.MainModule.FileName, // This is custom executable wrapping host (.NET Framework)
                         CreateNoWindow = true,
-                        Arguments = $"\"{applicationHostDataConfigurationAsJsonForCommandLine}\"",
+                        Arguments = $"\"{applicationHostDataConfigurationAsJsonForCommandLine}\""
                     }
                 };
             }

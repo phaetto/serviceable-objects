@@ -128,7 +128,7 @@
             {
                 ResultDataAsJson = JsonConvert.SerializeObject(exception),
                 CommandType = null,
-                ContainsError = true,
+                ContainsError = true
             }));
         }
     }

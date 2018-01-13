@@ -1,7 +1,6 @@
-﻿using System.Management.Automation;
-
-namespace TestHttpCompositionConsoleApp.Contexts.ConsoleLog.Commands.Instrumentation
+﻿namespace TestHttpCompositionConsoleApp.Contexts.ConsoleLog.Commands.Instrumentation
 {
+    using System.Management.Automation;
     using Data;
     using Serviceable.Objects.Instrumentation.Powershell;
 

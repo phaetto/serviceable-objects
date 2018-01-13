@@ -16,46 +16,46 @@
             {
                 GraphNodes = new []
                 {
-                    new GraphNode()
+                    new GraphNode
                     {
                         Id = "node-1",
-                        TypeFullName = typeof(ContextForTest).AssemblyQualifiedName,
+                        TypeFullName = typeof(ContextForTest).AssemblyQualifiedName
                     },
-                    new GraphNode()
+                    new GraphNode
                     {
                         Id = "node-2",
-                        TypeFullName = typeof(ContextForTest2).AssemblyQualifiedName,
+                        TypeFullName = typeof(ContextForTest2).AssemblyQualifiedName
                     },
-                    new GraphNode()
+                    new GraphNode
                     {
                         Id = "node-3",
-                        TypeFullName = typeof(ContextForTest3).AssemblyQualifiedName,
+                        TypeFullName = typeof(ContextForTest3).AssemblyQualifiedName
                     },
                     // Hooks up on the node-2 node and listens to the commands running
-                    new GraphNode()
+                    new GraphNode
                     {
                         Id = "node-assert",
-                        TypeFullName = typeof(AssertNode).AssemblyQualifiedName,
-                    },
+                        TypeFullName = typeof(AssertNode).AssemblyQualifiedName
+                    }
                 },
                 GraphVertices = new []
                 {
                     new GraphVertex
                     {
                         FromId = "node-1",
-                        ToId = "node-2",
+                        ToId = "node-2"
                     },
                     new GraphVertex
                     {
                         FromId = "node-1",
-                        ToId = "node-3",
+                        ToId = "node-3"
                     },
                     new GraphVertex
                     {
                         FromId = "node-2",
-                        ToId = "node-assert",
-                    },
-                },
+                        ToId = "node-assert"
+                    }
+                }
             };
 
             var json = JsonConvert.SerializeObject(graphSpec);

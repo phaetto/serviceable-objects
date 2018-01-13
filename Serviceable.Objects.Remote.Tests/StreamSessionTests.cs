@@ -1,10 +1,10 @@
-﻿using System.IO;
-using System.Text;
-using Serviceable.Objects.Remote.Serialization.Streaming;
-using Xunit;
-
-namespace Serviceable.Objects.Remote.Tests
+﻿namespace Serviceable.Objects.Remote.Tests
 {
+    using System.IO;
+    using System.Text;
+    using Serialization.Streaming;
+    using Xunit;
+
     public class StreamSessionTests
     {
         [Fact]

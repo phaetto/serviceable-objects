@@ -79,7 +79,7 @@
             Vertices.Add(new GraphVertexContext
             {
                 FromId = fromId,
-                ToId = toId,
+                ToId = toId
             });
         }
 

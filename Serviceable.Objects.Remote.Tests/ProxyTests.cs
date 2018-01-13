@@ -1,10 +1,10 @@
 ﻿namespace Serviceable.Objects.Remote.Tests
 {
-    using Proxying;
+    using System.Threading.Tasks;
     using Classes;
     using Classes.Proxies;
     using Objects.Tests.Classes;
-    using System.Threading.Tasks;
+    using Proxying;
     using Xunit;
 
     public class ProxyTests

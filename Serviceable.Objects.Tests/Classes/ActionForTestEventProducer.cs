@@ -23,7 +23,7 @@
                 new ActionForTestEventProducerCalledEvent
                 {
                     ChangedTo = context.ContextVariable,
-                    LastValue = lastValue,
+                    LastValue = lastValue
                 }
             };
             return context;

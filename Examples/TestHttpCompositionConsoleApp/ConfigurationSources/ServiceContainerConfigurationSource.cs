@@ -19,10 +19,10 @@
                         PipeName  = string.Join(".", serviceName, graphNodeId)
                     });
                 case var s when s == typeof(OwinHttpContext).AssemblyQualifiedName:
-                    return JsonConvert.SerializeObject(new OwinHttpContextConfiguration()
+                    return JsonConvert.SerializeObject(new OwinHttpContextConfiguration
                     {
                         Host = "$in.Host",
-                        Port = "$in.Port",
+                        Port = "$in.Port"
                     });
                 default:
                     return null;
