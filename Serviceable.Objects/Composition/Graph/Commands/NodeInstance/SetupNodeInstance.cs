@@ -9,7 +9,7 @@
             if (context.HostedContext is ISetupStageFactory graphSetup)
             {
                 var command = graphSetup.GenerateSetupCommand(context.GraphContext, context.GraphNodeContext);
-                context.HostedContext.Execute(command);
+                context.HostedContext.Execute((dynamic)command);
             }
 
             return context;

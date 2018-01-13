@@ -2,6 +2,6 @@
 {
     public interface IGraphFlowExecutionSink
     {
-        dynamic CustomCommandExecute(GraphContext graphContext, string executingNodeId, dynamic commandApplied);
+        object CustomCommandExecute(GraphContext graphContext, string executingNodeId, object commandApplied);
     }
 }

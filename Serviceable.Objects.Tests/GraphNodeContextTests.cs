@@ -53,7 +53,7 @@
         {
             public TestContextConfiguration TestContextConfiguration { get; set; }
             public bool HasBeenConfigured { get; set; }
-            public dynamic GenerateConfigurationCommand(string serializedConfigurationString)
+            public object GenerateConfigurationCommand(string serializedConfigurationString)
             {
                 return new TestConfigurationCommand(serializedConfigurationString);
             }

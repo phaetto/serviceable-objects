@@ -27,7 +27,7 @@
         {
         }
 
-        public dynamic GenerateInitializeCommand()
+        public object GenerateInitializeCommand()
         {
             return new StartServer();
         }

@@ -3,6 +3,6 @@
     public interface IConfigurableStageFactory
     {
         bool HasBeenConfigured { get; }
-        dynamic GenerateConfigurationCommand(string serializedConfigurationString);
+        object GenerateConfigurationCommand(string serializedConfigurationString);
     }
 }

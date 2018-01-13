@@ -40,7 +40,7 @@
             return base.InvokeExecute(action);
         }
 
-        public dynamic GenerateConfigurationCommand(string serializedConfigurationString)
+        public object GenerateConfigurationCommand(string serializedConfigurationString)
         {
             return new ApplyConfiguration<TConfiguration, TContextType>(serializedConfigurationString);
         }

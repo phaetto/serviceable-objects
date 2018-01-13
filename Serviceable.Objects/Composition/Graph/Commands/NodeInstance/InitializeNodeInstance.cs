@@ -9,7 +9,7 @@
             if (context.HostedContext is IInitializeStageFactory initialization)
             {
                 var command = initialization.GenerateInitializeCommand();
-                context.HostedContext.Execute(command);
+                context.HostedContext.Execute((dynamic)command);
             }
 
             return context;

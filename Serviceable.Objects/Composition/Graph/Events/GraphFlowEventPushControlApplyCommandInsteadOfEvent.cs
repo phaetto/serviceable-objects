@@ -6,14 +6,14 @@
 
     public sealed class GraphFlowEventPushControlApplyCommandInsteadOfEvent : IGraphFlowEventPushControl
     {
-        private readonly dynamic commandToExecute;
+        private readonly object commandToExecute;
 
-        public GraphFlowEventPushControlApplyCommandInsteadOfEvent(dynamic commandToExecute)
+        public GraphFlowEventPushControlApplyCommandInsteadOfEvent(object commandToExecute)
         {
             this.commandToExecute = commandToExecute;
         }
 
-        public IEnumerable<ExecutionCommandResult> OverrideEventPropagationLogic(GraphContext graphContext, string publishingNodeId, dynamic publishedHostedContext)
+        public IEnumerable<ExecutionCommandResult> OverrideEventPropagationLogic(GraphContext graphContext, string publishingNodeId, object publishedHostedContext)
         {
             return graphContext.GetChildren(publishingNodeId)
                 .Select(ExecuteCommand);

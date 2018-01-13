@@ -2,6 +2,6 @@
 {
     public interface ISetupStageFactory
     {
-        dynamic GenerateSetupCommand(GraphContext graphContext, GraphNodeContext graphNodeContext);
+        object GenerateSetupCommand(GraphContext graphContext, GraphNodeContext graphNodeContext);
     }
 }

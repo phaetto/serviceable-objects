@@ -32,7 +32,7 @@
             AbstractContext = abstractContext;
         }
 
-        public ExecutionCommandResult ExecuteGraphCommand(dynamic command)
+        public ExecutionCommandResult ExecuteGraphCommand(object command)
         {
             if (!AlgorithmicInstanceExecutions.Any())
             {
@@ -79,7 +79,7 @@
             return firstExecutionCommandResults.FirstOrDefault(x => x != null);
         }
 
-        private ExecutionCommandResult ExecutionLogicOnNodeInstance(dynamic command, GraphNodeInstanceContext graphNodeInstanceContext)
+        private ExecutionCommandResult ExecutionLogicOnNodeInstance(object command, GraphNodeInstanceContext graphNodeInstanceContext)
         {
             var contextExecutionResult = graphNodeInstanceContext.Execute(new ExecuteCommand(command));
 
@@ -88,7 +88,7 @@
                 Execute(new ProcessNodeEventLogic(publishedEvent, graphNodeInstanceContext));
             }
 
-            Execute(new CheckNodePostGraphFlowPullControl(command, graphNodeInstanceContext.HostedContext));
+            Execute(new CheckNodePostGraphFlowPullControl(command, graphNodeInstanceContext.HostedContextAsAbstractContext));
 
             return contextExecutionResult;
         }

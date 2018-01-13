@@ -35,7 +35,7 @@
 
             if (isEventTypeSupported)
             {
-                dynamic command;
+                object command;
                 try
                 {
                     command = context.HostedContext.GetCommandForEvent((dynamic)eventPublished);

@@ -13,8 +13,8 @@
     {
         internal CommonInstrumentationParameters CommonInstrumentationParameters;
 
-        public dynamic CustomCommandExecute(GraphContext graphContext, string executingNodeId,
-            dynamic commandApplied)
+        public object CustomCommandExecute(GraphContext graphContext, string executingNodeId,
+            object commandApplied)
         {
             try
             {
@@ -41,7 +41,7 @@
             }
         }
 
-        public dynamic GenerateSetupCommand(GraphContext graphContext, GraphNodeContext graphNodeContext)
+        public object GenerateSetupCommand(GraphContext graphContext, GraphNodeContext graphNodeContext)
         {
             return new SetupServer(graphContext, graphNodeContext);
         }

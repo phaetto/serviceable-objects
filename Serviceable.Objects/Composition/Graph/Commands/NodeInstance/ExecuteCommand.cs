@@ -18,7 +18,7 @@
         {
             try
             {
-                dynamic resultObject;
+                object resultObject;
                 try
                 {
                     resultObject = context.HostedContext.Execute(command);

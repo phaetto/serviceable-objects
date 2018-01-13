@@ -73,8 +73,8 @@
 
         private sealed class AssertNode : Context<AssertNode>, IPostGraphFlowPullControl
         {
-            public void GetAttachNodeCommandExecutionInformation(GraphContext graphContext, string executingNodeId, dynamic parentContext,
-                dynamic parentCommandApplied)
+            public void GetAttachNodeCommandExecutionInformation(GraphContext graphContext, string executingNodeId, object parentContext,
+                object parentCommandApplied)
             {
                 var contextForTest2 = (ContextForTest2) parentContext;
                 Assert.Equal("new-value", contextForTest2.ContextVariable);

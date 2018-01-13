@@ -105,7 +105,7 @@
             return Nodes.First(x => x.Id == nodeId);
         }
 
-        public List<ExecutionCommandResult> Execute(dynamic command)
+        public List<ExecutionCommandResult> Execute(object command)
         {
             Check.ArgumentNull(command, nameof(command));
 
@@ -129,7 +129,7 @@
             return contextExecutionResults;
         }
 
-        public ExecutionCommandResult Execute(dynamic command, string uniqueId)
+        public ExecutionCommandResult Execute(object command, string uniqueId)
         {
             Check.ArgumentNull(command, nameof(command));
             Check.ArgumentNullOrWhiteSpace(uniqueId, nameof(uniqueId));

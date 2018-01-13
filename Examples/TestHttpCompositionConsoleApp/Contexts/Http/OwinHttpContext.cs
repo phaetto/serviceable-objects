@@ -26,7 +26,7 @@
         {
         }
 
-        public dynamic GenerateInitializeCommand()
+        public object GenerateInitializeCommand()
         {
             return new Run();
         }
