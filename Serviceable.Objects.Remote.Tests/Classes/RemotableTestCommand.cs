@@ -17,6 +17,6 @@
             return Data;
         }
 
-        public IEnumerable<IEvent> EventsProduced { get; set; }
+        public List<IEvent> EventsProduced { get; } = new List<IEvent>();
     }
 }

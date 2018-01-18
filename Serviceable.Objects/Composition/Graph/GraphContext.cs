@@ -13,7 +13,7 @@
     public sealed class GraphContext : Context<GraphContext> // TODO: IDisposable
     {
         public readonly Container Container;
-        internal readonly List<GraphNodeContext> InputNodes = new List<GraphNodeContext>();
+        internal readonly List<GraphNodeContext> InputNodes = new List<GraphNodeContext>(); // TODO: fields can be made private
         internal readonly List<GraphVertexContext> Vertices = new List<GraphVertexContext>();
         internal readonly List<GraphNodeContext> Nodes = new List<GraphNodeContext>();
 
@@ -79,7 +79,7 @@
             Vertices.Add(new GraphVertexContext
             {
                 FromId = fromId,
-                ToId = toId,
+                ToId = toId
             });
         }
 
@@ -90,7 +90,7 @@
 
         public void ConfigureSetupAndInitialize() 
         {
-            // Configure/Setup/Initialize - cordering matters
+            // Configure/Setup/Initialize - ordering matters
             var service = Container.Resolve<IService>(throwOnError: false);
             var configurationSource = Container.Resolve<IConfigurationSource>(throwOnError: false);
             Nodes.ForEach(x => x.Execute(new ConfigureNode(service, configurationSource)));
@@ -99,27 +99,13 @@
             Nodes.ForEach(x => x.Execute(new InitializeNode()));
         }
 
-        public void ConfigureNode(string nodeId)
-        {
-            Check.ArgumentNullOrWhiteSpace(nodeId, nameof(nodeId));
-            var service = Container.Resolve<IService>(throwOnError: false);
-            var configurationSource = Container.Resolve<IConfigurationSource>(throwOnError: false);
-            Nodes.First(x => x.Id == nodeId).Execute(new ConfigureNode(service, configurationSource));
-        }
-
-        public void InitializeNode(string nodeId)
-        {
-            Check.ArgumentNullOrWhiteSpace(nodeId, nameof(nodeId));
-            Nodes.First(x => x.Id == nodeId).Execute(new InitializeNode());
-        }
-
         public GraphNodeContext GetNodeById(string nodeId)
         {
             Check.ArgumentNullOrWhiteSpace(nodeId, nameof(nodeId));
             return Nodes.First(x => x.Id == nodeId);
         }
 
-        public List<ExecutionCommandResult> Execute(dynamic command)
+        public List<ExecutionCommandResult> Execute(object command)
         {
             Check.ArgumentNull(command, nameof(command));
 
@@ -143,7 +129,7 @@
             return contextExecutionResults;
         }
 
-        public ExecutionCommandResult Execute(dynamic command, string uniqueId)
+        public ExecutionCommandResult Execute(object command, string uniqueId)
         {
             Check.ArgumentNull(command, nameof(command));
             Check.ArgumentNullOrWhiteSpace(uniqueId, nameof(uniqueId));

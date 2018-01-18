@@ -1,7 +1,7 @@
-﻿using System.Collections.Concurrent;
-
-namespace Serviceable.Objects.Remote.Serialization.Streaming
+﻿namespace Serviceable.Objects.Remote.Serialization.Streaming
 {
+    using System.Collections.Concurrent;
+
     public sealed class StreamState
     {
         public bool HasBegunParsingCommand;

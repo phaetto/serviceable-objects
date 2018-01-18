@@ -34,7 +34,7 @@
 
                 namedPipeClientStream.WaitForPipeDrain();
 
-                if (command is IRemotable) // TODO: abstract this to a common command executioner?
+                if (command is IRemotable)
                 {
                     do
                     {
@@ -57,7 +57,7 @@
         }
 
         // TODO: proxy might not need this
-        public dynamic CustomCommandExecute(GraphContext graphContext, string executingNodeId, dynamic commandApplied)
+        public object CustomCommandExecute(GraphContext graphContext, string executingNodeId, object commandApplied)
         {
             if (commandApplied is IReproducible reproducible)
             {

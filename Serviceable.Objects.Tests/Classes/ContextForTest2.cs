@@ -5,7 +5,7 @@
     {
         public string ContextVariable = null;
 
-        public dynamic GetCommandForEvent(ActionForTestEventProducerCalledEvent eventPublished)
+        public object GetCommandForEvent(ActionForTestEventProducerCalledEvent eventPublished)
         {
             return new ActionForTest2(eventPublished.ChangedTo);
         }

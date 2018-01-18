@@ -4,7 +4,6 @@
     using Composition.Configuration;
     using Configuration;
     using Objects.Composition.Graph;
-    using Objects.Composition.Graph.Stages.Configuration;
     using Objects.Composition.Service;
     using Objects.Composition.ServiceOrchestrator;
     using Objects.Dependencies;
@@ -28,14 +27,6 @@
         }
 
         public ServiceContext(ServiceContextConfiguration configuration) : base(configuration)
-        {
-            var graphContainer = new Container(ServiceContainer);
-            GraphContext = new GraphContext(graphContainer);
-            ServiceContainer.Register(GraphContext);
-            ServiceContainer.Register(typeof(IService), this);
-        }
-
-        public ServiceContext(IConfigurationSource configurationSource) : base(configurationSource)
         {
             var graphContainer = new Container(ServiceContainer);
             GraphContext = new GraphContext(graphContainer);

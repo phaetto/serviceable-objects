@@ -1,5 +1,6 @@
 ﻿namespace Serviceable.Objects.Composition.Graph.Commands.Node
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using Service;
@@ -33,6 +34,8 @@
                 return new Dictionary<string, IEnumerable<string>>();
             }
 
+            // TODO: add another generic In/Out without ContextTypeName after the specialized configuration that targets the type
+
             var contextInBindings =
                 service?.InBindings?.FirstOrDefault(x =>
                     x.ContextTypeName == context.ContextType.AssemblyQualifiedName);
@@ -51,17 +54,32 @@
 
             if ((contextExternalBindings?.AlgorithmBindings?.Count ?? 0) == 0)
             {
-                return new Dictionary<string, IEnumerable<string>>
+                return CheckForUnconfigurableSettings(new Dictionary<string, IEnumerable<string>>
                 {
                     {DefaultAlgorithmicService, configurations}
-                };
+                });
             }
 
-            return contextExternalBindings.AlgorithmBindings
+            // TODO: when there is a setting in config value left throw an error (to catch unconfigurable entities)
+
+            return CheckForUnconfigurableSettings(contextExternalBindings.AlgorithmBindings
                 .ToDictionary(
                     x => x.AlgorithmTypeName, 
                     y => configurations.SelectMany(z => y.ScaleSetBindings.Select(x => ConfigureOutString(z, x)))
-                );
+                ));
+        }
+
+        private Dictionary<string, IEnumerable<string>> CheckForUnconfigurableSettings(Dictionary<string, IEnumerable<string>> resultingConfiguration)
+        {
+            resultingConfiguration.ToList().ForEach(x => x.Value.ToList().ForEach(y =>
+                {
+                    if (y.Contains("$in."))
+                    {
+                        throw new InvalidOperationException($"Unconfigurable entity found at setting: {x.Key}/{y}");
+                    }
+                }));
+
+            return resultingConfiguration;
         }
 
         private string ConfigureInString(string setting, Binding binding)

@@ -1,4 +1,4 @@
-﻿namespace TestHttpCompositionConsoleApp.Contexts.ConsoleLog.Commands
+﻿namespace TestHttpCompositionConsoleApp.Contexts.ConsoleLog.Commands.Data
 {
     public class WriteMessageData
     {

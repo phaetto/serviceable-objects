@@ -11,11 +11,13 @@
             Data.DomainName = "Starting text";
         }
 
-        public override Task<ContextForTest> Execute(ContextForTest context)
+        public override async Task<ContextForTest> Execute(ContextForTest context)
         {
             context.ContextVariable = Data.ChangeToValue;
 
-            return Task.FromResult(context);
+            await Task.Delay(1);
+
+            return context;
         }
     }
 }

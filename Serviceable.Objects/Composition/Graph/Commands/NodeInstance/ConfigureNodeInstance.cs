@@ -17,7 +17,7 @@
             {
                 var command = configurable.GenerateConfigurationCommand(serializedConfigurationString);
 
-                context.HostedContext.Execute(command);
+                context.HostedContext.Execute((dynamic)command);
             }
 
             return context;

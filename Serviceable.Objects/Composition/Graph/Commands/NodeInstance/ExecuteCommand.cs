@@ -18,7 +18,7 @@
         {
             try
             {
-                dynamic resultObject;
+                object resultObject;
                 try
                 {
                     resultObject = context.HostedContext.Execute(command);
@@ -54,7 +54,7 @@
                         {
                             NodeId = context.Id,
                             ContextType = context.HostedContextAsAbstractContext.GetType(),
-                            ResultObject = null,
+                            ResultObject = null
                         };
                     executionCommandResult.IsFaulted = true;
                     executionCommandResult.Exception = exception;
@@ -66,7 +66,7 @@
                         {
                             NodeId = context.Id,
                             ContextType = context.HostedContextAsAbstractContext.GetType(),
-                            ResultObject = (object) resultObject,
+                            ResultObject = resultObject
                         };
                 }
             }

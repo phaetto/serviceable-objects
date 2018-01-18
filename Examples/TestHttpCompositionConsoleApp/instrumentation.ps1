@@ -16,7 +16,18 @@ PowerShell -NoProfile -Command {
     Set-Location -Path $folder;
     Move-Item "$location\*.dll" $folder -Force;
 
-    Import-Module "$folder\TestHttpCompositionConsoleApp.dll";
+    Import-Module "$folder\TestHttpCompositionConsoleApp.dll"; # Extended
+    Import-Module "$folder\Serviceable.Objects.Instrumentation.dll"; # Standard
+    
+    # Start services
+    Write-Host " --- Service management --- ";
+
+    echo "Starting service-X...";
+    New-Service -ServiceOrchestrator "orchestrator-X" -Data @{ ServiceName='service-X' };
+
+    Start-Sleep -s 2;
+
+    Write-Host " --- Communication start --- ";
 
     #Get-Help Write-Message;
     #Get-Help Enqueue-Message;
@@ -41,6 +52,11 @@ PowerShell -NoProfile -Command {
     $message = if ($queueItem -eq $null) { "<was null>" } else { $queueItem.Data };
     
     Write-Host "Message got: '$message'";
+
+    Write-Host " --- Communication end --- ";
+    
+    Write-Host "Stopping service...";
+    Close-Service -ServiceOrchestrator "orchestrator-X" -ServiceName 'service-X';
 
     Write-Host " --- Done --- ";
 } -args $location;

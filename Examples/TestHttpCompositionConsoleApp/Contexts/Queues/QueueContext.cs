@@ -1,8 +1,8 @@
 ﻿namespace TestHttpCompositionConsoleApp.Contexts.Queues
 {
     using System.Collections.Generic;
-    using Serviceable.Objects;
     using Commands.Data;
+    using Serviceable.Objects;
 
     public sealed class QueueContext : Context<QueueContext>
     {

@@ -2,11 +2,11 @@
 {
     using System;
     using System.Linq;
-    using Composition.Graph;
-    using Composition.Service;
-    using Composition.ServiceOrchestrator;
     using IO.NamedPipes.Server;
     using IO.NamedPipes.Server.Configuration;
+    using Objects.Composition.Graph;
+    using Objects.Composition.Service;
+    using Objects.Composition.ServiceOrchestrator;
 
     public sealed class SetupServer : ICommand<InstrumentationServerContext, InstrumentationServerContext>
     {

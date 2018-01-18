@@ -1,9 +1,7 @@
 ﻿namespace TestHttpCompositionConsoleApp.ConfigurationSources
 {
-    using System;
     using Newtonsoft.Json;
     using Serviceable.Objects.Composition.Graph.Stages.Configuration;
-    using Serviceable.Objects.Composition.ServiceOrchestrator;
     using Serviceable.Objects.IO.NamedPipes.Server;
     using Serviceable.Objects.IO.NamedPipes.Server.Configuration;
     using Serviceable.Objects.Remote.Composition.ServiceOrchestrator;
@@ -23,9 +21,7 @@
                 case var s when s == typeof(ServiceOrchestratorContext).AssemblyQualifiedName:
                     return JsonConvert.SerializeObject(new ServiceOrchestratorConfiguration
                     {
-                        OrchestratorName = "orchestrator-X",
-                        ServiceOrchestratorBinding = new Binding {Host = "localhost"},
-                        ExternalBinding = new ExternalBinding(),
+                        OrchestratorName = "orchestrator-X"
                     });
                 default:
                     return null;

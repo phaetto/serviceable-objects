@@ -11,10 +11,13 @@
             Data.DomainName = "Starting value";
         }
 
-        public override Task<ReproducibleTestData> Execute(ContextForTest context)
+        public override async Task<ReproducibleTestData> Execute(ContextForTest context)
         {
             context.ContextVariable = Data.ChangeToValue;
-            return Task.FromResult(Data);
+
+            await Task.Delay(1);
+
+            return Data;
         }
     }
 }

@@ -188,7 +188,7 @@
                         {
                             if (objectsCache.ContainsKey(type.AssemblyQualifiedName))
                             {
-                                throw new TypeCreatedTwiceInConatinerException($"Type ${type.AssemblyQualifiedName} created twice - that should never have happened.");
+                                throw new TypeCreatedTwiceInContainerException($"Type ${type.AssemblyQualifiedName} created twice - that should never have happened.");
                             }
 
                             objectsCache.Add(type.AssemblyQualifiedName, newObject);

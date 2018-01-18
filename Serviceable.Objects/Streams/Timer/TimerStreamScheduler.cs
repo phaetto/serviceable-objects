@@ -66,7 +66,7 @@
                     TimerScheduledCallType = timerScheduledCallType,
                     ActionToRepeat = action,
                     NextScheduledTimeToRunInMilliseconds = intervalInMilliseconds,
-                    CancellationToken = cancellationToken,
+                    CancellationToken = cancellationToken
                 });
             }
 

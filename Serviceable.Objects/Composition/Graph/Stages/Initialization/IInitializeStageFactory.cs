@@ -2,6 +2,6 @@
 {
     public interface IInitializeStageFactory
     {
-        dynamic GenerateInitializeCommand();
+        object GenerateInitializeCommand();
     }
 }

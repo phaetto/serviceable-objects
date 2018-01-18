@@ -1,10 +1,10 @@
 ﻿namespace Serviceable.Objects.Remote.Tests
 {
     using System;
+    using Classes;
     using Newtonsoft.Json;
     using Objects.Tests.Classes;
     using Serialization;
-    using Classes;
     using Xunit;
 
     public class SerializationTest
@@ -58,7 +58,7 @@
             {
                 CommandType = typeof(RemotableTestCommand).AssemblyQualifiedName,
                 ContainsError = true,
-                ResultDataAsJson = JsonConvert.SerializeObject(new InvalidOperationException("This is so invalid.")),
+                ResultDataAsJson = JsonConvert.SerializeObject(new InvalidOperationException("This is so invalid."))
             };
 
             var data = serializableSpecificationService.CreateResultDataFromCommandSpecification(commandResultSpecification);

@@ -4,18 +4,19 @@
     using Composition.Configuration;
     using Configuration;
     using Objects.Composition.Graph;
-    using Objects.Composition.Graph.Stages.Configuration;
     using Objects.Composition.ServiceOrchestrator;
     using Objects.Dependencies;
 
     public sealed class ServiceOrchestratorContext : ConfigurableContext<ServiceOrchestratorConfiguration, ServiceOrchestratorContext>, IServiceOrchestrator
     {
-        public string OrchestratorName => Configuration.OrchestratorName;
-        public Binding Binding => Configuration.ServiceOrchestratorBinding;
-        public ExternalBinding ExternalBinding => Configuration.ExternalBinding;
-        public IList<ServiceRegistration> ServiceRegistrations { get; } = new List<ServiceRegistration>();
         public Container ServiceOrchestratorContainer { get; } = new Container();
-        public IDictionary<string, string> GraphTemplatesDictionary { get; } = new Dictionary<string, string>();
+        public IList<ServiceRegistration> ServiceRegistrations { get; } = new List<ServiceRegistration>(); // TODO: evaluate if needed
+
+        public string OrchestratorName => Configuration.OrchestratorName;
+        public string EntryAssemblyFullPath => Configuration.EntryAssemblyFullPath;
+        public IDictionary<string, List<InBinding>> InBindingsPerService => Configuration.InBindingsPerService;
+        public IDictionary<string, List<ExternalBinding>> ExternalBindingsPerService => Configuration.ExternalBindingsPerService;
+        public IDictionary<string, string> GraphTemplatesDictionary => Configuration.GraphTemplatesDictionary;
 
         public ServiceOrchestratorContext(GraphContext graphContext)
         {
@@ -23,11 +24,6 @@
         }
 
         public ServiceOrchestratorContext(ServiceOrchestratorConfiguration configuration, GraphContext graphContext) : base(configuration)
-        {
-            graphContext.Container.Register(typeof(IServiceOrchestrator), this);
-        }
-
-        public ServiceOrchestratorContext(IConfigurationSource configurationSource, GraphContext graphContext) : base(configurationSource)
         {
             graphContext.Container.Register(typeof(IServiceOrchestrator), this);
         }

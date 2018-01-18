@@ -2,6 +2,6 @@
 {
     public interface IEventHandler<in T> where T: IEvent
     {
-        dynamic GetCommandForEvent(T eventPublished);
+        object GetCommandForEvent(T eventPublished);
     }
 }

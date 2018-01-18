@@ -6,13 +6,13 @@
 
     public sealed class ConsoleLogContext: Context<ConsoleLogContext>, IPostGraphFlowPullControl
     {
-        public void GetAttachNodeCommandExecutionInformation(GraphContext graphContext, string executingNodeId, dynamic parentContext,
-            dynamic parentCommandApplied)
+        public void GetAttachNodeCommandExecutionInformation(GraphContext graphContext, string executingNodeId, object parentContext,
+            object parentCommandApplied)
         {
             Console.WriteLine("\n*** Executed ***" +
                               $"\n\tNode '{executingNodeId}'," +
-                              $"\n\tContext: '{((object)parentContext).GetType().FullName}'," +
-                              $"\n\tCommand: '{((object)parentCommandApplied).GetType().FullName}'" +
+                              $"\n\tContext: '{parentContext.GetType().FullName}'," +
+                              $"\n\tCommand: '{parentCommandApplied.GetType().FullName}'" +
                               "\n\n");
         }
     }

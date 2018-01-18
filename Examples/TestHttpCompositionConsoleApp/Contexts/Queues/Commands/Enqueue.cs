@@ -1,7 +1,7 @@
 ﻿namespace TestHttpCompositionConsoleApp.Contexts.Queues.Commands
 {
-    using Serviceable.Objects.Remote;
     using Data;
+    using Serviceable.Objects.Remote;
 
     public sealed class Enqueue : ReproducibleCommandWithData<QueueContext, QueueContext, QueueItem>
     {

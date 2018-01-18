@@ -9,7 +9,6 @@
         where TConfiguration : struct
         where TContextType : Context<TContextType>
     {
-        internal readonly IConfigurationSource ConfigurationSource;
         public TConfiguration Configuration { get; private set; }
         public bool HasBeenConfigured { get; private set; }
 
@@ -21,11 +20,6 @@
         {
             HasBeenConfigured = true;
             Configuration = configuration;
-        }
-
-        protected ConfigurableContext(IConfigurationSource configurationSource)
-        {
-            ConfigurationSource = configurationSource;
         }
 
         public void SetConfiguration(TConfiguration state)
@@ -40,13 +34,13 @@
         {
             if (!HasBeenConfigured && !(action is ApplyConfiguration<TConfiguration, TContextType>))
             {
-                throw new InvalidOperationException($"The instance {GetType().AssemblyQualifiedName} has already been configured yet.");
+                throw new InvalidOperationException($"The instance {GetType().AssemblyQualifiedName} has not been configured yet.");
             }
 
             return base.InvokeExecute(action);
         }
 
-        public dynamic GenerateConfigurationCommand(string serializedConfigurationString)
+        public object GenerateConfigurationCommand(string serializedConfigurationString)
         {
             return new ApplyConfiguration<TConfiguration, TContextType>(serializedConfigurationString);
         }

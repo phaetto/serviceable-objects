@@ -40,7 +40,6 @@ namespace Serviceable.Objects.Instrumentation.Powershell
 
         public object GetDynamicParameters()
         {
-            // TODO: Change to RuntimeDefinedParameterDictionary so we can provide dynamic responses
             return commonInstrumentationParameters;
         }
 
