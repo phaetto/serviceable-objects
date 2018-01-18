@@ -11,6 +11,7 @@
     public sealed class InstrumentationServerContext : Context<InstrumentationServerContext>, IGraphFlowExecutionSink, ISetupStageFactory
     {
         internal CommonInstrumentationParameters CommonInstrumentationParameters;
+        internal GraphContext GraphContext;
 
         public object CustomCommandExecute(GraphContext graphContext, string executingNodeId,
             object commandApplied)
@@ -42,6 +43,7 @@
 
         public object GenerateSetupCommand(GraphContext graphContext, GraphNodeContext graphNodeContext)
         {
+            GraphContext = graphContext;
             return new SetupServer(graphContext, graphNodeContext);
         }
     }

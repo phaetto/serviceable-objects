@@ -18,17 +18,14 @@
             // Do changes
             context.ContextVariable = ValueToChangeTo;
 
-            EventsProduced = new IEvent[]
+            EventsProduced.Add(new ActionForTestEventProducerCalledEvent
             {
-                new ActionForTestEventProducerCalledEvent
-                {
-                    ChangedTo = context.ContextVariable,
-                    LastValue = lastValue
-                }
-            };
+                ChangedTo = context.ContextVariable,
+                LastValue = lastValue
+            });
             return context;
         }
 
-        public IEnumerable<IEvent> EventsProduced { get; set; }
+        public List<IEvent> EventsProduced { get; } = new List<IEvent>();
     }
 }

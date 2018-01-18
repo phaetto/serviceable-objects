@@ -4,6 +4,6 @@
 
     public interface IEventProducer
     {
-        IEnumerable<IEvent> EventsProduced { get; set; }
+        List<IEvent> EventsProduced { get; }
     }
 }

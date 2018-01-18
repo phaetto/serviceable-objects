@@ -1,22 +1,25 @@
 ﻿namespace Serviceable.Objects.Remote.Composition.ServiceOrchestrator.Commands
 {
     using System;
+    using System.Collections.Generic;
     using System.Diagnostics;
     using System.IO;
     using Data;
     using Dependencies;
+    using Events;
     using Graph;
     using Host.Configuration;
     using Newtonsoft.Json;
     using Service.Configuration;
 
-    public class NewService : ReproducibleCommandWithData<ServiceOrchestratorContext, ServiceOrchestratorContext, NewServiceData>
+    public class NewService : ReproducibleCommandWithData<ServiceOrchestratorContext, ServiceOrchestratorContext, NewServiceData>, IEventProducer
     {
         private const string DotNetCoreExecutable = "dotnet.exe";
         private readonly JsonSerializerSettings jsonSerializerSettings = new JsonSerializerSettings
         {
             NullValueHandling = NullValueHandling.Ignore
         };
+        public List<IEvent> EventsProduced { get; } = new List<IEvent>();
 
         public NewService(NewServiceData data) : base(data)
         {
@@ -85,6 +88,8 @@
             }
 
             serviceProcess.Start();
+
+            EventsProduced.Add(new ServiceStarted {ProcessId = serviceProcess.Id, ServiceName = Data.ServiceName});
 
             return context;
         }

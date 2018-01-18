@@ -1,8 +1,7 @@
-﻿namespace Serviceable.Objects.Instrumentation.Composition.Service.Commands
+﻿namespace Serviceable.Objects.Instrumentation.Server.Commands.Instrumentation
 {
     using System.Management.Automation;
     using Powershell;
-    using Remote.Composition.Service.Commands;
 
     [Cmdlet(VerbsCommon.Close, "Service")]
     public sealed class CloseServiceCmdlet : InstrumentationCommandCmdlet<CloseService>

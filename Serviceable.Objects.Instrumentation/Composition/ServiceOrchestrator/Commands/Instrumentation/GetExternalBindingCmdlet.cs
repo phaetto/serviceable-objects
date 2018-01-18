@@ -1,4 +1,4 @@
-﻿namespace Serviceable.Objects.Instrumentation.Composition.ServiceOrchestrator.Commands
+﻿namespace Serviceable.Objects.Instrumentation.Composition.ServiceOrchestrator.Commands.Instrumentation
 {
     using System.Management.Automation;
     using Powershell;

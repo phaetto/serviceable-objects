@@ -6,7 +6,7 @@
     {
         public override ServiceContext Execute(ServiceContext context)
         {
-            //TODO: shut down the service gracefully
+            //TODO: shut down the graph gracefully
 
             var applicationHost = context.ServiceContainer.Resolve<ApplicationHost>();
             applicationHost.CancellationTokenSource.Cancel();

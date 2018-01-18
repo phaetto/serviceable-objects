@@ -55,8 +55,8 @@ PowerShell -NoProfile -Command {
 
     Write-Host " --- Communication end --- ";
     
-    # Write-Host "Stopping serive...";
-    # Remove-Service -ServiceOrchestrator "orchestrator-X" -ServiceName 'service-X';
+    Write-Host "Stopping service...";
+    Close-Service -ServiceOrchestrator "orchestrator-X" -ServiceName 'service-X';
 
     Write-Host " --- Done --- ";
 } -args $location;

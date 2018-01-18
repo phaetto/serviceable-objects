@@ -20,7 +20,7 @@ namespace TestHttpCompositionConsoleApp
              * 
              */
             
-            // Sample host should minimal like that.
+            // Sample host should be minimal like that.
             // Override templates or data from args before reaching the host execution
             new ApplicationHost(args).Execute(new RunAndBlock());
         }
