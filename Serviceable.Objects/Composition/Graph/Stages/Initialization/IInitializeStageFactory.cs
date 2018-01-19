@@ -2,6 +2,7 @@
 {
     public interface IInitializeStageFactory
     {
-        object GenerateInitializeCommand();
+        object GenerateInitializationCommand();
+        object GenerateDeinitializationCommand();
     }
 }

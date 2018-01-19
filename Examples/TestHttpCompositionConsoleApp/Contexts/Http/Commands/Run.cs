@@ -1,6 +1,7 @@
 ﻿namespace TestHttpCompositionConsoleApp.Contexts.Http.Commands
 {
     using System.IO;
+    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
@@ -13,6 +14,8 @@
     {
         public Task<OwinHttpContext> Execute(OwinHttpContext context)
         {
+            context.CancellationTokenSource = new CancellationTokenSource();
+
             var config = new ConfigurationBuilder()
                 .AddEnvironmentVariables().Build();
 

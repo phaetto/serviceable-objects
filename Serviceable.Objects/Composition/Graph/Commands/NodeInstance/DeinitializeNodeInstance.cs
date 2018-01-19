@@ -1,14 +1,14 @@
 ﻿namespace Serviceable.Objects.Composition.Graph.Commands.NodeInstance
 {
-    using Stages.Setup;
+    using Stages.Initialization;
 
-    public sealed class SetupNodeInstance : ICommand<GraphNodeInstanceContext, GraphNodeInstanceContext>
+    public sealed class DeinitializeNodeInstance : ICommand<GraphNodeInstanceContext, GraphNodeInstanceContext>
     {
         public GraphNodeInstanceContext Execute(GraphNodeInstanceContext context)
         {
-            if (context.HostedContext is ISetupStageFactory graphSetup)
+            if (context.HostedContext is IInitializeStageFactory initialization)
             {
-                var command = graphSetup.GenerateSetupCommand(context.GraphContext, context.GraphNodeContext);
+                var command = initialization.GenerateDeinitializationCommand();
 
                 if (command != null)
                 {

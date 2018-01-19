@@ -43,6 +43,74 @@
             Assert.Equal("success", result.SingleContextExecutionResultWithInfo.ResultObject);
         }
 
+        [Fact]
+        public void Execute_WhenSuccesfullyUnloadingAGraph_ThenTheGraphIsEmpty()
+        {
+            var command = new TestCommand();
+            var graphContext = new GraphContext();
+            graphContext.AddNode(typeof(TestContext), "test-node");
+            var graphNodeContext = graphContext.GetNodeById("test-node");
+
+            // Set up service
+            graphContext.Container.RegisterWithDefaultInterface(new TestService());
+            graphContext.Container.RegisterWithDefaultInterface(new TestConfigurationSource());
+
+            // Configure
+            graphContext.ConfigureSetupAndInitialize();
+            Assert.True(graphNodeContext.IsConfigured);
+
+            // Execute
+            var result = graphNodeContext.ExecuteGraphCommand(command);
+            Assert.NotNull(result);
+            Assert.False(result.IsFaulted);
+            Assert.False(result.IsIdle);
+            Assert.Null(result.Exception);
+
+            // Unload
+            graphContext.UninitializeDismantleAndDeconfigure();
+            Assert.False(graphNodeContext.IsConfigured);
+        }
+
+        [Fact]
+        public void Execute_WhenSuccesfullyLoadingAndUnloadingAGraphMultipleTimes_ThenTheGraphIsStillInitializingCorrectly()
+        {
+            var command = new TestCommand();
+            var graphContext = new GraphContext();
+            graphContext.AddNode(typeof(TestContext), "test-node");
+            var graphNodeContext = graphContext.GetNodeById("test-node");
+
+            // Set up service
+            graphContext.Container.RegisterWithDefaultInterface(new TestService());
+            graphContext.Container.RegisterWithDefaultInterface(new TestConfigurationSource());
+
+            // First
+            graphContext.ConfigureSetupAndInitialize();
+            Assert.True(graphNodeContext.IsConfigured);
+            graphContext.UninitializeDismantleAndDeconfigure();
+            Assert.False(graphNodeContext.IsConfigured);
+
+            // Second
+            graphContext.ConfigureSetupAndInitialize();
+            Assert.True(graphNodeContext.IsConfigured);
+            graphContext.UninitializeDismantleAndDeconfigure();
+            Assert.False(graphNodeContext.IsConfigured);
+
+            // Third
+            graphContext.ConfigureSetupAndInitialize();
+            Assert.True(graphNodeContext.IsConfigured);
+            graphContext.UninitializeDismantleAndDeconfigure();
+            Assert.False(graphNodeContext.IsConfigured);
+
+            // Load and Execute
+            graphContext.ConfigureSetupAndInitialize();
+            Assert.True(graphNodeContext.IsConfigured);
+            var result = graphNodeContext.ExecuteGraphCommand(command);
+            Assert.NotNull(result);
+            Assert.False(result.IsFaulted);
+            Assert.False(result.IsIdle);
+            Assert.Null(result.Exception);
+        }
+
         public struct TestContextConfiguration
         {
             public string CustomValue { get; set; }
@@ -57,6 +125,11 @@
             public object GenerateConfigurationCommand(string serializedConfigurationString)
             {
                 return new TestConfigurationCommand(serializedConfigurationString);
+            }
+
+            public object GenerateDeconfigurationCommand()
+            {
+                return null;
             }
         }
 

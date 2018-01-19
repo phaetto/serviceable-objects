@@ -63,6 +63,15 @@
             Nodes.Add(node);
         }
 
+        public void RemoveNode(string id)
+        {
+            Check.ArgumentNullOrWhiteSpace(id, nameof(id));
+
+            var node = Nodes.First(x => x.Id == id);
+            Nodes.Remove(node);
+            InputNodes.Remove(node);
+        }
+
         public void ConnectNodes(string fromId, string toId)
         {
             Check.ArgumentNullOrWhiteSpace(fromId, nameof(fromId));
@@ -83,6 +92,37 @@
             });
         }
 
+        public void DisconnectNodes(string fromId, string toId)
+        {
+            Check.ArgumentNullOrWhiteSpace(fromId, nameof(fromId));
+            Check.ArgumentNullOrWhiteSpace(toId, nameof(toId));
+
+            var parentNode = Nodes.FirstOrDefault(x => x.Id == fromId);
+            Check.ArgumentNull(parentNode, nameof(fromId), $"Parent node with id '${fromId}' could not be found");
+
+            var childNode = Nodes.FirstOrDefault(x => x.Id == toId);
+            Check.ArgumentNull(childNode, nameof(toId), $"Parent node with id '${toId}' could not be found");
+
+            var vertix = Vertices.FirstOrDefault(x => x.FromId == fromId && x.ToId == toId);
+            Check.Argument(vertix == null, nameof(fromId), "Vertex doesn't exist in this graph");
+
+            Vertices.Remove(vertix);
+        }
+
+        public void DisconnectNode(string id)
+        {
+            Check.ArgumentNullOrWhiteSpace(id, nameof(id));
+
+            var parentNode = Nodes.FirstOrDefault(x => x.Id == id);
+            Check.ArgumentNull(parentNode, nameof(id), $"Parent node with id '${id}' could not be found");
+
+            var vertices = Vertices.Where(x => x.FromId == id || x.ToId == id).ToList();
+            foreach (var vertix in vertices)
+            {
+                Vertices.Remove(vertix);
+            }
+        }
+
         public IEnumerable<string> GetNodeIds<TNodeInContext>()
         {
             return Nodes.Where(x => x.ContextType == typeof(TNodeInContext)).Select(x => x.Id);
@@ -97,6 +137,14 @@
             Nodes.ToList().ForEach(x => x.Execute(new SetupNode()));
             Nodes.Where(x => !x.IsConfigured).ToList().ForEach(x => x.Execute(new ConfigureNode(service, configurationSource)));
             Nodes.ForEach(x => x.Execute(new InitializeNode()));
+        }
+
+        public void UninitializeDismantleAndDeconfigure() 
+        {
+            // Uninitialize/Dismantle/Deconfigure - ordering matters
+            Nodes.ForEach(x => x.Execute(new DeinitializeNode()));
+            Nodes.ToList().ForEach(x => x.Execute(new DismantleNode()));
+            Nodes.ForEach(x => x.Execute(new DeconfigureNode()));
         }
 
         public GraphNodeContext GetNodeById(string nodeId)

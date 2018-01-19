@@ -54,7 +54,7 @@
                             GraphNodeInstanceContextListPerAlgorithm[algorithmType]
                         );
 
-                    firstExecutionCommandResults = nodeInstancesToBeExecuted.Select(x => ExecutionLogicOnNodeInstance(command, x)).Cast<ExecutionCommandResult>().ToList();
+                    firstExecutionCommandResults = nodeInstancesToBeExecuted.Select(x => ExecutionLogicOnNodeInstance(command, x)).ToList();
                 }
                 else
                 {
@@ -66,7 +66,7 @@
                         );
 
                     // Execute them
-                    var newExecutionCommandResults = nodeInstancesToBeExecuted.Select(x => ExecutionLogicOnNodeInstance(command, x)).Cast<ExecutionCommandResult>().ToList();
+                    var newExecutionCommandResults = nodeInstancesToBeExecuted.Select(x => ExecutionLogicOnNodeInstance(command, x)).ToList();
 
                     // Possibly manipulate the returned results
                     firstExecutionCommandResults =

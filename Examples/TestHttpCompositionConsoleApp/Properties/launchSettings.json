@@ -1,0 +1,7 @@
+{
+  "profiles": {
+    "TestHttpCompositionConsoleApp": {
+      "commandName": "Project"
+    }
+  }
+}
