@@ -14,6 +14,7 @@
 
         public string OrchestratorName => Configuration.OrchestratorName;
         public string EntryAssemblyFullPath => Configuration.EntryAssemblyFullPath;
+        public bool UseChildProcesses => Configuration.UseChildProcesses;
         public IDictionary<string, List<InBinding>> InBindingsPerService => Configuration.InBindingsPerService;
         public IDictionary<string, List<ExternalBinding>> ExternalBindingsPerService => Configuration.ExternalBindingsPerService;
         public IDictionary<string, string> GraphTemplatesDictionary => Configuration.GraphTemplatesDictionary;

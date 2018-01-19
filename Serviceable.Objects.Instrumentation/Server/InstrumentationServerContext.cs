@@ -46,5 +46,11 @@
             GraphContext = graphContext;
             return new SetupServer(graphContext, graphNodeContext);
         }
+
+        public object GenerateDismantleCommand(GraphContext graphContext, GraphNodeContext graphNodeContext)
+        {
+            GraphContext = null;
+            return new DismantleServer(graphContext, graphNodeContext);
+        }
     }
 }

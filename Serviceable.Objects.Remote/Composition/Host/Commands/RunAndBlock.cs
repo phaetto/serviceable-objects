@@ -7,6 +7,7 @@
             context.GraphContext.ConfigureSetupAndInitialize();
             context.CancellationTokenSource.Token.Register(CancellationRequested, context);
             context.EventWaitHandle.WaitOne();
+            context.GraphContext.UninitializeDismantleAndDeconfigure();
             return context;
         }
 

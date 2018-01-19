@@ -24,15 +24,23 @@
 
         public void SetConfiguration(TConfiguration state)
         {
-            Check.Argument(HasBeenConfigured, nameof(state), $"The instance {GetType().AssemblyQualifiedName} has already been configured");
+            Check.Argument(HasBeenConfigured, nameof(HasBeenConfigured), $"The instance {GetType().AssemblyQualifiedName} has already been configured");
 
             Configuration = state;
             HasBeenConfigured = true;
         }
 
+        public void ClearConfiguration()
+        {
+            Check.Argument(!HasBeenConfigured, nameof(HasBeenConfigured), $"The instance {GetType().AssemblyQualifiedName} has not been configured");
+
+            Configuration = default(TConfiguration);
+            HasBeenConfigured = false;
+        }
+
         protected override TReturnedContextType InvokeExecute<TReturnedContextType>(ICommand<TContextType, TReturnedContextType> action)
         {
-            if (!HasBeenConfigured && !(action is ApplyConfiguration<TConfiguration, TContextType>))
+            if (!HasBeenConfigured && !(action is Configure<TConfiguration, TContextType>))
             {
                 throw new InvalidOperationException($"The instance {GetType().AssemblyQualifiedName} has not been configured yet.");
             }
@@ -42,7 +50,12 @@
 
         public object GenerateConfigurationCommand(string serializedConfigurationString)
         {
-            return new ApplyConfiguration<TConfiguration, TContextType>(serializedConfigurationString);
+            return new Configure<TConfiguration, TContextType>(serializedConfigurationString);
+        }
+
+        public object GenerateDeconfigurationCommand()
+        {
+            return new Deconfigure<TConfiguration, TContextType>();
         }
     }
 }

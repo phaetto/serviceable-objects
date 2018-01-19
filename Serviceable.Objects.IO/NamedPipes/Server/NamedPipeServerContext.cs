@@ -3,6 +3,7 @@
     using System.IO;
     using System.IO.Pipes;
     using System.Linq;
+    using System.Threading;
     using System.Threading.Tasks;
     using Commands;
     using Composition.Graph.Events;
@@ -18,6 +19,7 @@
     {
         private readonly StreamSession streamSession = new StreamSession();
         internal Task ServerTask;
+        internal CancellationTokenSource CancellationTokenSource;
 
         public NamedPipeServerContext()
         {
@@ -27,9 +29,14 @@
         {
         }
 
-        public object GenerateInitializeCommand()
+        public object GenerateInitializationCommand()
         {
             return new StartServer();
+        }
+
+        public object GenerateDeinitializationCommand()
+        {
+            return new StopServer();
         }
 
         internal void RunServerAndBlock()

@@ -2,6 +2,7 @@
 {
     using System.IO;
     using System.Linq;
+    using System.Threading;
     using System.Threading.Tasks;
     using Commands;
     using Configuration;
@@ -17,6 +18,7 @@
     public sealed class OwinHttpContext : ConfigurableContext<OwinHttpContextConfiguration, OwinHttpContext>, IInitializeStageFactory
     {
         internal IWebHost Host;
+        internal CancellationTokenSource CancellationTokenSource;
 
         public OwinHttpContext(OwinHttpContextConfiguration configuration) : base(configuration)
         {
@@ -26,9 +28,14 @@
         {
         }
 
-        public object GenerateInitializeCommand()
+        public object GenerateInitializationCommand()
         {
             return new Run();
+        }
+
+        public object GenerateDeinitializationCommand()
+        {
+            return new Stop();
         }
 
         internal void SetupRouter(IRouteBuilder routerBuilder)

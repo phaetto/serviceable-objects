@@ -4,5 +4,6 @@
     {
         bool HasBeenConfigured { get; }
         object GenerateConfigurationCommand(string serializedConfigurationString);
+        object GenerateDeconfigurationCommand();
     }
 }
