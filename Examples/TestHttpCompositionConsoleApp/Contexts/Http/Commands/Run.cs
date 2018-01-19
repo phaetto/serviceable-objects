@@ -34,7 +34,7 @@
 
             return Task.Run(() =>
             {
-                context.Host.Run();
+                context.Host.Run(context.CancellationTokenSource.Token);
                 return context;
             });
         }
