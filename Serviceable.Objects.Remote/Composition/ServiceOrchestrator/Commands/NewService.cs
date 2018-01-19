@@ -68,7 +68,7 @@
                     {
                         UseShellExecute = false,
                         FileName = existingProcess.MainModule.FileName, // This is dotnet running (.NET core)
-                        CreateNoWindow = true,
+                        CreateNoWindow = !context.UseChildProcesses,
                         Arguments = $"\"{context.EntryAssemblyFullPath}\" \"{applicationHostDataConfigurationAsJsonForCommandLine}\""
                     }
                 };
@@ -81,7 +81,7 @@
                     {
                         UseShellExecute = false,
                         FileName = existingProcess.MainModule.FileName, // This is custom executable wrapping host (.NET Framework)
-                        CreateNoWindow = true,
+                        CreateNoWindow = !context.UseChildProcesses,
                         Arguments = $"\"{applicationHostDataConfigurationAsJsonForCommandLine}\""
                     }
                 };

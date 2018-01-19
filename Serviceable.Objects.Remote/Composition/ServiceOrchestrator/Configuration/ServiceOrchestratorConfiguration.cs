@@ -7,6 +7,7 @@
     {
         public string OrchestratorName { get; set; }
         public string EntryAssemblyFullPath { get; set; }
+        public bool UseChildProcesses { get; set; }
         public Dictionary<string, List<InBinding>> InBindingsPerService { get; set; }
         public Dictionary<string, List<ExternalBinding>> ExternalBindingsPerService { get; set; }
         public Dictionary<string, string> GraphTemplatesDictionary { get; set; }
