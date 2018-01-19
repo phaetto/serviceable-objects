@@ -2,14 +2,15 @@
 {
     using Data;
     using Newtonsoft.Json;
+    using Objects.Composition.ServiceOrchestrator;
 
-    public sealed class SetTemplate : ReproducibleCommandWithData<ServiceOrchestratorContext, ServiceOrchestratorContext, GraphAndDependencyInjectionData>
+    public sealed class SetTemplate : ReproducibleCommandWithData<IServiceOrchestrator, IServiceOrchestrator, GraphAndDependencyInjectionData>
     {
         public SetTemplate(GraphAndDependencyInjectionData data) : base(data)
         {
         }
 
-        public override ServiceOrchestratorContext Execute(ServiceOrchestratorContext context)
+        public override IServiceOrchestrator Execute(IServiceOrchestrator context)
         {
             context.GraphTemplatesDictionary[Data.Name] = JsonConvert.SerializeObject(Data);
             return context;

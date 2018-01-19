@@ -1,10 +1,11 @@
 ﻿namespace Serviceable.Objects.Remote.Composition.Service.Commands
 {
     using Host;
+    using Objects.Composition.Service;
 
-    public class CloseService : ReproducibleCommand<ServiceContext, ServiceContext>
+    public class CloseService : ReproducibleCommand<IService, IService>
     {
-        public override ServiceContext Execute(ServiceContext context)
+        public override IService Execute(IService context)
         {
             // TODO: wait for critical services and block further execute
 
