@@ -9,6 +9,7 @@
         public List<IEvent> PublishedEvents { get; set; } = new List<IEvent>();
         public bool IsFaulted { get; set; }
         public bool IsIdle { get; set; }
+        public bool IsPaused { get; set; }
         public Exception Exception { get; set; }
     }
 }

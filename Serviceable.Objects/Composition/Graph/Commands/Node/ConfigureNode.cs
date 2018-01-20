@@ -7,7 +7,7 @@
     using Stages.Configuration;
     using Stages.Setup;
 
-    public sealed class ConfigureNode : ICommand<GraphNodeContext, GraphNodeContext>
+    public sealed class ConfigureNode : ICommand<GraphNodeContext, GraphNodeContext>, ISystemCommand
     {
         private readonly IService service;
         private readonly IConfigurationSource configurationSource;

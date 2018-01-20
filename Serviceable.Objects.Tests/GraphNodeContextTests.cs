@@ -9,6 +9,7 @@
     using Composition.Service;
     using Composition.ServiceOrchestrator;
     using Dependencies;
+    using Exceptions;
     using Newtonsoft.Json;
     using Xunit;
 
@@ -36,6 +37,7 @@
             Assert.NotNull(result);
             Assert.False(result.IsFaulted);
             Assert.False(result.IsIdle);
+            Assert.False(result.IsPaused);
             Assert.Null(result.Exception);
             Assert.NotNull(result.SingleContextExecutionResultWithInfo);
             Assert.Equal(typeof(TestContext), result.SingleContextExecutionResultWithInfo.ContextType);
@@ -65,6 +67,7 @@
             Assert.NotNull(result);
             Assert.False(result.IsFaulted);
             Assert.False(result.IsIdle);
+            Assert.False(result.IsPaused);
             Assert.Null(result.Exception);
             Assert.NotNull(result.SingleContextExecutionResultWithInfo);
             Assert.Equal(typeof(TestContext), result.SingleContextExecutionResultWithInfo.ContextType);
@@ -93,6 +96,7 @@
             Assert.NotNull(result);
             Assert.False(result.IsFaulted);
             Assert.False(result.IsIdle);
+            Assert.False(result.IsPaused);
             Assert.Null(result.Exception);
 
             // Unload
@@ -137,7 +141,35 @@
             Assert.NotNull(result);
             Assert.False(result.IsFaulted);
             Assert.False(result.IsIdle);
+            Assert.False(result.IsPaused);
             Assert.Null(result.Exception);
+        }
+
+        [Fact]
+        public void Execute_WhenGraphIsPaused_ThenThrowsException()
+        {
+            var command = new TestCommand();
+            var graphContext = new GraphContext();
+            graphContext.AddNode(typeof(TestContext), "test-node");
+            var graphNodeContext = graphContext.GetNodeById("test-node");
+
+            // Set up service
+            graphContext.Container.RegisterWithDefaultInterface(new TestService());
+            graphContext.Container.RegisterWithDefaultInterface(new TestConfigurationSource());
+
+            // Configure
+            graphContext.ConfigureSetupAndInitialize();
+            graphContext.RuntimeExecutionState = RuntimeExecutionState.Paused;
+
+            // Execute
+            var result = graphNodeContext.ExecuteGraphCommand(command);
+
+            Assert.NotNull(result);
+            Assert.False(result.IsFaulted);
+            Assert.False(result.IsIdle);
+            Assert.True(result.IsPaused);
+            Assert.IsType<RuntimeExecutionPausedException>(result.Exception);
+            Assert.Null(result.SingleContextExecutionResultWithInfo);
         }
 
         public struct TestContextConfiguration

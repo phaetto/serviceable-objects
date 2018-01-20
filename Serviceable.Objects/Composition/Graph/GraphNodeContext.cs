@@ -6,6 +6,7 @@
     using Commands.Node;
     using Commands.NodeInstance;
     using Commands.NodeInstance.ExecutionData;
+    using Exceptions;
 
     public sealed class GraphNodeContext : Context<GraphNodeContext>
     {
@@ -34,6 +35,15 @@
 
         public ExecutionCommandResult ExecuteGraphCommand(object command)
         {
+            if (GraphContext.RuntimeExecutionState != RuntimeExecutionState.Running && !(command is ISystemCommand))
+            {
+                return new ExecutionCommandResult
+                {
+                    IsPaused = true,
+                    Exception = new RuntimeExecutionPausedException(),
+                };
+            }
+
             if (!AlgorithmicInstanceExecutions.Any())
             {
                 // Default execution - find first and run it

@@ -5,7 +5,7 @@
     using NodeInstance;
     using NodeInstance.ExecutionData;
 
-    public sealed class ProcessNodeEventLogic : ICommand<GraphNodeContext, IList<ExecutionCommandResult>>
+    public sealed class ProcessNodeEventLogic : ICommand<GraphNodeContext, IList<ExecutionCommandResult>>, ISystemCommand
     {
         private readonly IEvent eventPublished;
         private readonly GraphNodeInstanceContext graphNodeInstanceContext;
