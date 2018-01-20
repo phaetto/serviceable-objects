@@ -4,7 +4,7 @@
     using System.Collections.Generic;
     using System.Threading;
 
-    public sealed class TimerStreamScheduler : Publisher
+    public sealed class TimerStreamSchedulerPublisher : Publisher
     {
         private const int StartNeverTimerValue = Timeout.Infinite;
 
@@ -26,7 +26,7 @@
 
         public bool IsIdle => lastRunIntervalInMilliseconds == TimerIdle;
 
-        public TimerStreamScheduler()
+        public TimerStreamSchedulerPublisher()
         {
             timer = new Timer(
                 TimerCallback,
