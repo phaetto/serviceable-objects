@@ -34,21 +34,18 @@
 
                 namedPipeClientStream.WaitForPipeDrain();
 
-                if (command is IRemotable)
+                do
                 {
-                    do
-                    {
-                        streamSession.Read(namedPipeClientStream);
-                    } while (streamSession.IsCommandBufferWaitingForCompletion);
+                    streamSession.Read(namedPipeClientStream);
+                } while (streamSession.IsCommandBufferWaitingForCompletion);
 
-                    if (streamSession.CommandsTextReadyToBeParsedQueue.TryDequeue(out var replyString))
+                if (streamSession.CommandsTextReadyToBeParsedQueue.TryDequeue(out var replyString))
+                {
+                    if (!string.IsNullOrWhiteSpace(replyString))
                     {
-                        if (!string.IsNullOrWhiteSpace(replyString))
-                        {
-                            var commandSpecificationService = new CommandSpecificationService();
-                            var commandResultSpecification = JsonConvert.DeserializeObject<CommandResultSpecification[]>(replyString);
-                            return commandSpecificationService.CreateResultDataFromCommandSpecification(commandResultSpecification.First());
-                        }
+                        var commandSpecificationService = new CommandSpecificationService();
+                        var commandResultSpecification = JsonConvert.DeserializeObject<CommandResultSpecification[]>(replyString);
+                        return commandResultSpecification.Take(1).Select(x => commandSpecificationService.CreateResultDataFromCommandSpecification(x)).FirstOrDefault();
                     }
                 }
 
