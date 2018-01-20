@@ -19,6 +19,35 @@
         {
             var command = new TestCommand();
             var graphContext = new GraphContext();
+            graphContext.AddNode(new TestContext(), "test-node");
+            var graphNodeContext = graphContext.GetNodeById("test-node");
+
+            // Set up service
+            graphContext.Container.RegisterWithDefaultInterface(new TestService());
+            graphContext.Container.RegisterWithDefaultInterface(new TestConfigurationSource());
+
+            // Configure
+            graphContext.ConfigureSetupAndInitialize();
+            Assert.True(graphNodeContext.IsConfigured);
+
+            // Execute
+            var result = graphNodeContext.ExecuteGraphCommand(command);
+
+            Assert.NotNull(result);
+            Assert.False(result.IsFaulted);
+            Assert.False(result.IsIdle);
+            Assert.Null(result.Exception);
+            Assert.NotNull(result.SingleContextExecutionResultWithInfo);
+            Assert.Equal(typeof(TestContext), result.SingleContextExecutionResultWithInfo.ContextType);
+            Assert.Equal("test-node", result.SingleContextExecutionResultWithInfo.NodeId);
+            Assert.Equal("success", result.SingleContextExecutionResultWithInfo.ResultObject);
+        }
+
+        [Fact]
+        public void Execute_WhenSuccesfullyExecutingAnInstanceFromContainer_ThenTheResultObjectContainsTheValue()
+        {
+            var command = new TestCommand();
+            var graphContext = new GraphContext();
             graphContext.AddNode(typeof(TestContext), "test-node");
             var graphNodeContext = graphContext.GetNodeById("test-node");
 
