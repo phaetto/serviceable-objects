@@ -17,6 +17,8 @@
         private readonly List<GraphVertexContext> vertices = new List<GraphVertexContext>();
         private readonly List<GraphNodeContext> nodes = new List<GraphNodeContext>();
 
+        public RuntimeExecutionState RuntimeExecutionState = RuntimeExecutionState.Paused;
+
         public GraphContext(Container container = null)
         {
             Container = container ?? new Container();
@@ -130,18 +132,20 @@
 
         public void ConfigureSetupAndInitialize() 
         {
-            // Configure/Setup/Initialize - ordering matters
+            // Configure/Setup/Initialize/Run - ordering matters
             var service = Container.Resolve<IService>(throwOnError: false);
             var configurationSource = Container.Resolve<IConfigurationSource>(throwOnError: false);
             nodes.ForEach(x => x.Execute(new ConfigureNode(service, configurationSource)));
             nodes.ToList().ForEach(x => x.Execute(new SetupNode()));
             nodes.Where(x => !x.IsConfigured).ToList().ForEach(x => x.Execute(new ConfigureNode(service, configurationSource)));
             nodes.ForEach(x => x.Execute(new InitializeNode()));
+            RuntimeExecutionState = RuntimeExecutionState.Running;
         }
 
         public void UninitializeDismantleAndDeconfigure() 
         {
-            // Uninitialize/Dismantle/Deconfigure - ordering matters
+            // Pause/Uninitialize/Dismantle/Deconfigure - ordering matters
+            RuntimeExecutionState = RuntimeExecutionState.Paused;
             nodes.ForEach(x => x.Execute(new DeinitializeNode()));
             nodes.ToList().ForEach(x => x.Execute(new DismantleNode()));
             nodes.ForEach(x => x.Execute(new DeconfigureNode()));
