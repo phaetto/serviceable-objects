@@ -162,6 +162,17 @@
             Check.ArgumentNull(command, nameof(command));
 
             var contextExecutionResults = new List<ExecutionCommandResult>(inputNodes.Count);
+            
+            if (RuntimeExecutionState != RuntimeExecutionState.Running && !(command is ISystemCommand))
+            {
+                contextExecutionResults.Add(new ExecutionCommandResult
+                {
+                    IsPaused = true,
+                    Exception = new RuntimeExecutionPausedException(),
+                });
+
+                return contextExecutionResults;
+            }
 
             foreach (var inputNode in inputNodes)
             {
@@ -186,11 +197,20 @@
             Check.ArgumentNull(command, nameof(command));
             Check.ArgumentNullOrWhiteSpace(uniqueId, nameof(uniqueId));
 
-            var contextExecutionResult = inputNodes.First(x => x.Id == uniqueId).ExecuteGraphCommand(command);
+            if (RuntimeExecutionState != RuntimeExecutionState.Running && !(command is ISystemCommand))
+            {
+                return new ExecutionCommandResult
+                {
+                    IsPaused = true,
+                    Exception = new RuntimeExecutionPausedException(),
+                };
+            }
+
+            var contextExecutionResult = nodes.First(x => x.Id == uniqueId).ExecuteGraphCommand(command);
 
             if (contextExecutionResult.IsIdle)
             {
-                throw new NotSupportedException("No context found that support this command");
+                throw new NotSupportedException($"Node {uniqueId} does not support this command");
             }
 
             if (contextExecutionResult.IsFaulted)

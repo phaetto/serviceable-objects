@@ -18,20 +18,20 @@
         {
             try
             {
-                GraphNodeContext graphNodeContextForExecution;
+                string nodeId;
                 if (string.IsNullOrWhiteSpace(CommonInstrumentationParameters.ServiceName)
                     && string.IsNullOrWhiteSpace(CommonInstrumentationParameters.ContextId))
                 {
                     // This needs to reach orchestrator
-                    graphNodeContextForExecution = graphContext.GetNodeById(graphContext.GetNodeIds<ServiceOrchestratorContext>().First());
+                    nodeId = graphContext.GetNodeIds<ServiceOrchestratorContext>().First();
                 }
                 else
                 {
                     // We need to find the target context node to execute
-                    graphNodeContextForExecution = graphContext.GetNodeById(CommonInstrumentationParameters.ContextId);
+                    nodeId = CommonInstrumentationParameters.ContextId;
                 }
 
-                var executionDataResult = graphNodeContextForExecution.ExecuteGraphCommand(commandApplied);
+                var executionDataResult = graphContext.Execute(commandApplied, nodeId);
 
                 return executionDataResult.SingleContextExecutionResultWithInfo?.ResultObject ?? executionDataResult.Exception;
             }

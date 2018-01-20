@@ -33,17 +33,8 @@
             AbstractContext = abstractContext;
         }
 
-        public ExecutionCommandResult ExecuteGraphCommand(object command)
+        internal ExecutionCommandResult ExecuteGraphCommand(object command)
         {
-            if (GraphContext.RuntimeExecutionState != RuntimeExecutionState.Running && !(command is ISystemCommand))
-            {
-                return new ExecutionCommandResult
-                {
-                    IsPaused = true,
-                    Exception = new RuntimeExecutionPausedException(),
-                };
-            }
-
             if (!AlgorithmicInstanceExecutions.Any())
             {
                 // Default execution - find first and run it

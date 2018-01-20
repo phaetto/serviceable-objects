@@ -23,7 +23,7 @@
             var namedPipeServerContextNode = graphContext.GetNodeById(namedPipeServerNodeId);
 
             // Deconfigure
-            namedPipeServerContextNode.ExecuteGraphCommand(new DeconfigureNode()); // Deconfigure
+            namedPipeServerContextNode.Execute(new DeconfigureNode()); // Deconfigure
 
             // Diconnect graph nodes
             graphContext.DisconnectNode(namedPipeServerNodeId);

@@ -2,9 +2,12 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Threading;
+    using System.Threading.Tasks;
     using Composition.Graph;
     using Composition.Graph.Commands.Node;
     using Composition.Graph.Commands.NodeInstance.ExecutionData;
+    using Composition.Graph.Events;
     using Composition.Graph.Stages.Configuration;
     using Composition.Service;
     using Composition.ServiceOrchestrator;
@@ -21,7 +24,6 @@
             var command = new TestCommand();
             var graphContext = new GraphContext();
             graphContext.AddNode(new TestContext(), "test-node");
-            var graphNodeContext = graphContext.GetNodeById("test-node");
 
             // Set up service
             graphContext.Container.RegisterWithDefaultInterface(new TestService());
@@ -29,10 +31,9 @@
 
             // Configure
             graphContext.ConfigureSetupAndInitialize();
-            Assert.True(graphNodeContext.IsConfigured);
 
             // Execute
-            var result = graphNodeContext.ExecuteGraphCommand(command);
+            var result = graphContext.Execute(command, "test-node");
 
             Assert.NotNull(result);
             Assert.False(result.IsFaulted);
@@ -51,7 +52,6 @@
             var command = new TestCommand();
             var graphContext = new GraphContext();
             graphContext.AddNode(typeof(TestContext), "test-node");
-            var graphNodeContext = graphContext.GetNodeById("test-node");
 
             // Set up service
             graphContext.Container.RegisterWithDefaultInterface(new TestService());
@@ -59,10 +59,9 @@
 
             // Configure
             graphContext.ConfigureSetupAndInitialize();
-            Assert.True(graphNodeContext.IsConfigured);
 
             // Execute
-            var result = graphNodeContext.ExecuteGraphCommand(command);
+            var result = graphContext.Execute(command, "test-node");
 
             Assert.NotNull(result);
             Assert.False(result.IsFaulted);
@@ -92,7 +91,7 @@
             Assert.True(graphNodeContext.IsConfigured);
 
             // Execute
-            var result = graphNodeContext.ExecuteGraphCommand(command);
+            var result = graphContext.Execute(command, "test-node");
             Assert.NotNull(result);
             Assert.False(result.IsFaulted);
             Assert.False(result.IsIdle);
@@ -137,7 +136,7 @@
             // Load and Execute
             graphContext.ConfigureSetupAndInitialize();
             Assert.True(graphNodeContext.IsConfigured);
-            var result = graphNodeContext.ExecuteGraphCommand(command);
+            var result = graphContext.Execute(command, "test-node");
             Assert.NotNull(result);
             Assert.False(result.IsFaulted);
             Assert.False(result.IsIdle);
@@ -151,7 +150,6 @@
             var command = new TestCommand();
             var graphContext = new GraphContext();
             graphContext.AddNode(typeof(TestContext), "test-node");
-            var graphNodeContext = graphContext.GetNodeById("test-node");
 
             // Set up service
             graphContext.Container.RegisterWithDefaultInterface(new TestService());
@@ -162,7 +160,7 @@
             graphContext.RuntimeExecutionState = RuntimeExecutionState.Paused;
 
             // Execute
-            var result = graphNodeContext.ExecuteGraphCommand(command);
+            var result = graphContext.Execute(command, "test-node");
 
             Assert.NotNull(result);
             Assert.False(result.IsFaulted);
@@ -307,6 +305,98 @@
             public IList<ExecutionCommandResult> FilterExecutionResults(IList<ExecutionCommandResult> previousExecutionCommandResults, IList<ExecutionCommandResult> currentExecutionCommandResults)
             {
                 throw new NotImplementedException();
+            }
+        }
+
+        [Fact]
+        public async Task Execute_WhenGraphIsPaused_ThenItShouldFinalizeTheExistingExecutionCycle()
+        {
+            var command = new TestContextWithPauseCommand();
+            var graphContext = new GraphContext();
+            var testContextWithPause = new TestContextWithPause();
+            var secondContext = new SecondContext();
+            graphContext.AddNode(testContextWithPause, "first-node");
+            graphContext.AddNode(secondContext, "second-node");
+            graphContext.ConnectNodes("first-node", "second-node");
+
+            // Configure
+            graphContext.ConfigureSetupAndInitialize();
+
+            // Execute (context will pause)
+            ExecutionCommandResult executionCommandResult = null;
+            Task task = Task.Run(() => executionCommandResult = graphContext.Execute(command, "first-node"));
+
+            // Graph switches to pause
+            graphContext.RuntimeExecutionState = RuntimeExecutionState.Paused;
+
+            // A new command trying to execute should fail
+            var result = graphContext.Execute(command, "first-node");
+            Assert.NotNull(result);
+            Assert.False(result.IsFaulted);
+            Assert.False(result.IsIdle);
+            Assert.True(result.IsPaused);
+            Assert.IsType<RuntimeExecutionPausedException>(result.Exception);
+            Assert.Null(result.SingleContextExecutionResultWithInfo);
+
+            // Signal to continue execution
+            Assert.False(secondContext.HasRun);
+            testContextWithPause.EventWaitHandle.Set();
+
+            // As before, a new command trying to execute should fail as well
+            result = graphContext.Execute(command, "first-node");
+            Assert.NotNull(result);
+            Assert.False(result.IsFaulted);
+            Assert.False(result.IsIdle);
+            Assert.True(result.IsPaused);
+            Assert.IsType<RuntimeExecutionPausedException>(result.Exception);
+            Assert.Null(result.SingleContextExecutionResultWithInfo);
+
+            // Wait for it to finish
+            await task;
+
+            Assert.NotNull(executionCommandResult);
+            Assert.False(executionCommandResult.IsFaulted);
+            Assert.False(executionCommandResult.IsIdle);
+            Assert.False(executionCommandResult.IsPaused);
+            Assert.Null(executionCommandResult.Exception);
+            Assert.NotNull(result.SingleContextExecutionResultWithInfo);
+            Assert.True(secondContext.HasRun);
+        }
+
+        public class TestContextWithPause : Context<TestContext>
+        {
+            public EventWaitHandle EventWaitHandle = new EventWaitHandle(false, EventResetMode.ManualReset);
+
+            internal void PublishEvent(IEvent eventToPublish)
+            {
+                this.PublishContextEvent(eventToPublish);
+            }
+        }
+
+        public class TestContextWithPauseCommand: ICommand<TestContextWithPause, TestContextWithPause>
+        {
+            public TestContextWithPause Execute(TestContextWithPause context)
+            {
+                context.EventWaitHandle.WaitOne(1000);
+
+                context.PublishEvent(
+                    new GraphFlowEventPushControlEventApplyCommandInsteadOfEvent(new SecondContextCommand()));
+
+                return context;
+            }
+        }
+
+        public class SecondContext : Context<TestContext>
+        {
+            public bool HasRun { get; set; }
+        }
+
+        public class SecondContextCommand: ICommand<SecondContext, SecondContext>
+        {
+            public SecondContext Execute(SecondContext context)
+            {
+                context.HasRun = true;
+                return context;
             }
         }
     }
