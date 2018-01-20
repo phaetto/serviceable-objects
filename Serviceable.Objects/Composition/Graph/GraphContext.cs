@@ -13,9 +13,9 @@
     public sealed class GraphContext : Context<GraphContext> // TODO: IDisposable
     {
         public readonly Container Container;
-        internal readonly List<GraphNodeContext> InputNodes = new List<GraphNodeContext>(); // TODO: fields can be made private
-        internal readonly List<GraphVertexContext> Vertices = new List<GraphVertexContext>();
-        internal readonly List<GraphNodeContext> Nodes = new List<GraphNodeContext>();
+        private readonly List<GraphNodeContext> inputNodes = new List<GraphNodeContext>();
+        private readonly List<GraphVertexContext> vertices = new List<GraphVertexContext>();
+        private readonly List<GraphNodeContext> nodes = new List<GraphNodeContext>();
 
         public GraphContext(Container container = null)
         {
@@ -31,8 +31,8 @@
             Check.ArgumentNullOrWhiteSpace(id, nameof(id));
 
             var node = new GraphNodeContext(type, this, id);
-            InputNodes.Add(node);
-            Nodes.Add(node);
+            inputNodes.Add(node);
+            nodes.Add(node);
         }
 
         public void AddInput(AbstractContext context, string id)
@@ -41,8 +41,8 @@
             Check.ArgumentNullOrWhiteSpace(id, nameof(id));
 
             var node = new GraphNodeContext(context, this, id);
-            InputNodes.Add(node);
-            Nodes.Add(node);
+            inputNodes.Add(node);
+            nodes.Add(node);
         }
 
         public void AddNode(Type type, string id)
@@ -51,7 +51,7 @@
             Check.ArgumentNullOrWhiteSpace(id, nameof(id));
 
             var node = new GraphNodeContext(type, this, id);
-            Nodes.Add(node);
+            nodes.Add(node);
         }
 
         public void AddNode(AbstractContext context, string id)
@@ -60,16 +60,16 @@
             Check.ArgumentNullOrWhiteSpace(id, nameof(id));
 
             var node = new GraphNodeContext(context, this, id);
-            Nodes.Add(node);
+            nodes.Add(node);
         }
 
         public void RemoveNode(string id)
         {
             Check.ArgumentNullOrWhiteSpace(id, nameof(id));
 
-            var node = Nodes.First(x => x.Id == id);
-            Nodes.Remove(node);
-            InputNodes.Remove(node);
+            var node = nodes.First(x => x.Id == id);
+            nodes.Remove(node);
+            inputNodes.Remove(node);
         }
 
         public void ConnectNodes(string fromId, string toId)
@@ -77,15 +77,15 @@
             Check.ArgumentNullOrWhiteSpace(fromId, nameof(fromId));
             Check.ArgumentNullOrWhiteSpace(toId, nameof(toId));
 
-            var parentNode = Nodes.FirstOrDefault(x => x.Id == fromId);
+            var parentNode = nodes.FirstOrDefault(x => x.Id == fromId);
             Check.ArgumentNull(parentNode, nameof(fromId), $"Parent node with id '${fromId}' could not be found");
 
-            var childNode = Nodes.FirstOrDefault(x => x.Id == toId);
+            var childNode = nodes.FirstOrDefault(x => x.Id == toId);
             Check.ArgumentNull(childNode, nameof(toId), $"Parent node with id '${toId}' could not be found");
 
-            Check.Argument(Vertices.Any(x => x.FromId == fromId && x.ToId == toId), nameof(fromId), "Vertex already exists in this graph");
+            Check.Argument(vertices.Any(x => x.FromId == fromId && x.ToId == toId), nameof(fromId), "Vertex already exists in this graph");
 
-            Vertices.Add(new GraphVertexContext
+            vertices.Add(new GraphVertexContext
             {
                 FromId = fromId,
                 ToId = toId
@@ -97,35 +97,35 @@
             Check.ArgumentNullOrWhiteSpace(fromId, nameof(fromId));
             Check.ArgumentNullOrWhiteSpace(toId, nameof(toId));
 
-            var parentNode = Nodes.FirstOrDefault(x => x.Id == fromId);
+            var parentNode = nodes.FirstOrDefault(x => x.Id == fromId);
             Check.ArgumentNull(parentNode, nameof(fromId), $"Parent node with id '${fromId}' could not be found");
 
-            var childNode = Nodes.FirstOrDefault(x => x.Id == toId);
+            var childNode = nodes.FirstOrDefault(x => x.Id == toId);
             Check.ArgumentNull(childNode, nameof(toId), $"Parent node with id '${toId}' could not be found");
 
-            var vertix = Vertices.FirstOrDefault(x => x.FromId == fromId && x.ToId == toId);
+            var vertix = vertices.FirstOrDefault(x => x.FromId == fromId && x.ToId == toId);
             Check.Argument(vertix == null, nameof(fromId), "Vertex doesn't exist in this graph");
 
-            Vertices.Remove(vertix);
+            vertices.Remove(vertix);
         }
 
         public void DisconnectNode(string id)
         {
             Check.ArgumentNullOrWhiteSpace(id, nameof(id));
 
-            var parentNode = Nodes.FirstOrDefault(x => x.Id == id);
+            var parentNode = nodes.FirstOrDefault(x => x.Id == id);
             Check.ArgumentNull(parentNode, nameof(id), $"Parent node with id '${id}' could not be found");
 
-            var vertices = Vertices.Where(x => x.FromId == id || x.ToId == id).ToList();
+            var vertices = this.vertices.Where(x => x.FromId == id || x.ToId == id).ToList();
             foreach (var vertix in vertices)
             {
-                Vertices.Remove(vertix);
+                this.vertices.Remove(vertix);
             }
         }
 
         public IEnumerable<string> GetNodeIds<TNodeInContext>()
         {
-            return Nodes.Where(x => x.ContextType == typeof(TNodeInContext)).Select(x => x.Id);
+            return nodes.Where(x => x.ContextType == typeof(TNodeInContext)).Select(x => x.Id);
         }
 
         public void ConfigureSetupAndInitialize() 
@@ -133,33 +133,33 @@
             // Configure/Setup/Initialize - ordering matters
             var service = Container.Resolve<IService>(throwOnError: false);
             var configurationSource = Container.Resolve<IConfigurationSource>(throwOnError: false);
-            Nodes.ForEach(x => x.Execute(new ConfigureNode(service, configurationSource)));
-            Nodes.ToList().ForEach(x => x.Execute(new SetupNode()));
-            Nodes.Where(x => !x.IsConfigured).ToList().ForEach(x => x.Execute(new ConfigureNode(service, configurationSource)));
-            Nodes.ForEach(x => x.Execute(new InitializeNode()));
+            nodes.ForEach(x => x.Execute(new ConfigureNode(service, configurationSource)));
+            nodes.ToList().ForEach(x => x.Execute(new SetupNode()));
+            nodes.Where(x => !x.IsConfigured).ToList().ForEach(x => x.Execute(new ConfigureNode(service, configurationSource)));
+            nodes.ForEach(x => x.Execute(new InitializeNode()));
         }
 
         public void UninitializeDismantleAndDeconfigure() 
         {
             // Uninitialize/Dismantle/Deconfigure - ordering matters
-            Nodes.ForEach(x => x.Execute(new DeinitializeNode()));
-            Nodes.ToList().ForEach(x => x.Execute(new DismantleNode()));
-            Nodes.ForEach(x => x.Execute(new DeconfigureNode()));
+            nodes.ForEach(x => x.Execute(new DeinitializeNode()));
+            nodes.ToList().ForEach(x => x.Execute(new DismantleNode()));
+            nodes.ForEach(x => x.Execute(new DeconfigureNode()));
         }
 
         public GraphNodeContext GetNodeById(string nodeId)
         {
             Check.ArgumentNullOrWhiteSpace(nodeId, nameof(nodeId));
-            return Nodes.First(x => x.Id == nodeId);
+            return nodes.First(x => x.Id == nodeId);
         }
 
         public List<ExecutionCommandResult> Execute(object command)
         {
             Check.ArgumentNull(command, nameof(command));
 
-            var contextExecutionResults = new List<ExecutionCommandResult>(InputNodes.Count);
+            var contextExecutionResults = new List<ExecutionCommandResult>(inputNodes.Count);
 
-            foreach (var inputNode in InputNodes)
+            foreach (var inputNode in inputNodes)
             {
                 contextExecutionResults.Add(inputNode.ExecuteGraphCommand(command));
             }
@@ -182,7 +182,7 @@
             Check.ArgumentNull(command, nameof(command));
             Check.ArgumentNullOrWhiteSpace(uniqueId, nameof(uniqueId));
 
-            var contextExecutionResult = InputNodes.First(x => x.Id == uniqueId).ExecuteGraphCommand(command);
+            var contextExecutionResult = inputNodes.First(x => x.Id == uniqueId).ExecuteGraphCommand(command);
 
             if (contextExecutionResult.IsIdle)
             {
@@ -201,7 +201,7 @@
         {
             Check.ArgumentNullOrWhiteSpace(id, nameof(id));
 
-            return Vertices.Where(x => x.FromId == id).Select(x => Nodes.First(y => y.Id == x.ToId));
+            return vertices.Where(x => x.FromId == id).Select(x => nodes.First(y => y.Id == x.ToId));
         }
     }
 }
