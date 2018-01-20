@@ -20,7 +20,7 @@
 
         public IEnumerable<ExecutionCommandResult> Execute(GraphNodeInstanceContext context)
         {
-            if (eventPublished is IGraphFlowEventPushControl controlFlowEvent)
+            if (eventPublished is IGraphFlowEventPushControlEvent controlFlowEvent)
             {
                 return controlFlowEvent.OverrideEventPropagationLogic(context.GraphContext, publishingGraphNodeInstanceContext.Id, publishingGraphNodeInstanceContext.HostedContext);
             }
