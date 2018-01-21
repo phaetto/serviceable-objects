@@ -138,17 +138,27 @@
             nodes.ForEach(x => x.Execute(new ConfigureNode(service, configurationSource)));
             nodes.ToList().ForEach(x => x.Execute(new SetupNode()));
             nodes.Where(x => !x.IsConfigured).ToList().ForEach(x => x.Execute(new ConfigureNode(service, configurationSource)));
-            nodes.ForEach(x => x.Execute(new InitializeNode()));
-            RuntimeExecutionState = RuntimeExecutionState.Running;
+            Start();
         }
 
         public void UninitializeDismantleAndDeconfigure() 
         {
             // Pause/Uninitialize/Dismantle/Deconfigure - ordering matters
-            RuntimeExecutionState = RuntimeExecutionState.Paused;
-            nodes.ForEach(x => x.Execute(new DeinitializeNode()));
+            Pause();
             nodes.ToList().ForEach(x => x.Execute(new DismantleNode()));
             nodes.ForEach(x => x.Execute(new DeconfigureNode()));
+        }
+
+        public void Start()
+        {
+            nodes.ForEach(x => x.Execute(new InitializeNode()));
+            RuntimeExecutionState = RuntimeExecutionState.Running;
+        }
+
+        public void Pause()
+        {
+            RuntimeExecutionState = RuntimeExecutionState.Paused;
+            nodes.ForEach(x => x.Execute(new DeinitializeNode()));
         }
 
         public GraphNodeContext GetNodeById(string nodeId)
