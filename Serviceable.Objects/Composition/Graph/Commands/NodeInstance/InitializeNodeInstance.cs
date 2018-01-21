@@ -1,5 +1,6 @@
 ﻿namespace Serviceable.Objects.Composition.Graph.Commands.NodeInstance
 {
+    using System.Threading;
     using Stages.Initialization;
 
     public sealed class InitializeNodeInstance : ICommand<GraphNodeInstanceContext, GraphNodeInstanceContext>
@@ -8,6 +9,11 @@
         {
             if (context.HostedContext is IInitializeStageFactory initialization)
             {
+                if (initialization is IInitializationStageSynchronization initializationStageSynchronization)
+                {
+                    initializationStageSynchronization.ReaderWriterLockSlim = new ReaderWriterLockSlim(LockRecursionPolicy.NoRecursion);
+                }
+
                 var command = initialization.GenerateInitializationCommand();
 
                 if (command != null)

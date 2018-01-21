@@ -1,5 +1,6 @@
 ﻿namespace Serviceable.Objects.Composition.Graph.Commands.NodeInstance
 {
+    using System;
     using Stages.Initialization;
 
     public sealed class DeinitializeNodeInstance : ICommand<GraphNodeInstanceContext, GraphNodeInstanceContext>
@@ -8,11 +9,27 @@
         {
             if (context.HostedContext is IInitializeStageFactory initialization)
             {
-                var command = initialization.GenerateDeinitializationCommand();
-
-                if (command != null)
+                try
                 {
-                    context.HostedContext.Execute((dynamic) command);
+                    if (initialization is IInitializationStageSynchronization initializationStageSynchronization)
+                    {
+                        initializationStageSynchronization.ReaderWriterLockSlim.EnterWriteLock();
+                    }
+
+                    var command = initialization.GenerateDeinitializationCommand();
+
+                    if (command != null)
+                    {
+                        context.HostedContext.Execute((dynamic) command);
+                    }
+                }
+                finally
+                {
+                    if (initialization is IInitializationStageSynchronization initializationStageSynchronization)
+                    {
+                        initializationStageSynchronization.ReaderWriterLockSlim.ExitWriteLock();
+                        initializationStageSynchronization.ReaderWriterLockSlim.Dispose();
+                    }
                 }
             }
 
