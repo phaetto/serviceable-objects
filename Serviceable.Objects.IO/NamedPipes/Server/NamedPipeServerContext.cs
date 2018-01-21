@@ -15,11 +15,13 @@
     using Remote.Serialization;
     using Remote.Serialization.Streaming;
 
-    public sealed class NamedPipeServerContext : ConfigurableContext<NamedPipeServerConfiguration, NamedPipeServerContext>, IInitializeStageFactory
+    public sealed class NamedPipeServerContext : ConfigurableContext<NamedPipeServerConfiguration, NamedPipeServerContext>, IInitializeStageFactory, IInitializeStageFactoryWithDeinitSynchronization
     {
         private readonly StreamSession streamSession = new StreamSession();
         internal Task ServerTask;
         internal CancellationTokenSource CancellationTokenSource;
+
+        public ReaderWriterLockSlim ReaderWriterLockSlim { get; set; }
 
         public NamedPipeServerContext()
         {
@@ -58,18 +60,32 @@
 
                             if (streamSession.CommandsTextReadyToBeParsedQueue.TryDequeue(out var commandString))
                             {
-                                var commandSpecification = JsonConvert.DeserializeObject<CommandSpecification>(commandString);
-                                var commandSpecificationService = new CommandSpecificationService();
-                                var command = commandSpecificationService.CreateCommandFromSpecification(commandSpecification);
+                                try
+                                {
+                                    ReaderWriterLockSlim?.EnterReadLock();
 
-                                var eventResults =
-                                    PublishContextEvent(new GraphFlowEventPushControlApplyCommandInsteadOfEvent(command))
-                                        .Where(x => x.ResultObject != null);
+                                    if (CancellationTokenSource.IsCancellationRequested)
+                                    {
+                                        return;
+                                    }
 
-                                var commandResultSpecifications = commandSpecificationService.CreateSpecificationForEventResults(
-                                    command.GetType(), eventResults);
+                                    var commandSpecification = JsonConvert.DeserializeObject<CommandSpecification>(commandString);
+                                    var commandSpecificationService = new CommandSpecificationService();
+                                    var command = commandSpecificationService.CreateCommandFromSpecification(commandSpecification);
 
-                                streamSession.Write(namedPipeServerStream, JsonConvert.SerializeObject(commandResultSpecifications));
+                                    var eventResults =
+                                        PublishContextEvent(new GraphFlowEventPushControlEventApplyCommandInsteadOfEvent(command))
+                                            .Where(x => x.ResultObject != null);
+
+                                    var commandResultSpecifications = commandSpecificationService.CreateSpecificationForEventResults(
+                                        command.GetType(), eventResults);
+
+                                    streamSession.Write(namedPipeServerStream, JsonConvert.SerializeObject(commandResultSpecifications));
+                                }
+                                finally 
+                                {
+                                    ReaderWriterLockSlim?.ExitReadLock();
+                                }
                             }
 
                             namedPipeServerStream.WaitForPipeDrain();

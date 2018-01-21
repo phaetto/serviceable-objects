@@ -3,7 +3,7 @@
     using System.Linq;
     using NodeInstance;
 
-    public sealed class DeinitializeNode : ICommand<GraphNodeContext, GraphNodeContext>
+    public sealed class DeinitializeNode : ICommand<GraphNodeContext, GraphNodeContext>, ISystemCommand
     {
         public GraphNodeContext Execute(GraphNodeContext context)
         {

@@ -4,11 +4,11 @@
     using System.Linq;
     using Commands.NodeInstance.ExecutionData;
 
-    public sealed class GraphFlowEventPushControlApplyCommandInsteadOfEvent : IGraphFlowEventPushControl
+    public sealed class GraphFlowEventPushControlEventApplyCommandInsteadOfEvent : IGraphFlowEventPushControlEvent
     {
         private readonly object commandToExecute;
 
-        public GraphFlowEventPushControlApplyCommandInsteadOfEvent(object commandToExecute)
+        public GraphFlowEventPushControlEventApplyCommandInsteadOfEvent(object commandToExecute)
         {
             this.commandToExecute = commandToExecute;
         }

@@ -2,14 +2,15 @@
 {
     using System.Linq;
     using Data;
+    using Objects.Composition.ServiceOrchestrator;
 
-    public sealed class SetBinding : ReproducibleCommandWithData<ServiceOrchestratorContext, ServiceOrchestratorContext, BindingData>
+    public sealed class SetBinding : ReproducibleCommandWithData<IServiceOrchestrator, IServiceOrchestrator, BindingData>
     {
         public SetBinding(BindingData data) : base(data)
         {
         }
 
-        public override ServiceOrchestratorContext Execute(ServiceOrchestratorContext context)
+        public override IServiceOrchestrator Execute(IServiceOrchestrator context)
         {
             context.InBindingsPerService[Data.ServiceName] = Data.InBindings?.ToList() ?? context.InBindingsPerService[Data.ServiceName];
             context.ExternalBindingsPerService[Data.ServiceName] = Data.ExternalBindings?.ToList() ?? context.ExternalBindingsPerService[Data.ServiceName];

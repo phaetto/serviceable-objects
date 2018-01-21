@@ -1,13 +1,7 @@
 ﻿namespace Serviceable.Objects.Instrumentation.Server.Commands
 {
-    using System;
-    using System.Linq;
-    using IO.NamedPipes.Server;
-    using IO.NamedPipes.Server.Configuration;
     using Objects.Composition.Graph;
     using Objects.Composition.Graph.Commands.Node;
-    using Objects.Composition.Service;
-    using Objects.Composition.ServiceOrchestrator;
 
     public sealed class DismantleServer : ICommand<InstrumentationServerContext, InstrumentationServerContext>
     {
@@ -29,7 +23,7 @@
             var namedPipeServerContextNode = graphContext.GetNodeById(namedPipeServerNodeId);
 
             // Deconfigure
-            namedPipeServerContextNode.ExecuteGraphCommand(new DeconfigureNode()); // Deconfigure
+            namedPipeServerContextNode.Execute(new DeconfigureNode()); // Deconfigure
 
             // Diconnect graph nodes
             graphContext.DisconnectNode(namedPipeServerNodeId);

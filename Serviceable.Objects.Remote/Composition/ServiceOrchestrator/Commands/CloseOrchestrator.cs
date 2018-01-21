@@ -1,10 +1,11 @@
 ﻿namespace Serviceable.Objects.Remote.Composition.ServiceOrchestrator.Commands
 {
+    using Objects.Composition.ServiceOrchestrator;
     using Service;
 
-    public class CloseOrchestrator : ReproducibleCommand<ServiceOrchestratorContext, ServiceOrchestratorContext>
+    public class CloseOrchestrator : ReproducibleCommand<IServiceOrchestrator, IServiceOrchestrator>
     {
-        public override ServiceOrchestratorContext Execute(ServiceOrchestratorContext context)
+        public override IServiceOrchestrator Execute(IServiceOrchestrator context)
         {
             var serviceContext = context.ServiceOrchestratorContainer.Resolve<ServiceContext>();
             serviceContext.Execute(new Service.Commands.CloseService());

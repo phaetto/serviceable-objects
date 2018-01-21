@@ -67,7 +67,7 @@
         }
 
         // TODO: add interface tests
-        // IGraphFlowEventPushControl, IPostGraphFlowPullControl
+        // IGraphFlowEventPushControlEvent, IPostGraphFlowPullControl
 
         public class TestContext : Context<TestContext>
         {

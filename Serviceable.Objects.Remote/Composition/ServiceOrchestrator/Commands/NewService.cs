@@ -10,9 +10,10 @@
     using Graph;
     using Host.Configuration;
     using Newtonsoft.Json;
+    using Objects.Composition.ServiceOrchestrator;
     using Service.Configuration;
 
-    public class NewService : ReproducibleCommandWithData<ServiceOrchestratorContext, ServiceOrchestratorContext, NewServiceData>, IEventProducer
+    public class NewService : ReproducibleCommandWithData<IServiceOrchestrator, IServiceOrchestrator, NewServiceData>, IEventProducer
     {
         private const string DotNetCoreExecutable = "dotnet.exe";
         private readonly JsonSerializerSettings jsonSerializerSettings = new JsonSerializerSettings
@@ -25,7 +26,7 @@
         {
         }
 
-        public override ServiceOrchestratorContext Execute(ServiceOrchestratorContext context)
+        public override IServiceOrchestrator Execute(IServiceOrchestrator context)
         {
             if (!context.GraphTemplatesDictionary.ContainsKey(Data.ServiceName))
             {

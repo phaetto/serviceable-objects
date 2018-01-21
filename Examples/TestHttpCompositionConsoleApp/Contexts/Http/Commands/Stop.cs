@@ -1,6 +1,5 @@
 ﻿namespace TestHttpCompositionConsoleApp.Contexts.Http.Commands
 {
-    using System.Threading.Tasks;
     using Serviceable.Objects;
 
     public sealed class Stop : ICommand<OwinHttpContext, OwinHttpContext>

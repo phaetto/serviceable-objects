@@ -7,10 +7,12 @@
     using ServiceOrchestrator;
     using Stages.Configuration;
 
-    public sealed class ExpandConfiguration : ICommand<GraphNodeContext, IDictionary<string, IEnumerable<string>>>
+    public sealed class ExpandConfiguration : ICommand<GraphNodeContext, IDictionary<string, IEnumerable<string>>>, ISystemCommand
     {
         public const string DefaultAlgorithmicService = "default";
         public const string OrchestratorService = "orchestrator";
+        public const string InConfigurablePrefix = "$in.";
+        public const string OutConfigurablePrefix = "$out.";
         private readonly IService service;
         private readonly IConfigurationSource configurationSource;
 
@@ -60,8 +62,7 @@
                 });
             }
 
-            // TODO: when there is a setting in config value left throw an error (to catch unconfigurable entities)
-
+            // ReSharper disable once AssignNullToNotNullAttribute
             return CheckForUnconfigurableSettings(contextExternalBindings.AlgorithmBindings
                 .ToDictionary(
                     x => x.AlgorithmTypeName, 
@@ -73,7 +74,7 @@
         {
             resultingConfiguration.ToList().ForEach(x => x.Value.ToList().ForEach(y =>
                 {
-                    if (y.Contains("$in."))
+                    if (y.Contains(InConfigurablePrefix) || y.Contains(OutConfigurablePrefix))
                     {
                         throw new InvalidOperationException($"Unconfigurable entity found at setting: {x.Key}/{y}");
                     }
@@ -84,12 +85,12 @@
 
         private string ConfigureInString(string setting, Binding binding)
         {
-            return binding.Aggregate(setting, (current, keyValuePair) => current.Replace($"$in.{keyValuePair.Key}", keyValuePair.Value));
+            return binding.Aggregate(setting, (current, keyValuePair) => current.Replace($"{InConfigurablePrefix}{keyValuePair.Key}", keyValuePair.Value));
         }
 
         private string ConfigureOutString(string setting, Binding binding)
         {
-            return binding.Aggregate(setting, (current, keyValuePair) => current.Replace($"$out.{keyValuePair.Key}", keyValuePair.Value));
+            return binding.Aggregate(setting, (current, keyValuePair) => current.Replace($"{OutConfigurablePrefix}{keyValuePair.Key}", keyValuePair.Value));
         }
     }
 }

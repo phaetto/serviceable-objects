@@ -3,7 +3,7 @@
     using System.Linq;
     using NodeInstance;
 
-    public sealed class SetupNode : ICommand<GraphNodeContext, GraphNodeContext>
+    public sealed class SetupNode : ICommand<GraphNodeContext, GraphNodeContext>, ISystemCommand
     {
         public GraphNodeContext Execute(GraphNodeContext context)
         {

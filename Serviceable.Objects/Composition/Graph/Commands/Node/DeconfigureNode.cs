@@ -2,7 +2,7 @@
 {
     using NodeInstance;
 
-    public sealed class DeconfigureNode : ICommand<GraphNodeContext, GraphNodeContext>
+    public sealed class DeconfigureNode : ICommand<GraphNodeContext, GraphNodeContext>, ISystemCommand
     {
         public GraphNodeContext Execute(GraphNodeContext context)
         {

@@ -54,6 +54,8 @@ PowerShell -NoProfile -Command {
     Write-Host "Message got: '$message'";
 
     Write-Host " --- Communication end --- ";
+
+    # Make-ArtificialError -ServiceOrchestrator "orchestrator-X" -ServiceName 'service-X' -ContextId "queue-context";
     
     Write-Host "Stopping service...";
     Close-Service -ServiceOrchestrator "orchestrator-X" -ServiceName 'service-X';

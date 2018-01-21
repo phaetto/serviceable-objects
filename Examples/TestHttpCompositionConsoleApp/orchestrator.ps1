@@ -46,7 +46,7 @@ $orchTemplateJson = ConvertTo-Json @{
     ServiceOrchestratorConfiguration = @{
         EntryAssemblyFullPath = "C:\sources\serviceable-objects\Examples\TestHttpCompositionConsoleApp\bin\Debug\netcoreapp1.0\TestHttpCompositionConsoleApp.dll";
         OrchestratorName = "orchestrator-X";
-        # UseChildProcesses = $true;
+        # UseChildProcesses = $true; # When this is true if parent process closes, all children are as well
         GraphTemplatesDictionary = @{
             "service-X"= $serviceGraphTemplate;
         };

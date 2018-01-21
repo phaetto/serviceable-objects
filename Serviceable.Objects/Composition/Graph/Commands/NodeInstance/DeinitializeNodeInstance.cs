@@ -8,11 +8,28 @@
         {
             if (context.HostedContext is IInitializeStageFactory initialization)
             {
-                var command = initialization.GenerateDeinitializationCommand();
-
-                if (command != null)
+                try
                 {
-                    context.HostedContext.Execute((dynamic) command);
+                    if (initialization is IInitializeStageFactoryWithDeinitSynchronization initializationStageSynchronization)
+                    {
+                        initializationStageSynchronization.ReaderWriterLockSlim.EnterWriteLock();
+                    }
+
+                    var command = initialization.GenerateDeinitializationCommand();
+
+                    if (command != null)
+                    {
+                        context.HostedContext.Execute((dynamic) command);
+                    }
+                }
+                finally
+                {
+                    if (initialization is IInitializeStageFactoryWithDeinitSynchronization initializationStageSynchronization)
+                    {
+                        initializationStageSynchronization.ReaderWriterLockSlim.ExitWriteLock();
+                        initializationStageSynchronization.ReaderWriterLockSlim.Dispose();
+                        initializationStageSynchronization.ReaderWriterLockSlim = null;
+                    }
                 }
             }
 
