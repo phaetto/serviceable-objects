@@ -29,7 +29,7 @@
                 .Where(x => !x.IsIdle)
                 .Select(x => new EventResult
                 {
-                    ResultObject =  x.IsFaulted || x.IsPaused ? x.Exception : x.SingleContextExecutionResultWithInfo.ResultObject
+                    ResultObject = x.IsFaulted ? x.Exception : x.SingleContextExecutionResultWithInfo.ResultObject
                 })
                 .ToList();
         }

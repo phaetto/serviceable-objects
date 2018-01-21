@@ -16,8 +16,8 @@
         private readonly List<GraphNodeContext> inputNodes = new List<GraphNodeContext>();
         private readonly List<GraphVertexContext> vertices = new List<GraphVertexContext>();
         private readonly List<GraphNodeContext> nodes = new List<GraphNodeContext>();
-
-        public RuntimeExecutionState RuntimeExecutionState = RuntimeExecutionState.Paused;
+        public RuntimeExecutionState RuntimeExecutionState { get; private set; } = RuntimeExecutionState.Paused;
+        public bool IsWorking => nodes.Any(x => x.IsWorking);
 
         public GraphContext(Container container = null)
         {

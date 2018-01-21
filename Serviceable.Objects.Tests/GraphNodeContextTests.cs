@@ -157,7 +157,7 @@
 
             // Configure
             graphContext.ConfigureSetupAndInitialize();
-            graphContext.RuntimeExecutionState = RuntimeExecutionState.Paused;
+            graphContext.Pause();
 
             // Execute
             var result = graphContext.Execute(command, "test-node");
@@ -329,7 +329,8 @@
 
             // Graph switches to pause
             switchToPausedEventWaitHandle.WaitOne(1000);
-            graphContext.RuntimeExecutionState = RuntimeExecutionState.Paused;
+            Assert.True(graphContext.IsWorking);
+            graphContext.Pause();
 
             // A new command trying to execute should fail
             var result = graphContext.Execute(command, "first-node");
@@ -341,6 +342,7 @@
             Assert.Null(result.SingleContextExecutionResultWithInfo);
 
             // Signal to continue execution
+            Assert.True(graphContext.IsWorking);
             Assert.False(secondContext.HasRun);
             testContextWithPause.EventWaitHandle.Set();
 
@@ -352,10 +354,12 @@
             Assert.True(result.IsPaused);
             Assert.IsType<RuntimeExecutionPausedException>(result.Exception);
             Assert.Null(result.SingleContextExecutionResultWithInfo);
+            Assert.True(graphContext.IsWorking);
 
             // Wait for it to finish
             await task;
 
+            Assert.False(graphContext.IsWorking);
             Assert.NotNull(executionCommandResult);
             Assert.False(executionCommandResult.IsFaulted);
             Assert.False(executionCommandResult.IsIdle);
