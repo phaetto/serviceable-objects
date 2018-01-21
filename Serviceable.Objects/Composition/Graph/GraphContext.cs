@@ -175,11 +175,7 @@
             
             if (RuntimeExecutionState != RuntimeExecutionState.Running && !(command is ISystemCommand))
             {
-                contextExecutionResults.Add(new ExecutionCommandResult
-                {
-                    IsPaused = true,
-                    Exception = new RuntimeExecutionPausedException(),
-                });
+                contextExecutionResults.Add(GeneratePausedExecutionCommandResult());
 
                 return contextExecutionResults;
             }
@@ -209,11 +205,7 @@
 
             if (RuntimeExecutionState != RuntimeExecutionState.Running && !(command is ISystemCommand))
             {
-                return new ExecutionCommandResult
-                {
-                    IsPaused = true,
-                    Exception = new RuntimeExecutionPausedException(),
-                };
+                return GeneratePausedExecutionCommandResult();
             }
 
             var contextExecutionResult = nodes.First(x => x.Id == uniqueId).ExecuteGraphCommand(command);
@@ -236,6 +228,15 @@
             Check.ArgumentNullOrWhiteSpace(id, nameof(id));
 
             return vertices.Where(x => x.FromId == id).Select(x => nodes.First(y => y.Id == x.ToId));
+        }
+
+        internal ExecutionCommandResult GeneratePausedExecutionCommandResult()
+        {
+            return new ExecutionCommandResult
+            {
+                IsPaused = true,
+                Exception = new RuntimeExecutionPausedException(),
+            };
         }
     }
 }
