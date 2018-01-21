@@ -332,7 +332,12 @@
             // Graph switches to pause
             switchToPausedEventWaitHandle.WaitOne(1000);
             Assert.True(graphContext.IsWorking);
-            graphContext.Pause();
+            graphContext.Pause(); // Will wait until all executions that have a read-lock to finish
+            Assert.False(graphContext.IsWorking); // In this current setup, nothing else will run here
+
+            // An event-based command should not be executed as well
+            testContextWithPause.Execute(new TestContextCommand());
+            Assert.Equal(1, secondContext.TimesHasRun);
 
             // A new command trying to execute should fail
             var result = graphContext.Execute(testCommand, "first-node");
@@ -343,11 +348,6 @@
             Assert.IsType<RuntimeExecutionPausedException>(result.Exception);
             Assert.Null(result.SingleContextExecutionResultWithInfo);
 
-            // Signal to continue execution
-            Assert.True(graphContext.IsWorking);
-            Assert.False(secondContext.HasRun);
-            testContextWithPause.EventWaitHandle.Set();
-
             // As before, a new command trying to execute should fail as well
             result = graphContext.Execute(testCommand, "first-node");
             Assert.NotNull(result);
@@ -356,11 +356,12 @@
             Assert.True(result.IsPaused);
             Assert.IsType<RuntimeExecutionPausedException>(result.Exception);
             Assert.Null(result.SingleContextExecutionResultWithInfo);
-            Assert.True(graphContext.IsWorking);
+            Assert.Equal(1, secondContext.TimesHasRun);
 
             // Wait for it to finish
             await task;
 
+            // Command already running in the background should continue
             Assert.False(graphContext.IsWorking);
             Assert.NotNull(executionCommandResult);
             Assert.False(executionCommandResult.IsFaulted);
@@ -368,19 +369,42 @@
             Assert.False(executionCommandResult.IsPaused);
             Assert.Null(executionCommandResult.Exception);
             Assert.NotNull(executionCommandResult.SingleContextExecutionResultWithInfo);
-            Assert.True(secondContext.HasRun);
+            Assert.Equal(1, secondContext.TimesHasRun);
         }
 
         public class TestContextWithPause : Context<TestContextWithPause>, IInitializeStageFactoryWithDeinitSynchronization
         {
-            public EventWaitHandle EventWaitHandle = new EventWaitHandle(false, EventResetMode.ManualReset);
             public ReaderWriterLockSlim ReaderWriterLockSlim { get; set; }
 
-            internal void PublishEvent(IEvent eventToPublish)
+            internal IList<EventResult> PublishEvent(IEvent eventToPublish, bool emulateRun)
             {
-                ReaderWriterLockSlim?.EnterReadLock();
-                PublishContextEvent(eventToPublish);
-                ReaderWriterLockSlim?.ExitReadLock();
+                // Best practice for "exactly one" synchronization
+                try
+                {
+                    if (ReaderWriterLockSlim == null)
+                    {
+                        return new List<EventResult>
+                        {
+                            new EventResult
+                            {
+                                ResultObject = new RuntimeExecutionPausedException()
+                            }
+                        }; // Do not publish and async event
+                    }
+
+                    ReaderWriterLockSlim.EnterReadLock();
+
+                    if (emulateRun)
+                    {
+                        Task.WaitAll(Task.Delay(500));
+                    }
+
+                    return PublishContextEvent(eventToPublish);
+                }
+                finally
+                {
+                    ReaderWriterLockSlim?.ExitReadLock();
+                }
             }
 
             public object GenerateInitializationCommand()
@@ -410,10 +434,22 @@
             public TestContextWithPause Execute(TestContextWithPause context)
             {
                 switchToPausedEventWaitHandle?.Set();
-                context.EventWaitHandle.WaitOne(1000);
 
                 context.PublishEvent(
-                    new GraphFlowEventPushControlEventApplyCommandInsteadOfEvent(new SecondContextCommand()));
+                    new GraphFlowEventPushControlEventApplyCommandInsteadOfEvent(new SecondContextCommand()),
+                    true);
+
+                return context;
+            }
+        }
+
+        public class TestContextCommand: ICommand<TestContextWithPause, TestContextWithPause>
+        {
+            public TestContextWithPause Execute(TestContextWithPause context)
+            {
+                context.PublishEvent(
+                    new GraphFlowEventPushControlEventApplyCommandInsteadOfEvent(new SecondContextCommand()),
+                    false);
 
                 return context;
             }
@@ -421,14 +457,14 @@
 
         public class SecondContext : Context<SecondContext>
         {
-            public bool HasRun { get; set; }
+            public int TimesHasRun { get; set; }
         }
 
         public class SecondContextCommand: ICommand<SecondContext, SecondContext>
         {
             public SecondContext Execute(SecondContext context)
             {
-                context.HasRun = true;
+                context.TimesHasRun++;
                 return context;
             }
         }
