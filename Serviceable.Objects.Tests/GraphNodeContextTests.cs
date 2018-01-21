@@ -311,7 +311,8 @@
         [Fact]
         public async Task Execute_WhenGraphIsPaused_ThenItShouldFinalizeTheExistingExecutionCycle()
         {
-            var command = new TestContextWithPauseCommand();
+            var switchToPausedEventWaitHandle = new EventWaitHandle(false, EventResetMode.ManualReset);
+            var command = new TestContextWithPauseCommand(switchToPausedEventWaitHandle);
             var graphContext = new GraphContext();
             var testContextWithPause = new TestContextWithPause();
             var secondContext = new SecondContext();
@@ -327,6 +328,7 @@
             Task task = Task.Run(() => executionCommandResult = graphContext.Execute(command, "first-node"));
 
             // Graph switches to pause
+            switchToPausedEventWaitHandle.WaitOne(1000);
             graphContext.RuntimeExecutionState = RuntimeExecutionState.Paused;
 
             // A new command trying to execute should fail
@@ -359,11 +361,11 @@
             Assert.False(executionCommandResult.IsIdle);
             Assert.False(executionCommandResult.IsPaused);
             Assert.Null(executionCommandResult.Exception);
-            Assert.NotNull(result.SingleContextExecutionResultWithInfo);
+            Assert.NotNull(executionCommandResult.SingleContextExecutionResultWithInfo);
             Assert.True(secondContext.HasRun);
         }
 
-        public class TestContextWithPause : Context<TestContext>
+        public class TestContextWithPause : Context<TestContextWithPause>
         {
             public EventWaitHandle EventWaitHandle = new EventWaitHandle(false, EventResetMode.ManualReset);
 
@@ -375,8 +377,16 @@
 
         public class TestContextWithPauseCommand: ICommand<TestContextWithPause, TestContextWithPause>
         {
+            private readonly EventWaitHandle switchToPausedEventWaitHandle;
+
+            public TestContextWithPauseCommand(EventWaitHandle switchToPausedEventWaitHandle)
+            {
+                this.switchToPausedEventWaitHandle = switchToPausedEventWaitHandle;
+            }
+
             public TestContextWithPause Execute(TestContextWithPause context)
             {
+                switchToPausedEventWaitHandle.Set();
                 context.EventWaitHandle.WaitOne(1000);
 
                 context.PublishEvent(
@@ -386,7 +396,7 @@
             }
         }
 
-        public class SecondContext : Context<TestContext>
+        public class SecondContext : Context<SecondContext>
         {
             public bool HasRun { get; set; }
         }
