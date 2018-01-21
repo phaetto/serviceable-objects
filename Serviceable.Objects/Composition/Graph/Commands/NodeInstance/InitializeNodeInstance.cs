@@ -9,7 +9,7 @@
         {
             if (context.HostedContext is IInitializeStageFactory initialization)
             {
-                if (initialization is IInitializationStageSynchronization initializationStageSynchronization)
+                if (initialization is IInitializeStageFactoryWithDeinitSynchronization initializationStageSynchronization)
                 {
                     initializationStageSynchronization.ReaderWriterLockSlim = new ReaderWriterLockSlim(LockRecursionPolicy.NoRecursion);
                 }

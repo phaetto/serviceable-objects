@@ -10,7 +10,7 @@
             {
                 try
                 {
-                    if (initialization is IInitializationStageSynchronization initializationStageSynchronization)
+                    if (initialization is IInitializeStageFactoryWithDeinitSynchronization initializationStageSynchronization)
                     {
                         initializationStageSynchronization.ReaderWriterLockSlim.EnterWriteLock();
                     }
@@ -24,10 +24,11 @@
                 }
                 finally
                 {
-                    if (initialization is IInitializationStageSynchronization initializationStageSynchronization)
+                    if (initialization is IInitializeStageFactoryWithDeinitSynchronization initializationStageSynchronization)
                     {
                         initializationStageSynchronization.ReaderWriterLockSlim.ExitWriteLock();
                         initializationStageSynchronization.ReaderWriterLockSlim.Dispose();
+                        initializationStageSynchronization.ReaderWriterLockSlim = null;
                     }
                 }
             }

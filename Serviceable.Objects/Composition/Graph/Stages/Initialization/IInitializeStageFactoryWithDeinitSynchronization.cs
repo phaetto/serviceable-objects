@@ -2,7 +2,7 @@
 {
     using System.Threading;
 
-    public interface IInitializationStageSynchronization
+    public interface IInitializeStageFactoryWithDeinitSynchronization : IInitializeStageFactory
     {
         ReaderWriterLockSlim ReaderWriterLockSlim { get; set; }
     }
