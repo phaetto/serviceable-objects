@@ -1,6 +1,5 @@
 ﻿namespace Serviceable.Objects.Composition.Graph.Commands.NodeInstance
 {
-    using System;
     using Stages.Initialization;
 
     public sealed class DeinitializeNodeInstance : ICommand<GraphNodeInstanceContext, GraphNodeInstanceContext>

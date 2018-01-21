@@ -1,7 +1,5 @@
 ﻿namespace Serviceable.Objects.Remote.Composition.Host.Commands
 {
-    using System;
-
     public sealed class RunAndBlock : ICommand<ApplicationHost, ApplicationHost>
     {
         public ApplicationHost Execute(ApplicationHost context)
