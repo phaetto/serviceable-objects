@@ -9,6 +9,7 @@
     using Composition.Graph.Commands.NodeInstance.ExecutionData;
     using Composition.Graph.Events;
     using Composition.Graph.Stages.Configuration;
+    using Composition.Graph.Stages.Initialization;
     using Composition.Service;
     using Composition.ServiceOrchestrator;
     using Dependencies;
@@ -313,6 +314,7 @@
         {
             var switchToPausedEventWaitHandle = new EventWaitHandle(false, EventResetMode.ManualReset);
             var command = new TestContextWithPauseCommand(switchToPausedEventWaitHandle);
+            var testCommand = new TestContextWithPauseCommand();
             var graphContext = new GraphContext();
             var testContextWithPause = new TestContextWithPause();
             var secondContext = new SecondContext();
@@ -333,7 +335,7 @@
             graphContext.Pause();
 
             // A new command trying to execute should fail
-            var result = graphContext.Execute(command, "first-node");
+            var result = graphContext.Execute(testCommand, "first-node");
             Assert.NotNull(result);
             Assert.False(result.IsFaulted);
             Assert.False(result.IsIdle);
@@ -347,7 +349,7 @@
             testContextWithPause.EventWaitHandle.Set();
 
             // As before, a new command trying to execute should fail as well
-            result = graphContext.Execute(command, "first-node");
+            result = graphContext.Execute(testCommand, "first-node");
             Assert.NotNull(result);
             Assert.False(result.IsFaulted);
             Assert.False(result.IsIdle);
@@ -369,13 +371,26 @@
             Assert.True(secondContext.HasRun);
         }
 
-        public class TestContextWithPause : Context<TestContextWithPause>
+        public class TestContextWithPause : Context<TestContextWithPause>, IInitializeStageFactoryWithDeinitSynchronization
         {
             public EventWaitHandle EventWaitHandle = new EventWaitHandle(false, EventResetMode.ManualReset);
+            public ReaderWriterLockSlim ReaderWriterLockSlim { get; set; }
 
             internal void PublishEvent(IEvent eventToPublish)
             {
+                ReaderWriterLockSlim?.EnterReadLock();
                 PublishContextEvent(eventToPublish);
+                ReaderWriterLockSlim?.ExitReadLock();
+            }
+
+            public object GenerateInitializationCommand()
+            {
+                return null;
+            }
+
+            public object GenerateDeinitializationCommand()
+            {
+                return null;
             }
         }
 
@@ -388,9 +403,13 @@
                 this.switchToPausedEventWaitHandle = switchToPausedEventWaitHandle;
             }
 
+            public TestContextWithPauseCommand()
+            {
+            }
+
             public TestContextWithPause Execute(TestContextWithPause context)
             {
-                switchToPausedEventWaitHandle.Set();
+                switchToPausedEventWaitHandle?.Set();
                 context.EventWaitHandle.WaitOne(1000);
 
                 context.PublishEvent(

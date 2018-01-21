@@ -15,7 +15,7 @@
     using Remote.Serialization;
     using Remote.Serialization.Streaming;
 
-    public sealed class NamedPipeServerContext : ConfigurableContext<NamedPipeServerConfiguration, NamedPipeServerContext>, IInitializeStageFactory, IInitializationStageSynchronization
+    public sealed class NamedPipeServerContext : ConfigurableContext<NamedPipeServerConfiguration, NamedPipeServerContext>, IInitializeStageFactory, IInitializeStageFactoryWithDeinitSynchronization
     {
         private readonly StreamSession streamSession = new StreamSession();
         internal Task ServerTask;
@@ -62,7 +62,7 @@
                             {
                                 try
                                 {
-                                    ReaderWriterLockSlim.EnterReadLock();
+                                    ReaderWriterLockSlim?.EnterReadLock();
 
                                     if (CancellationTokenSource.IsCancellationRequested)
                                     {
@@ -84,7 +84,7 @@
                                 }
                                 finally 
                                 {
-                                    ReaderWriterLockSlim.ExitReadLock();
+                                    ReaderWriterLockSlim?.ExitReadLock();
                                 }
                             }
 
