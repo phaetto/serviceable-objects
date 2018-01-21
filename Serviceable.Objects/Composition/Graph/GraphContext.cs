@@ -118,10 +118,10 @@
             var parentNode = nodes.FirstOrDefault(x => x.Id == id);
             Check.ArgumentNull(parentNode, nameof(id), $"Parent node with id '${id}' could not be found");
 
-            var verticesToRemove = this.vertices.Where(x => x.FromId == id || x.ToId == id).ToList();
+            var verticesToRemove = vertices.Where(x => x.FromId == id || x.ToId == id).ToList();
             foreach (var vertix in verticesToRemove)
             {
-                this.vertices.Remove(vertix);
+                vertices.Remove(vertix);
             }
         }
 

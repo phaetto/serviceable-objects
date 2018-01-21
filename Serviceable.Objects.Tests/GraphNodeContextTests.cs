@@ -375,7 +375,7 @@
 
             internal void PublishEvent(IEvent eventToPublish)
             {
-                this.PublishContextEvent(eventToPublish);
+                PublishContextEvent(eventToPublish);
             }
         }
 

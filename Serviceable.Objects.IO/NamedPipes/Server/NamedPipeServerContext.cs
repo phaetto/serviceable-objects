@@ -64,7 +64,7 @@
                                 {
                                     ReaderWriterLockSlim.EnterReadLock();
 
-                                    if (this.CancellationTokenSource.IsCancellationRequested)
+                                    if (CancellationTokenSource.IsCancellationRequested)
                                     {
                                         return;
                                     }
