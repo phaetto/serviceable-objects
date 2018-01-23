@@ -13,7 +13,7 @@
     using Service;
     using ServiceOrchestrator;
 
-    public sealed class ApplicationHost : Context<ApplicationHost>
+    public class ApplicationHost : Context<ApplicationHost>
     {
         public readonly string DefaultOrchestratorTemplate = @"
 {
