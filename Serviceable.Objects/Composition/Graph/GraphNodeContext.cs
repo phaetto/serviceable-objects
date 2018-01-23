@@ -10,7 +10,7 @@
 
     public sealed class GraphNodeContext : Context<GraphNodeContext>
     {
-        public bool IsWorking => WorkingReferenceCount > 0;
+        public bool IsWorking => workingReferenceCount > 0;
         public GraphNodeStatus Status { get; internal set; }
         public readonly string Id;
         internal readonly GraphContext GraphContext;
@@ -18,7 +18,7 @@
         internal readonly List<IAlgorithmicInstanceExecution> AlgorithmicInstanceExecutions = new List<IAlgorithmicInstanceExecution>();
         internal readonly Dictionary<Type, List<GraphNodeInstanceContext>> GraphNodeInstanceContextListPerAlgorithm = new Dictionary<Type, List<GraphNodeInstanceContext>>();
         internal readonly AbstractContext AbstractContext;
-        internal int WorkingReferenceCount;
+        private int workingReferenceCount;
 
         public GraphNodeContext(Type contextType, GraphContext graphContext, string id)
         {
@@ -39,7 +39,7 @@
         {
             try
             {
-                Interlocked.Increment(ref WorkingReferenceCount);
+                Interlocked.Increment(ref workingReferenceCount);
 
                 if (!AlgorithmicInstanceExecutions.Any())
                 {
@@ -87,7 +87,7 @@
             }
             finally
             {
-                Interlocked.Decrement(ref WorkingReferenceCount);
+                Interlocked.Decrement(ref workingReferenceCount);
             }
         }
 
