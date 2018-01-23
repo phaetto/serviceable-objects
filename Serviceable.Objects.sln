@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27004.2010
+VisualStudioVersion = 15.0.27130.2020
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Serviceable.Objects", "Serviceable.Objects\Serviceable.Objects.csproj", "{46A7AB18-5784-46A0-89C6-DFBCCE3AE6E6}"
 EndProject
@@ -26,6 +26,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Serviceable.Objects.Instrumentation", "Serviceable.Objects.Instrumentation\Serviceable.Objects.Instrumentation.csproj", "{A7FB9BA5-9591-4A40-B0F6-3E7B62137D2A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Serviceable.Objects.IO", "Serviceable.Objects.IO\Serviceable.Objects.IO.csproj", "{349EED11-5DD9-4E95-8315-AA142CF74A14}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serviceable.Objects.Windows", "Serviceable.Objects.Windows\Serviceable.Objects.Windows.csproj", "{051B12D5-6300-48B6-8726-A11F7710ACEA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -151,6 +153,22 @@ Global
 		{349EED11-5DD9-4E95-8315-AA142CF74A14}.Release|x64.Build.0 = Release|Any CPU
 		{349EED11-5DD9-4E95-8315-AA142CF74A14}.Release|x86.ActiveCfg = Release|Any CPU
 		{349EED11-5DD9-4E95-8315-AA142CF74A14}.Release|x86.Build.0 = Release|Any CPU
+		{051B12D5-6300-48B6-8726-A11F7710ACEA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{051B12D5-6300-48B6-8726-A11F7710ACEA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{051B12D5-6300-48B6-8726-A11F7710ACEA}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{051B12D5-6300-48B6-8726-A11F7710ACEA}.Debug|ARM.Build.0 = Debug|Any CPU
+		{051B12D5-6300-48B6-8726-A11F7710ACEA}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{051B12D5-6300-48B6-8726-A11F7710ACEA}.Debug|x64.Build.0 = Debug|Any CPU
+		{051B12D5-6300-48B6-8726-A11F7710ACEA}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{051B12D5-6300-48B6-8726-A11F7710ACEA}.Debug|x86.Build.0 = Debug|Any CPU
+		{051B12D5-6300-48B6-8726-A11F7710ACEA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{051B12D5-6300-48B6-8726-A11F7710ACEA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{051B12D5-6300-48B6-8726-A11F7710ACEA}.Release|ARM.ActiveCfg = Release|Any CPU
+		{051B12D5-6300-48B6-8726-A11F7710ACEA}.Release|ARM.Build.0 = Release|Any CPU
+		{051B12D5-6300-48B6-8726-A11F7710ACEA}.Release|x64.ActiveCfg = Release|Any CPU
+		{051B12D5-6300-48B6-8726-A11F7710ACEA}.Release|x64.Build.0 = Release|Any CPU
+		{051B12D5-6300-48B6-8726-A11F7710ACEA}.Release|x86.ActiveCfg = Release|Any CPU
+		{051B12D5-6300-48B6-8726-A11F7710ACEA}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

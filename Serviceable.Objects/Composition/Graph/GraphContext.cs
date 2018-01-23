@@ -135,9 +135,9 @@
             // Configure/Setup/Initialize/Run - ordering matters
             var service = Container.Resolve<IService>(throwOnError: false);
             var configurationSource = Container.Resolve<IConfigurationSource>(throwOnError: false);
-            nodes.ForEach(x => x.Execute(new ConfigureNode(service, configurationSource)));
-            nodes.ToList().ForEach(x => x.Execute(new SetupNode()));
-            nodes.Where(x => !x.IsConfigured).ToList().ForEach(x => x.Execute(new ConfigureNode(service, configurationSource)));
+            nodes.Where(x => x.Status < GraphNodeStatus.Configuring).ToList().ForEach(x => x.Execute(new ConfigureNode(service, configurationSource)));
+            nodes.Where(x => x.Status < GraphNodeStatus.SetupStarted).ToList().ForEach(x => x.Execute(new SetupNode()));
+            nodes.Where(x => x.Status < GraphNodeStatus.Configuring).ToList().ForEach(x => x.Execute(new ConfigureNode(service, configurationSource)));
             Start();
         }
 
@@ -145,20 +145,20 @@
         {
             // Pause/Uninitialize/Dismantle/Deconfigure - ordering matters
             Pause();
-            nodes.ToList().ForEach(x => x.Execute(new DismantleNode()));
-            nodes.ForEach(x => x.Execute(new DeconfigureNode()));
+            nodes.Where(x => x.Status <= GraphNodeStatus.SetupFinished).ToList().ForEach(x => x.Execute(new DismantleNode()));
+            nodes.Where(x => x.Status <= GraphNodeStatus.Configured).ToList().ForEach(x => x.Execute(new DeconfigureNode()));
         }
 
         public void Start()
         {
-            nodes.ForEach(x => x.Execute(new InitializeNode()));
+            nodes.Where(x => x.Status < GraphNodeStatus.Initializing).ToList().ForEach(x => x.Execute(new InitializeNode()));
             RuntimeExecutionState = RuntimeExecutionState.Running;
         }
 
         public void Pause()
         {
             RuntimeExecutionState = RuntimeExecutionState.Paused;
-            nodes.ForEach(x => x.Execute(new DeinitializeNode()));
+            nodes.Where(x => x.Status <= GraphNodeStatus.Initialized).ToList().ForEach(x => x.Execute(new DeinitializeNode()));
         }
 
         public GraphNodeContext GetNodeById(string nodeId)

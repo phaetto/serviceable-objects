@@ -7,10 +7,13 @@
     {
         public GraphNodeContext Execute(GraphNodeContext context)
         {
+            context.Status = GraphNodeStatus.SetupStarted;
+
             context.GraphNodeInstanceContextListPerAlgorithm
                 .SelectMany(x => x.Value)
                 .ToList().ForEach(x => x.Execute(new SetupNodeInstance()));
 
+            context.Status = GraphNodeStatus.SetupFinished;
             return context;
         }
     }

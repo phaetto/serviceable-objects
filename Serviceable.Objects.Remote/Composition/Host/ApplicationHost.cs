@@ -13,12 +13,12 @@
     using Service;
     using ServiceOrchestrator;
 
-    public sealed class ApplicationHost : Context<ApplicationHost>
+    public class ApplicationHost : Context<ApplicationHost>
     {
         public readonly string DefaultOrchestratorTemplate = @"
 {
     GraphNodes: [
-        { TypeFullName:'" + typeof(ServiceOrchestratorContext).AssemblyQualifiedName + @"', Id:'server-orchestrator-context' },
+        { TypeFullName:'" + typeof(ServiceOrchestratorContext).AssemblyQualifiedName + @"', Id:'service-orchestrator-context' },
     ],
     GraphVertices: [
     ],
