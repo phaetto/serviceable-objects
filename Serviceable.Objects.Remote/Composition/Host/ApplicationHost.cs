@@ -18,7 +18,7 @@
         public readonly string DefaultOrchestratorTemplate = @"
 {
     GraphNodes: [
-        { TypeFullName:'" + typeof(ServiceOrchestratorContext).AssemblyQualifiedName + @"', Id:'server-orchestrator-context' },
+        { TypeFullName:'" + typeof(ServiceOrchestratorContext).AssemblyQualifiedName + @"', Id:'service-orchestrator-context' },
     ],
     GraphVertices: [
     ],
