@@ -6,6 +6,8 @@
     {
         public GraphNodeContext Execute(GraphNodeContext context)
         {
+            context.Status = GraphNodeStatus.Deconfiguring;
+            
             foreach (var algorithmAndInstancesListKeyValue in context.GraphNodeInstanceContextListPerAlgorithm)
             {
                 foreach (var graphNodeInstanceContext in algorithmAndInstancesListKeyValue.Value)
@@ -17,6 +19,7 @@
             context.GraphNodeInstanceContextListPerAlgorithm.Clear();
             context.AlgorithmicInstanceExecutions.Clear();
 
+            context.Status = GraphNodeStatus.Unconfigured;
             return context;
         }
     }

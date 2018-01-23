@@ -20,6 +20,8 @@
 
         public GraphNodeContext Execute(GraphNodeContext context)
         {
+            context.Status = GraphNodeStatus.Configuring;
+
             var possibleConfigurations = context.Execute(new ExpandConfiguration(service, configurationSource));
 
             if (context.AbstractContext is IConfigurableStageFactory configurableStageFactory && configurableStageFactory.HasBeenConfigured
@@ -67,6 +69,7 @@
                 }
             }
                
+            context.Status = GraphNodeStatus.Configured;
             return context;
         }
     }

@@ -7,10 +7,13 @@
     {
         public GraphNodeContext Execute(GraphNodeContext context)
         {
+            context.Status = GraphNodeStatus.Deinitializing;
+
             context.GraphNodeInstanceContextListPerAlgorithm
                 .SelectMany(x => x.Value)
                 .ToList().ForEach(x => x.Execute(new DeinitializeNodeInstance()));
 
+            context.Status = GraphNodeStatus.SetupFinished;
             return context;
         }
     }

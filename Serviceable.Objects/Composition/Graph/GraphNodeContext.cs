@@ -10,8 +10,8 @@
 
     public sealed class GraphNodeContext : Context<GraphNodeContext>
     {
-        public bool IsConfigured => GraphNodeInstanceContextListPerAlgorithm.Any();
         public bool IsWorking => WorkingReferenceCount > 0;
+        public GraphNodeStatus Status { get; internal set; }
         public readonly string Id;
         internal readonly GraphContext GraphContext;
         internal readonly Type ContextType;

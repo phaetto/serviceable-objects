@@ -89,7 +89,7 @@
 
             // Configure
             graphContext.ConfigureSetupAndInitialize();
-            Assert.True(graphNodeContext.IsConfigured);
+            Assert.True(graphNodeContext.Status == GraphNodeStatus.Initialized);
 
             // Execute
             var result = graphContext.Execute(command, "test-node");
@@ -101,7 +101,7 @@
 
             // Unload
             graphContext.UninitializeDismantleAndDeconfigure();
-            Assert.False(graphNodeContext.IsConfigured);
+            Assert.False(graphNodeContext.Status == GraphNodeStatus.Initialized);
         }
 
         [Fact]
@@ -118,25 +118,25 @@
 
             // First
             graphContext.ConfigureSetupAndInitialize();
-            Assert.True(graphNodeContext.IsConfigured);
+            Assert.True(graphNodeContext.Status == GraphNodeStatus.Initialized);
             graphContext.UninitializeDismantleAndDeconfigure();
-            Assert.False(graphNodeContext.IsConfigured);
+            Assert.False(graphNodeContext.Status == GraphNodeStatus.Initialized);
 
             // Second
             graphContext.ConfigureSetupAndInitialize();
-            Assert.True(graphNodeContext.IsConfigured);
+            Assert.True(graphNodeContext.Status == GraphNodeStatus.Initialized);
             graphContext.UninitializeDismantleAndDeconfigure();
-            Assert.False(graphNodeContext.IsConfigured);
+            Assert.False(graphNodeContext.Status == GraphNodeStatus.Initialized);
 
             // Third
             graphContext.ConfigureSetupAndInitialize();
-            Assert.True(graphNodeContext.IsConfigured);
+            Assert.True(graphNodeContext.Status == GraphNodeStatus.Initialized);
             graphContext.UninitializeDismantleAndDeconfigure();
-            Assert.False(graphNodeContext.IsConfigured);
+            Assert.False(graphNodeContext.Status == GraphNodeStatus.Initialized);
 
             // Load and Execute
             graphContext.ConfigureSetupAndInitialize();
-            Assert.True(graphNodeContext.IsConfigured);
+            Assert.True(graphNodeContext.Status == GraphNodeStatus.Initialized);
             var result = graphContext.Execute(command, "test-node");
             Assert.NotNull(result);
             Assert.False(result.IsFaulted);
