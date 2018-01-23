@@ -46,6 +46,8 @@
     <Compile Include="Installation\InstallationContext.cs" />
     <Compile Include="Installation\InstallAsServiceCommand.cs" />
     <Compile Include="Installation\InstallAsServiceData.cs" />
+    <Compile Include="ServiceCommands\Stop.cs" />
+    <Compile Include="ServiceCommands\Start.cs" />
     <Compile Include="ServiceHost.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
