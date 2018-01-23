@@ -45,8 +45,6 @@
             }
 
             GraphContext.AddNode(typeof(InstrumentationServerContext), DefaultInstrumentationId);
-            // Advance new nodes to Config -> Setup -> Init
-            GraphContext.ConfigureSetupAndInitialize();
         }
 
         public static bool InstallIfRequested(string []args, InstallAsServiceData installAsServiceData)
