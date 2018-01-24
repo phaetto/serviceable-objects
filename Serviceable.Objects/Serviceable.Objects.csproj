@@ -17,6 +17,7 @@
 Includes module composition that integrates contexts with event-publishing and consuming, as well as the transformation to commands and the orchestration of those.
 
 This framework is developed with testing in mind and every derivable should be fully testable.</Description>
+    <Summary>Composable graph services library</Summary>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

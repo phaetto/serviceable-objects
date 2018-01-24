@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>Serviceable.Objects.Windows</id>
+    <version>1.0.0</version>
+    <authors>Alexander Mantzoukas</authors>
+    <owners>Alexander Mantzoukas</owners>
+    <licenseUrl>https://github.com/phaetto/serviceable-objects/blob/master/license.md</licenseUrl>
+    <projectUrl>https://github.com/phaetto/serviceable-objects/</projectUrl>
+    <description>
+      A derived host to create a windows service that can run context-graphs with instrumentation enabled.
+    </description>
+    <copyright>Alexander Mantzoukas (c) 2017, Rebootify ApS</copyright>
+    <tags>Serviceable-objects TDD Modular Micro-Services Commands</tags>
+    <dependencies>
+      <dependency id="Newtonsoft.Json" version="10.0.3" />
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="bin\Release\Serviceable.Objects.Windows.dll" target="lib\net461" />
+  </files>
+</package>
