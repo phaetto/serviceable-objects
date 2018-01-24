@@ -47,7 +47,7 @@
             GraphContext.AddNode(typeof(InstrumentationServerContext), DefaultInstrumentationId);
         }
 
-        public static bool InstallIfRequested(string []args, InstallAsServiceData installAsServiceData)
+        public static bool ChangeInstallStateIfRequested(string[] args, InstallAsServiceData installAsServiceData)
         {
             if (args.Length != 1)
             {
@@ -61,7 +61,7 @@
                     Console.WriteLine($"Service '{installAsServiceData.Name}' has been installed.");
                     return true;
                 case "--uninstall":
-                    new InstallationContext().Execute(new InstallAsServiceCommand(installAsServiceData));
+                    new InstallationContext().Execute(new UninstallAsServiceCommand(installAsServiceData));
                     Console.WriteLine($"Service '{installAsServiceData.Name}' has been uninstalled.");
                     return true;
             }

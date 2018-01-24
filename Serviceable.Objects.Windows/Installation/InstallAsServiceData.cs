@@ -8,5 +8,6 @@ namespace Serviceable.Objects.Windows.Installation
         public string Description;
         public ServiceAccount Account;
         public bool DelayAutoStart;
+        public string ApplicationHostDataConfigurationAsJsonForCommandLine;
     }
 }
