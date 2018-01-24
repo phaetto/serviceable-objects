@@ -31,6 +31,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration.Install" />
     <Reference Include="System.Core" />
@@ -43,13 +46,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Installation\InstallationContext.cs" />
-    <Compile Include="Installation\InstallAsServiceCommand.cs" />
-    <Compile Include="Installation\InstallAsServiceData.cs" />
-    <Compile Include="ServiceCommands\Stop.cs" />
-    <Compile Include="ServiceCommands\Start.cs" />
-    <Compile Include="ServiceHost.cs" />
+    <Compile Include="Host\Installation\UninstallAsServiceCommand.cs" />
+    <Compile Include="Host\Installation\InstallationContext.cs" />
+    <Compile Include="Host\Installation\InstallAsServiceCommand.cs" />
+    <Compile Include="Host\Installation\InstallAsServiceData.cs" />
+    <Compile Include="Host\ServiceHost.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ServiceHostWindowsService.cs">
+      <SubType>Component</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Serviceable.Objects.Instrumentation\Serviceable.Objects.Instrumentation.csproj">
@@ -68,6 +73,9 @@
       <Project>{46a7ab18-5784-46a0-89c6-dfbcce3ae6e6}</Project>
       <Name>Serviceable.Objects</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -1,4 +1,4 @@
-namespace Serviceable.Objects.Windows.Installation
+namespace Serviceable.Objects.Windows.Host.Installation
 {
     using System.ServiceProcess;
 
@@ -8,5 +8,6 @@ namespace Serviceable.Objects.Windows.Installation
         public string Description;
         public ServiceAccount Account;
         public bool DelayAutoStart;
+        public string ApplicationHostDataConfigurationAsJsonForCommandLine;
     }
 }
