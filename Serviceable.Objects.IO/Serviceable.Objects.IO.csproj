@@ -2,6 +2,18 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard1.3</TargetFramework>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Authors>Alexander Mantzoukas</Authors>
+    <Company>Rebootify ApS</Company>
+    <Product>Serviceable objects and composable services</Product>
+    <Description>Defines the IO clients and server contexts that other contexts can use to transport information on a service graph.</Description>
+    <Copyright>Alexander Mantzoukas (c) 2017, Rebootify ApS</Copyright>
+    <PackageLicenseUrl>https://github.com/phaetto/serviceable-objects/blob/master/license.md</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/phaetto/serviceable-objects/</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/phaetto/serviceable-objects/</RepositoryUrl>
+    <RepositoryType>Git</RepositoryType>
+    <PackageTags>Serviceable-objects TDD Modular Micro-Services Commands</PackageTags>
+    <Summary>Composable graph services library</Summary>
   </PropertyGroup>
 
   <ItemGroup>

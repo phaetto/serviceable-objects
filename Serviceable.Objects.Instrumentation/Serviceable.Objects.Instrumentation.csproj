@@ -2,6 +2,19 @@
 
   <PropertyGroup>
     <TargetFrameworks>netstandard1.6;netcoreapp2.0</TargetFrameworks>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Authors>Alexander Mantzoukas</Authors>
+    <Company>Rebootify ApS</Company>
+    <Product>Serviceable objects and composable services</Product>
+    <Description>Implements the base classes for Powershell instrumentation of service graphs and contexts. Existing commands can be ported with this package.</Description>
+    <Copyright>Alexander Mantzoukas (c) 2017, Rebootify ApS</Copyright>
+    <PackageLicenseUrl>https://github.com/phaetto/serviceable-objects/blob/master/license.md</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/phaetto/serviceable-objects/</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/phaetto/serviceable-objects/</RepositoryUrl>
+    <PackageReleaseNotes></PackageReleaseNotes>
+    <PackageTags>Powershell Serviceable-objects TDD Modular Micro-Services Commands</PackageTags>
+    <RepositoryType>Git</RepositoryType>
+    <Summary>Composable graph services library</Summary>
   </PropertyGroup>
 
   <ItemGroup>
