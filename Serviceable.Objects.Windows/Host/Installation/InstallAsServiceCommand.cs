@@ -1,4 +1,4 @@
-namespace Serviceable.Objects.Windows.Installation
+namespace Serviceable.Objects.Windows.Host.Installation
 {
     using System.Collections;
     using System.Configuration.Install;
@@ -77,7 +77,8 @@ namespace Serviceable.Objects.Windows.Installation
             var currentControlSet = system?.OpenSubKey("CurrentControlSet");
             var servicesKey = currentControlSet?.OpenSubKey("Services");
             var serviceKey = servicesKey?.OpenSubKey(Data.Name, true);
-            serviceKey?.SetValue("ImagePath", (string) serviceKey.GetValue("ImagePath") + " --service");
+            serviceKey?.SetValue("ImagePath",
+                $"{(string) serviceKey.GetValue("ImagePath")} \"{Data.ApplicationHostDataConfigurationAsJsonForCommandLine}\"");
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace Serviceable.Objects.Windows
+﻿namespace Serviceable.Objects.Windows.Host
 {
     using System;
     using System.Linq;

@@ -1,4 +1,4 @@
-namespace Serviceable.Objects.Windows.Installation
+namespace Serviceable.Objects.Windows.Host.Installation
 {
     using System.ServiceProcess;
 

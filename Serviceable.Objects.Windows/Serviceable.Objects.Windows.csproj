@@ -46,12 +46,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Installation\UninstallAsServiceCommand.cs" />
-    <Compile Include="Installation\InstallationContext.cs" />
-    <Compile Include="Installation\InstallAsServiceCommand.cs" />
-    <Compile Include="Installation\InstallAsServiceData.cs" />
-    <Compile Include="ServiceHost.cs" />
+    <Compile Include="Host\Installation\UninstallAsServiceCommand.cs" />
+    <Compile Include="Host\Installation\InstallationContext.cs" />
+    <Compile Include="Host\Installation\InstallAsServiceCommand.cs" />
+    <Compile Include="Host\Installation\InstallAsServiceData.cs" />
+    <Compile Include="Host\ServiceHost.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ServiceHostWindowsService.cs">
+      <SubType>Component</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Serviceable.Objects.Instrumentation\Serviceable.Objects.Instrumentation.csproj">
