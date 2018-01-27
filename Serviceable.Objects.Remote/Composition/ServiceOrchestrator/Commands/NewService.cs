@@ -34,6 +34,17 @@
             }
 
             var template = context.GraphTemplatesDictionary[Data.ServiceName];
+            var inBindings = context.InBindingsPerService == null
+                ? new List<InBinding>()
+                : context.InBindingsPerService.ContainsKey(Data.ServiceName)
+                    ? context.InBindingsPerService[Data.ServiceName]
+                    : new List<InBinding>();
+            var externalBindings = context.ExternalBindingsPerService == null
+                ? new List<ExternalBinding>()
+                : context.ExternalBindingsPerService.ContainsKey(Data.ServiceName)
+                    ? context.ExternalBindingsPerService[Data.ServiceName]
+                    : new List<ExternalBinding>();
+
             var existingProcess = Process.GetCurrentProcess();
             var executableFile = Path.GetFileName(existingProcess.MainModule.FileName);
 
@@ -46,8 +57,8 @@
                     OrchestratorName = context.OrchestratorName,
                     ServiceName = Data.ServiceName,
                     TemplateName = Data.ServiceName,
-                    ExternalBindings = context.ExternalBindingsPerService?[Data.ServiceName],
-                    InBindings = context.InBindingsPerService?[Data.ServiceName]
+                    ExternalBindings = externalBindings,
+                    InBindings = inBindings
                 }
             };
 
