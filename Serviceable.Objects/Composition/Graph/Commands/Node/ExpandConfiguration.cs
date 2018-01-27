@@ -38,23 +38,23 @@
 
             // TODO: add another generic In/Out without ContextTypeName after the specialized configuration that targets the type
 
-            var contextInBindings =
+            var contextInBinding =
                 service?.InBindings?.FirstOrDefault(x =>
                     x.ContextTypeName == context.ContextType.AssemblyQualifiedName);
 
-            var contextExternalBindings =
+            var contextExternalBinding =
                 service?.ExternalBindings?.FirstOrDefault(x =>
                     x.ContextTypeName == context.ContextType.AssemblyQualifiedName);
 
             var configurations = new List<string> {nodeConfiguration};
 
-            if (contextInBindings != null)
+            if (contextInBinding != null)
             {
-                configurations = contextInBindings.ScaleSetBindings.Select(x => ConfigureInString(nodeConfiguration, x))
+                configurations = contextInBinding.ScaleSetBindings.Select(x => ConfigureInString(nodeConfiguration, x))
                     .ToList();
             }
 
-            if ((contextExternalBindings?.AlgorithmBindings?.Count ?? 0) == 0)
+            if ((contextExternalBinding?.AlgorithmBindings?.Count ?? 0) == 0)
             {
                 return CheckForUnconfigurableSettings(new Dictionary<string, IEnumerable<string>>
                 {
@@ -63,7 +63,7 @@
             }
 
             // ReSharper disable once AssignNullToNotNullAttribute
-            return CheckForUnconfigurableSettings(contextExternalBindings.AlgorithmBindings
+            return CheckForUnconfigurableSettings(contextExternalBinding.AlgorithmBindings
                 .ToDictionary(
                     x => x.AlgorithmTypeName, 
                     y => configurations.SelectMany(z => y.ScaleSetBindings.Select(x => ConfigureOutString(z, x)))
