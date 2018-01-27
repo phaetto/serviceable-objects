@@ -23,7 +23,15 @@
 
         protected override void OnStart(string[] args)
         {
-            serviceHost = new ServiceHost(consoleArgs ?? args);
+            if (graphContext != null)
+            {
+                serviceHost = new ServiceHost(graphContext);
+            }
+            else
+            {
+                serviceHost = new ServiceHost(consoleArgs ?? args);
+            }
+
             serviceHost.ForceExecuteAsync(new RunAndBlock());
         }
 
