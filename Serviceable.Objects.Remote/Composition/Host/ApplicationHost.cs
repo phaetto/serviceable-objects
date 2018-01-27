@@ -34,6 +34,8 @@
         public ApplicationHost(GraphContext graphContext)
         {
             GraphContext = graphContext;
+            Service = new ServiceContext(graphContext);
+            Service.ServiceContainer.Register(this);
         }
 
         public ApplicationHost(IService service)
