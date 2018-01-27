@@ -53,7 +53,8 @@
 
         private static bool InterfaceSupportsEventHandler(IEvent eventPublished, Type interfaceType)
         {
-            return interfaceType.GetGenericTypeDefinition() == typeof(IEventHandler<>) &&
+            return interfaceType.GetTypeInfo().IsGenericType &&
+                interfaceType.GetGenericTypeDefinition() == typeof(IEventHandler<>) &&
                    interfaceType.GenericTypeArguments.Length == 1 &&
                    (
                        interfaceType.GenericTypeArguments[0] == eventPublished.GetType()
