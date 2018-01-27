@@ -9,7 +9,6 @@
     using Newtonsoft.Json;
     using Objects.Composition.Graph;
     using Objects.Composition.Service;
-    using Objects.Composition.ServiceOrchestrator;
     using Service;
     using ServiceOrchestrator;
 
@@ -29,14 +28,11 @@
 
         public readonly GraphContext GraphContext;
         public readonly IService Service;
-        public readonly IServiceOrchestrator ServiceOrchestrator;
         public EventWaitHandle EventWaitHandle = new EventWaitHandle(false, EventResetMode.ManualReset);
         public CancellationTokenSource CancellationTokenSource = new CancellationTokenSource();
 
-        public ApplicationHost(IServiceOrchestrator serviceOrchestrator, GraphContext graphContext)
+        public ApplicationHost(GraphContext graphContext)
         {
-            ServiceOrchestrator = serviceOrchestrator;
-            serviceOrchestrator.ServiceOrchestratorContainer.Register(this);
             GraphContext = graphContext;
         }
 

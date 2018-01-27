@@ -4,7 +4,6 @@
     using System.Linq;
     using Composition.Graph;
     using Composition.Service;
-    using Composition.ServiceOrchestrator;
     using Installation;
     using Instrumentation.Server;
     using Remote.Composition.Host;
@@ -13,7 +12,7 @@
     {
         private const string DefaultInstrumentationId = "service-instrumentation-server";
 
-        public ServiceHost(IServiceOrchestrator serviceOrchestrator, GraphContext graphContext) : base(serviceOrchestrator, graphContext)
+        public ServiceHost(GraphContext graphContext) : base(graphContext)
         {
             CheckAndSetupInstrumentationServer();
         }
@@ -33,11 +32,6 @@
 
         private void CheckAndSetupInstrumentationServer()
         {
-            if (ServiceOrchestrator == null)
-            {
-                return;
-            }
-
             var instrumentationId = GraphContext.GetNodeIds<InstrumentationServerContext>().FirstOrDefault();
             if (!string.IsNullOrWhiteSpace(instrumentationId))
             {
