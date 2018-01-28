@@ -26,14 +26,6 @@
             ServiceContainer.Register(typeof(IService), this);
         }
 
-        public ServiceContext(GraphContext graphContext)
-        {
-            ServiceContainer = graphContext.Container;
-            GraphContext = graphContext;
-            ServiceContainer.Register(GraphContext);
-            ServiceContainer.Register(typeof(IService), this);
-        }
-
         public ServiceContext(ServiceContextConfiguration configuration) : base(configuration)
         {
             var graphContainer = new Container(ServiceContainer);
