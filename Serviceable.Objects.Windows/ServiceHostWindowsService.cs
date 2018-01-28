@@ -1,7 +1,6 @@
 ﻿namespace Serviceable.Objects.Windows
 {
     using System.ServiceProcess;
-    using Composition.Graph;
     using Composition.Service;
     using Host;
     using Remote.Composition.Host.Commands;
@@ -24,14 +23,7 @@
 
         protected override void OnStart(string[] args)
         {
-            if (service != null)
-            {
-                serviceHost = new ServiceHost(service);
-            }
-            else
-            {
-                serviceHost = new ServiceHost(consoleArgs ?? args);
-            }
+            serviceHost = service != null ? new ServiceHost(service) : new ServiceHost(consoleArgs ?? args);
 
             serviceHost.ForceExecuteAsync(new RunAndBlock());
         }
