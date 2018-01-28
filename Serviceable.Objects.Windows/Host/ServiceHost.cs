@@ -2,7 +2,6 @@
 {
     using System;
     using System.Linq;
-    using Composition.Graph;
     using Composition.Service;
     using Installation;
     using Instrumentation.Server;
