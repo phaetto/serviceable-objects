@@ -31,13 +31,6 @@
         public EventWaitHandle EventWaitHandle = new EventWaitHandle(false, EventResetMode.ManualReset);
         public CancellationTokenSource CancellationTokenSource = new CancellationTokenSource();
 
-        public ApplicationHost(GraphContext graphContext)
-        {
-            GraphContext = graphContext;
-            Service = new ServiceContext(graphContext);
-            Service.ServiceContainer.Register(this);
-        }
-
         public ApplicationHost(IService service)
         {
             Service = service;

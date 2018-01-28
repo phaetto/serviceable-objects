@@ -2,12 +2,13 @@
 {
     using System.ServiceProcess;
     using Composition.Graph;
+    using Composition.Service;
     using Host;
     using Remote.Composition.Host.Commands;
 
     public class ServiceHostWindowsService : ServiceBase
     {
-        private readonly GraphContext graphContext;
+        private readonly IService service;
         private readonly string[] consoleArgs;
         private ServiceHost serviceHost;
 
@@ -16,16 +17,16 @@
             this.consoleArgs = consoleArgs;
         }
 
-        public ServiceHostWindowsService(GraphContext graphContext)
+        public ServiceHostWindowsService(IService service)
         {
-            this.graphContext = graphContext;
+            this.service = service;
         }
 
         protected override void OnStart(string[] args)
         {
-            if (graphContext != null)
+            if (service != null)
             {
-                serviceHost = new ServiceHost(graphContext);
+                serviceHost = new ServiceHost(service);
             }
             else
             {

@@ -12,11 +12,6 @@
     {
         private const string DefaultInstrumentationId = "service-instrumentation-server";
 
-        public ServiceHost(GraphContext graphContext) : base(graphContext)
-        {
-            CheckAndSetupInstrumentationServer();
-        }
-
         public ServiceHost(IService service) : base(service)
         {
         }
