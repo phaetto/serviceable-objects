@@ -1,11 +1,22 @@
 ﻿namespace Serviceable.Objects.Remote
 {
-    public abstract class RemotableCommandWithData<TSend, TReceived, TContext> : RemotableCommandWithSerializableData<TSend, TReceived, TContext>
+    using System;
+
+    public abstract class RemotableCommandWithData<TDataType, TReceived, TContext> : 
+        Reproducible,
+        IReproducibleWithKnownData<TDataType>,
+        IRemotableCommand<TContext, TReceived>
     {
-        protected RemotableCommandWithData(TSend data): base(data)
+        public TDataType Data { get; set; }
+        public object DataAsObject => Data;
+        public Type ReturnType => typeof(TReceived);
+        public Type InitializationType => typeof(TDataType);
+
+        protected RemotableCommandWithData(TDataType data)
         {
+            Data = data;
         }
 
-        public abstract override TReceived Execute(TContext context);
+        public abstract TReceived Execute(TContext context);
     }
 }
