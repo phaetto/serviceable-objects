@@ -7,6 +7,7 @@ namespace Serviceable.Objects.Instrumentation.Powershell
     using Remote;
     using Remote.Dependencies;
     using Server.Commands;
+    using Remote.Proxying;
 
     public abstract class InstrumentationCommandCmdletBase<TCommand> : Cmdlet, IDynamicParameters
         where TCommand : IReproducible
@@ -34,7 +35,7 @@ namespace Serviceable.Objects.Instrumentation.Powershell
                 commonInstrumentationParameters.ServiceName);
             namedPipeClientContext =
                 new NamedPipeClientContext(namedPipe, commonInstrumentationParameters.TimeoutInMilliseconds);
-            namedPipeClientContext.Send(new SetupCallData(commonInstrumentationParameters));
+            namedPipeClientContext.Execute(new SetupCallData(commonInstrumentationParameters));
             ExecuteAndReturnReply(namedPipeClientContext, GenerateCommand());
         }
 
@@ -45,7 +46,7 @@ namespace Serviceable.Objects.Instrumentation.Powershell
 
         private void ExecuteAndReturnReply(NamedPipeClientContext namedPipeClientContext, TCommand command)
         {
-            var result = namedPipeClientContext.Send(command);
+            var result = namedPipeClientContext.Execute(command);
             if (result is Exception exception)
             {
                 ThrowTerminatingError(new ErrorRecord(exception, exception.HResult.ToString(), ErrorCategory.InvalidOperation, this));

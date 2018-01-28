@@ -10,7 +10,7 @@
 
         public TReceived Execute(TContext context)
         {
-            return ((TOtherContext)context.WrappedContext).Execute(RemotableCommand); ;
+            return ((TOtherContext)((IProxyContentNeededData)context).WrappedContext).Execute(RemotableCommand); ;
         }
     }
 }

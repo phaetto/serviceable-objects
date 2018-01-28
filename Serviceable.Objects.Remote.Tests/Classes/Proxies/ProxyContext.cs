@@ -3,7 +3,7 @@
     using System.Threading.Tasks;
     using Proxying;
 
-    public sealed class ProxyContext : Context<ProxyContext>, IProxyContext
+    public sealed class ProxyContext : Context<ProxyContext>, IProxyContext, IProxyContentNeededData
     {
         public AbstractContext WrappedContext { get; }
 

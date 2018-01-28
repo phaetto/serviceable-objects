@@ -4,8 +4,6 @@
 
     public interface IProxyContext
     {
-        AbstractContext WrappedContext { get; }
-
         IRemotableCarrier<TContext, TOtherContext, TReceived> CreateRemotableCarrier<TContext, TOtherContext, TReceived>()
             where TOtherContext : Context<TOtherContext>
             where TContext : IProxyContext;
