@@ -12,8 +12,9 @@
 
         public TReceived Execute(TContext context)
         {
-            return (context as NamedPipeClientContext).Execute(new Send(RemotableCommand)) is TReceived 
-                ? (TReceived) (context as NamedPipeClientContext).Execute(new Send(RemotableCommand))
+            var result = (context as NamedPipeClientContext).Execute(new Send(RemotableCommand));
+            return result is TReceived received 
+                ? received
                 : default(TReceived);
         }
     }
