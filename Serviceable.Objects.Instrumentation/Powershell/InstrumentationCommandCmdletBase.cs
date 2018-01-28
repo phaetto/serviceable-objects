@@ -46,7 +46,7 @@ namespace Serviceable.Objects.Instrumentation.Powershell
 
         private void ExecuteAndReturnReply(NamedPipeClientContext namedPipeClientContext, TCommand command)
         {
-            var result = namedPipeClientContext.Execute(command);
+            var result = namedPipeClientContext.Execute(namedPipeClientContext.GenerateProxyCommandForGenericExecution(command));
             if (result is Exception exception)
             {
                 ThrowTerminatingError(new ErrorRecord(exception, exception.HResult.ToString(), ErrorCategory.InvalidOperation, this));

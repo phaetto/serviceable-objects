@@ -2,7 +2,7 @@
 {
     public interface IRemotableCarrier<in TContext, TOtherContext, TReceived> : ICommand<TContext, TReceived>
         where TOtherContext : Context<TOtherContext>
-        where TContext : IProxyContext
+        where TContext : ITypeSafeProxyContext
     {
         IRemotableCommand<TOtherContext, TReceived> RemotableCommand { get; set; }
     }

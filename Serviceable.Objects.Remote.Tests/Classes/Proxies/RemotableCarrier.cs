@@ -4,7 +4,7 @@
 
     public sealed class RemotableCarrier<TContext, TOtherContext, TReceived> : IRemotableCarrier<TContext, TOtherContext, TReceived>
         where TOtherContext : Context<TOtherContext>
-        where TContext : IProxyContext
+        where TContext : ITypeSafeProxyContext
     {
         public IRemotableCommand<TOtherContext, TReceived> RemotableCommand { get; set; }
 

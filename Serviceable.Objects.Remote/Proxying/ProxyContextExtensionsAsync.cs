@@ -8,7 +8,7 @@
             this Task<TExecutionContext> context,
             IRemotableCommand<T, TResultType> command)
             where T : Context<T>
-            where TExecutionContext : Context<TExecutionContext>, IProxyContext
+            where TExecutionContext : Context<TExecutionContext>, ITypeSafeProxyContext
         {
             return context.ContinueWith(x =>
             {
@@ -21,7 +21,7 @@
         public static Task<TExecutionContext> Execute<T, TResultType, TExecutionContext>(
             this Task<TExecutionContext> context,
             IReproducibleCommand<T, TResultType> command)
-            where TExecutionContext : Context<TExecutionContext>, IProxyContext
+            where TExecutionContext : Context<TExecutionContext>, ITypeSafeProxyContext
             where T : Context<T>
         {
             return context.ContinueWith(x =>
@@ -36,7 +36,7 @@
             this Task<TExecutionContext> context,
             IRemotableCommand<T, Task<TResultType>> command)
             where T : Context<T>
-            where TExecutionContext : Context<TExecutionContext>, IProxyContext
+            where TExecutionContext : Context<TExecutionContext>, ITypeSafeProxyContext
         {
             return context.ContinueWith(x =>
             {
@@ -49,7 +49,7 @@
         public static Task<TExecutionContext> Execute<T, TResultType, TExecutionContext>(
             this Task<TExecutionContext> context,
             IReproducibleCommand<T, Task<TResultType>> command)
-            where TExecutionContext : Context<TExecutionContext>, IProxyContext
+            where TExecutionContext : Context<TExecutionContext>, ITypeSafeProxyContext
             where T : Context<T>
         {
             return context.ContinueWith(x =>
@@ -64,7 +64,7 @@
             this TExecutionContext context,
             IRemotableCommand<T, Task<TResultType>> command)
             where T : Context<T>
-            where TExecutionContext : Context<TExecutionContext>, IProxyContext
+            where TExecutionContext : Context<TExecutionContext>, ITypeSafeProxyContext
         {
             var remotableCarrier = context.CreateRemotableCarrier<TExecutionContext, T, Task<TResultType>>();
             remotableCarrier.RemotableCommand = command;
@@ -74,7 +74,7 @@
         public static Task<TExecutionContext> Execute<T, TResultType, TExecutionContext>(
             this TExecutionContext context,
             IReproducibleCommand<T, Task<TResultType>> command)
-            where TExecutionContext : Context<TExecutionContext>, IProxyContext
+            where TExecutionContext : Context<TExecutionContext>, ITypeSafeProxyContext
             where T : Context<T>
         {
             var reproducibleCarrier = context.CreateAsyncReproducibleCarrier<TExecutionContext, T, Task<TResultType>>();
