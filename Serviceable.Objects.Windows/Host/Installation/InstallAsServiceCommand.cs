@@ -73,6 +73,11 @@ namespace Serviceable.Objects.Windows.Host.Installation
 
         private void ServiceInstaller_AfterInstall(object sender, InstallEventArgs e)
         {
+            if (string.IsNullOrWhiteSpace(Data.ApplicationHostDataConfigurationAsJsonForCommandLine))
+            {
+                return;
+            }
+
             var system = Registry.LocalMachine.OpenSubKey("System");
             var currentControlSet = system?.OpenSubKey("CurrentControlSet");
             var servicesKey = currentControlSet?.OpenSubKey("Services");

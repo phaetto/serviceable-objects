@@ -6,7 +6,7 @@
             this TExecutionContext context,
             IRemotableCommand<T, TResultType> command)
             where T : Context<T>
-            where TExecutionContext : Context<TExecutionContext>, IProxyContext
+            where TExecutionContext : Context<TExecutionContext>, ITypeSafeProxyContext
         {
             var remotableCarrier = context.CreateRemotableCarrier<TExecutionContext, T, TResultType>();
             remotableCarrier.RemotableCommand = command;
@@ -16,7 +16,7 @@
         public static TExecutionContext Execute<T, TResultType, TExecutionContext>(
             this TExecutionContext context,
             IReproducibleCommand<T, TResultType> command)
-            where TExecutionContext : Context<TExecutionContext>, IProxyContext
+            where TExecutionContext : Context<TExecutionContext>, ITypeSafeProxyContext
             where T : Context<T>
         {
             var reproducibleCarrier = context.CreateReproducibleCarrier<TExecutionContext, T, TResultType>();

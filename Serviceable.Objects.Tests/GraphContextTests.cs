@@ -48,7 +48,7 @@
 
             graph.ConfigureSetupAndInitialize();
 
-            var executionDataResults = graph.Execute(new ActionForTestEventProducer("new-value")).ToList();
+            var executionDataResults = graph.Execute(new ActionForTestEventProducer("new-value"));
 
             Assert.Single(executionDataResults);
             Assert.NotNull(executionDataResults[0]);

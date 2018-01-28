@@ -3,6 +3,7 @@
     using System;
     using ExecutionData;
     using Microsoft.CSharp.RuntimeBinder;
+    using Proxying;
 
     public sealed class ExecuteCommand : ICommand<GraphNodeInstanceContext, ExecutionCommandResult>
     {
@@ -21,8 +22,15 @@
                 object resultObject;
                 try
                 {
-                    resultObject = context.HostedContext.Execute(command);
+                    var commandToExecute = command;
+                    if (context.HostedContextAsAbstractContext is IProxyFactoryContext proxyFactoryContext)
+                    {
+                        commandToExecute = proxyFactoryContext.GenerateProxyCommandForGenericExecution(command);
+                    }
 
+                    resultObject = context.HostedContext.Execute(commandToExecute);
+
+                    // Event if the execution is proxied, the input command still carries the events
                     if (command is IEventProducer eventProducer)
                     {
                         executionCommandResult.PublishedEvents.AddRange(eventProducer.EventsProduced);

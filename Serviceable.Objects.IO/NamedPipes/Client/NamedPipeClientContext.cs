@@ -1,67 +1,55 @@
 ﻿namespace Serviceable.Objects.IO.NamedPipes.Client
 {
     using System;
-    using System.IO.Pipes;
-    using System.Linq;
-    using Composition.Graph;
-    using Newtonsoft.Json;
+    using System.Threading.Tasks;
+    using Commands;
     using Remote;
-    using Remote.Serialization;
+    using Remote.Proxying;
     using Remote.Serialization.Streaming;
 
-    public sealed class NamedPipeClientContext: Context<NamedPipeClientContext>, IGraphFlowExecutionSink
+    public sealed class NamedPipeClientContext : Context<NamedPipeClientContext>, ITypeSafeProxyContext
     {
-        // TODO: make client a real proxy context
-        private readonly string namedPipe;
-
-        private readonly int timeoutInMilliseconds;
-        private readonly StreamSession streamSession = new StreamSession();
+        // TODO: use configuration, initialization
+        internal readonly string NamedPipe;
+        internal readonly int TimeoutInMilliseconds;
+        internal readonly StreamSession StreamSession = new StreamSession();
 
         public NamedPipeClientContext(string namedPipe, int timeoutInMilliseconds)
         {
-            this.namedPipe = namedPipe;
-            this.timeoutInMilliseconds = timeoutInMilliseconds;
+            NamedPipe = namedPipe;
+            TimeoutInMilliseconds = timeoutInMilliseconds;
         }
 
-        public object Send(IReproducible command)
+        public IRemotableCarrier<TContext, TOtherContext, TReceived> CreateRemotableCarrier<TContext, TOtherContext, TReceived>()
+            where TOtherContext : Context<TOtherContext> where TContext : ITypeSafeProxyContext
         {
-            using (var namedPipeClientStream = new NamedPipeClientStream(".", namedPipe, PipeDirection.InOut))
-            {
-                namedPipeClientStream.Connect(timeoutInMilliseconds);
-
-                var specification = command.GetInstanceSpec();
-                streamSession.Write(namedPipeClientStream, JsonConvert.SerializeObject(specification));
-
-                namedPipeClientStream.WaitForPipeDrain();
-
-                do
-                {
-                    streamSession.Read(namedPipeClientStream);
-                } while (streamSession.IsCommandBufferWaitingForCompletion);
-
-                if (streamSession.CommandsTextReadyToBeParsedQueue.TryDequeue(out var replyString))
-                {
-                    if (!string.IsNullOrWhiteSpace(replyString))
-                    {
-                        var commandSpecificationService = new CommandSpecificationService();
-                        var commandResultSpecification = JsonConvert.DeserializeObject<CommandResultSpecification[]>(replyString);
-                        return commandResultSpecification.Take(1).Select(x => commandSpecificationService.CreateResultDataFromCommandSpecification(x)).FirstOrDefault();
-                    }
-                }
-
-                return null;
-            }
+            return new NamedPipeClientRemotableCarrier<TContext, TOtherContext, TReceived>();
         }
 
-        // TODO: proxy might not need this
-        public object CustomCommandExecute(GraphContext graphContext, string executingNodeId, object commandApplied)
+        public IReproducibleCarrier<TContext, TContext, TOtherContext, TReceived> CreateReproducibleCarrier<TContext, TOtherContext, TReceived>()
+            where TOtherContext : Context<TOtherContext> where TContext : ITypeSafeProxyContext
         {
-            if (commandApplied is IReproducible reproducible)
-            {
-                return Send(reproducible);
-            }
+            return new NamedPipeClientReproducibleCarrier<TContext, TOtherContext, TReceived>();
+        }
 
-            throw new NotSupportedException($"Command {commandApplied.GetType().AssemblyQualifiedName} was not IReproducible");
+        public IReproducibleCarrier<TContext, Task<TContext> ,TOtherContext, TReceived> CreateAsyncReproducibleCarrier<TContext, TOtherContext, TReceived>()
+            where TOtherContext : Context<TOtherContext> where TContext : ITypeSafeProxyContext
+        {
+            return new NamedPipeClientReproducibleCarrier<TContext, TOtherContext, TReceived>();
+        }
+
+        public object GenerateProxyCommandForGenericExecution(object commandToBeProxied)
+        {
+            if (commandToBeProxied is IReproducible reproducible)
+            {
+                return new Send(reproducible);
+            }
+            throw new NotSupportedException($"Command {commandToBeProxied.GetType().AssemblyQualifiedName} was not IReproducible");
+        }
+
+        public Send GenerateProxyCommandForGenericExecution(IReproducible reproducible)
+        {
+            return (Send) GenerateProxyCommandForGenericExecution((object) reproducible);
         }
     }
 }

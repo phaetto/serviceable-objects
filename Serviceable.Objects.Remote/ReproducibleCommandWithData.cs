@@ -1,9 +1,21 @@
 ﻿namespace Serviceable.Objects.Remote
 {
-    public abstract class ReproducibleCommandWithData<TContext, TReceived, TDataType> : ReproducibleCommandWithSerializableData<TContext, TReceived, TDataType>
+    using System;
+
+    public abstract class ReproducibleCommandWithData<TContext, TReceived, TDataType> : 
+        Reproducible,
+        IReproducibleCommand<TContext, TReceived>,
+        IReproducibleWithKnownData<TDataType>
     {
-        protected ReproducibleCommandWithData(TDataType data) : base(data)
+        public TDataType Data { get; set; }
+        public object DataAsObject => Data;
+        public Type InitializationType => typeof(TDataType);
+
+        protected ReproducibleCommandWithData(TDataType data)
         {
+            Data = data;
         }
+
+        public abstract TReceived Execute(TContext context);
     }
 }
