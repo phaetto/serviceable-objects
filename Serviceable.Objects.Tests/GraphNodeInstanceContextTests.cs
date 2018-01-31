@@ -1,6 +1,7 @@
 ﻿namespace Serviceable.Objects.Tests
 {
     using System;
+    using System.Linq;
     using Composition.Graph;
     using Composition.Graph.Commands.NodeInstance;
     using Microsoft.CSharp.RuntimeBinder;
@@ -48,7 +49,7 @@
         }
 
         [Fact]
-        public void Execute_WhenExecutingAnInstanceAndDoesNotSupportCommand_ThenTheItIsConsideredIdle()
+        public void Execute_WhenExecutingAnInstanceAndDoesNotSupportCommand_ThenItIsConsideredIdle()
         {
             var testContext = new TestContext();
             var command = new CommandFromAnotherContext();
@@ -99,6 +100,28 @@
             {
                 return "success";
             }
+        }
+
+        [Fact]
+        public void ProcessNodeInstanceEventLogic_WhenAnEventIsPublishedAndNotSupported_ThenExecutionReturnsAnEmptyList()
+        {
+            var testContext = new TestContext();
+            var graphContext = new GraphContext();
+            var graphNodeContext = new GraphNodeContext(testContext, graphContext, "test-node");
+            var graphNodeInstanceContext = new GraphNodeInstanceContext(testContext, graphContext, graphNodeContext, "test-node");
+
+            var result = graphNodeInstanceContext.Execute(new ProcessNodeInstanceEventLogic(new EventNotSupportedForTestContext2(), graphNodeInstanceContext)).ToList();
+
+            Assert.NotNull(result);
+            Assert.Empty(result);
+        }
+
+        public class TestContext2 : Context<TestContext2>
+        {
+        }
+
+        public class EventNotSupportedForTestContext2 : IEvent
+        {
         }
     }
 }

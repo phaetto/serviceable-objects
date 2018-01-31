@@ -25,7 +25,8 @@
                 return controlFlowEvent.OverrideEventPropagationLogic(context.GraphContext, publishingGraphNodeInstanceContext.Id, publishingGraphNodeInstanceContext.HostedContext);
             }
 
-            return new[] { EventPropagated(context) };
+            var eventPropagatedResult = EventPropagated(context);
+            return eventPropagatedResult != null ? new[] { eventPropagatedResult } : new ExecutionCommandResult[0];
         }
 
         private ExecutionCommandResult EventPropagated(GraphNodeInstanceContext context)
