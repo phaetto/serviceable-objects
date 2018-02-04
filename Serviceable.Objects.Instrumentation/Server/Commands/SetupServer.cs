@@ -36,7 +36,9 @@
 
             graphContext.AddNode(new NamedPipeServerContext(new NamedPipeServerConfiguration
             {
-                PipeName = WellknownPipeFormat(serviceOrchestrator?.OrchestratorName ?? service.OrchestratorName, service?.ServiceName)
+                PipeName = WellknownPipeFormat(
+                    serviceOrchestrator?.OrchestratorName ?? service.OrchestratorName,
+                    serviceOrchestrator != null ? null : service?.ServiceName)
             }), namedPipeServerNodeId);
 
             // Connect to this node
