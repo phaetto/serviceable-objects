@@ -1,10 +1,10 @@
 ﻿namespace Serviceable.Objects.Remote.Tests
 {
     using System.Linq;
-    using Composition.Graph;
     using Newtonsoft.Json;
     using Objects.Composition.Graph;
     using Objects.Tests.Classes;
+    using Remote.Composition.Graph;
     using Xunit;
 
     public sealed class CompositionExtensionsTests

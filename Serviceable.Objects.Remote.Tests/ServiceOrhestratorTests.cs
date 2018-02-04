@@ -2,12 +2,12 @@
 {
     using System.Linq;
     using System.Threading.Tasks;
-    using Composition.Host;
-    using Composition.Host.Commands;
-    using Composition.Service;
-    using Composition.ServiceOrchestrator;
-    using Composition.ServiceOrchestrator.Configuration;
     using Objects.Tests.Classes;
+    using Remote.Composition.Host;
+    using Remote.Composition.Host.Commands;
+    using Remote.Composition.Service;
+    using Remote.Composition.ServiceOrchestrator;
+    using Remote.Composition.ServiceOrchestrator.Configuration;
     using Xunit;
 
     public sealed class ServiceOrhestratorTests
