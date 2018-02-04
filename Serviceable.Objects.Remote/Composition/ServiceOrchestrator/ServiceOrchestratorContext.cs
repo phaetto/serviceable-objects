@@ -9,7 +9,7 @@
 
     public sealed class ServiceOrchestratorContext : ConfigurableContext<ServiceOrchestratorConfiguration, ServiceOrchestratorContext>, IServiceOrchestrator
     {
-        public Container ServiceOrchestratorContainer { get; } = new Container();
+        public Container ServiceOrchestratorContainer { get; }
         public IList<ServiceRegistration> ServiceRegistrations { get; } = new List<ServiceRegistration>(); // TODO: evaluate if needed
 
         public string OrchestratorName => Configuration.OrchestratorName;
@@ -21,11 +21,13 @@
 
         public ServiceOrchestratorContext(GraphContext graphContext)
         {
+            ServiceOrchestratorContainer = new Container(graphContext.Container);
             graphContext.Container.Register(typeof(IServiceOrchestrator), this);
         }
 
         public ServiceOrchestratorContext(ServiceOrchestratorConfiguration configuration, GraphContext graphContext) : base(configuration)
         {
+            ServiceOrchestratorContainer = new Container(graphContext.Container);
             graphContext.Container.Register(typeof(IServiceOrchestrator), this);
         }
     }
