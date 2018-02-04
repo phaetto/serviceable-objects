@@ -44,7 +44,8 @@
                 if (!AlgorithmicInstanceExecutions.Any())
                 {
                     // Default execution - will fire up all instances in this node
-                    return GraphNodeInstanceContextListPerAlgorithm.ToList().Select(x => x.Value.Select(y => ExecutionLogicOnNodeInstance(command, y))).First().FirstOrDefault();
+                    var resultLists = GraphNodeInstanceContextListPerAlgorithm.ToList().Select(x => x.Value.Select(y => ExecutionLogicOnNodeInstance(command, y))).ToList(); // This will force to run them all
+                    return resultLists.First().FirstOrDefault(); // Algorithm - ExecutionCommandResult
                 }
 
                 // The first algorithm runs and the others are inspecting
