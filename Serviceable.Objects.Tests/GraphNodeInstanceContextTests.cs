@@ -110,17 +110,13 @@
             var graphNodeContext = new GraphNodeContext(testContext, graphContext, "test-node");
             var graphNodeInstanceContext = new GraphNodeInstanceContext(testContext, graphContext, graphNodeContext, "test-node");
 
-            var result = graphNodeInstanceContext.Execute(new ProcessNodeInstanceEventLogic(new EventNotSupportedForTestContext2(), graphNodeInstanceContext)).ToList();
+            var result = graphNodeInstanceContext.Execute(new ProcessNodeInstanceEventLogic(new EventNotSupportedForTestContext(), graphNodeInstanceContext)).ToList();
 
             Assert.NotNull(result);
             Assert.Empty(result);
         }
 
-        public class TestContext2 : Context<TestContext2>
-        {
-        }
-
-        public class EventNotSupportedForTestContext2 : IEvent
+        public class EventNotSupportedForTestContext : IEvent
         {
         }
     }
