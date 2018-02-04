@@ -101,6 +101,8 @@
 
             serviceProcess.Start();
 
+            // TODO: how to make sure that the process started without instrumentation?
+
             EventsProduced.Add(new ServiceStarted {ProcessId = serviceProcess.Id, ServiceName = Data.ServiceName});
 
             return context;
