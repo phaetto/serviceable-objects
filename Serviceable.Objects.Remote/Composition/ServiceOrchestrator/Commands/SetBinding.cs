@@ -12,8 +12,19 @@
 
         public override IServiceOrchestrator Execute(IServiceOrchestrator context)
         {
-            context.InBindingsPerService[Data.ServiceName] = Data.InBindings?.ToList() ?? context.InBindingsPerService[Data.ServiceName];
-            context.ExternalBindingsPerService[Data.ServiceName] = Data.ExternalBindings?.ToList() ?? context.ExternalBindingsPerService[Data.ServiceName];
+            if (context.InBindingsPerService.ContainsKey(Data.ServiceName))
+            {
+                context.InBindingsPerService[Data.ServiceName] =
+                    Data.InBindings?.ToList() ?? context.InBindingsPerService[Data.ServiceName];
+            }
+
+
+            if (context.ExternalBindingsPerService.ContainsKey(Data.ServiceName))
+            {
+                context.ExternalBindingsPerService[Data.ServiceName] =
+                    Data.ExternalBindings?.ToList() ?? context.ExternalBindingsPerService[Data.ServiceName];
+            }
+
             return context;
         }
     }
