@@ -22,7 +22,7 @@
         {
             if (eventPublished is IGraphFlowEventPushControlEvent controlFlowEvent)
             {
-                return controlFlowEvent.OverrideEventPropagationLogic(context.GraphContext, publishingGraphNodeInstanceContext.Id, publishingGraphNodeInstanceContext.HostedContext);
+                return new [] { controlFlowEvent.OverrideEventPropagationLogic(context.GraphContext, context.Id, context.HostedContextAsAbstractContext) };
             }
 
             var eventPropagatedResult = EventPropagated(context);

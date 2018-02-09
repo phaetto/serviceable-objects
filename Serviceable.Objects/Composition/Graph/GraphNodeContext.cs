@@ -45,6 +45,7 @@
                 {
                     // Default execution - will fire up all instances in this node
                     var resultLists = GraphNodeInstanceContextListPerAlgorithm.ToList().Select(x => x.Value.Select(y => ExecutionLogicOnNodeInstance(command, y)).ToList()).ToList(); // This will force to run them all
+                    // TODO: If an error happened (IsFaulted || IsPaused), return that first otherwise, send the first successful
                     return resultLists.First().FirstOrDefault(); // Algorithm - ExecutionCommandResult
                 }
 
@@ -98,7 +99,7 @@
 
             foreach (var publishedEvent in contextExecutionResult.PublishedEvents)
             {
-                Execute(new ProcessNodeEventLogic(publishedEvent, graphNodeInstanceContext));
+                Execute(new ProcessNodeEventLogicOnChildNodes(publishedEvent, graphNodeInstanceContext));
             }
 
             Execute(new CheckNodePostGraphFlowPullControl(command, graphNodeInstanceContext.HostedContextAsAbstractContext));

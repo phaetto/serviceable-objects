@@ -5,12 +5,12 @@
     using NodeInstance;
     using NodeInstance.ExecutionData;
 
-    public sealed class ProcessNodeEventLogic : ICommand<GraphNodeContext, IList<ExecutionCommandResult>>, ISystemCommand
+    public sealed class ProcessNodeEventLogicOnChildNodes : ICommand<GraphNodeContext, IList<ExecutionCommandResult>>, ISystemCommand
     {
         private readonly IEvent eventPublished;
         private readonly GraphNodeInstanceContext graphNodeInstanceContext;
 
-        public ProcessNodeEventLogic(IEvent eventPublished, GraphNodeInstanceContext graphNodeInstanceContext)
+        public ProcessNodeEventLogicOnChildNodes(IEvent eventPublished, GraphNodeInstanceContext graphNodeInstanceContext)
         {
             this.eventPublished = eventPublished;
             this.graphNodeInstanceContext = graphNodeInstanceContext;
