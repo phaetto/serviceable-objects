@@ -45,8 +45,8 @@
                 {
                     // Default execution - will fire up all instances in this node
                     var resultLists = GraphNodeInstanceContextListPerAlgorithm.ToList().Select(x => x.Value.Select(y => ExecutionLogicOnNodeInstance(command, y)).ToList()).ToList(); // This will force to run them all
-                    // TODO: If an error happened (IsFaulted || IsPaused), return that first otherwise, send the first successful
-                    return resultLists.First().FirstOrDefault(); // Algorithm - ExecutionCommandResult
+                    return resultLists.Select(x => x.FirstOrDefault(y => y.IsFaulted || y.IsPaused)).FirstOrDefault()
+                        ?? resultLists.First().FirstOrDefault(); // Algorithm - ExecutionCommandResult
                 }
 
                 // The first algorithm runs and the others are inspecting
