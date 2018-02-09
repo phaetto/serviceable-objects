@@ -1,7 +1,5 @@
 ﻿namespace Serviceable.Objects.Composition.Graph.Events
 {
-    using System.Collections.Generic;
-    using System.Linq;
     using Commands.NodeInstance.ExecutionData;
 
     public sealed class GraphFlowEventPushControlEventApplyCommandInsteadOfEvent : IGraphFlowEventPushControlEvent
@@ -13,15 +11,9 @@
             this.commandToExecute = commandToExecute;
         }
 
-        public IEnumerable<ExecutionCommandResult> OverrideEventPropagationLogic(GraphContext graphContext, string publishingNodeId, object publishedHostedContext)
+        public ExecutionCommandResult OverrideEventPropagationLogic(GraphContext graphContext, string nodeId, object publishedHostedContext)
         {
-            return graphContext.GetChildren(publishingNodeId)
-                .Select(ExecuteCommand);
-        }
-
-        private ExecutionCommandResult ExecuteCommand(GraphNodeContext childNode)
-        {
-            return childNode.ExecuteGraphCommand(commandToExecute);
+            return graphContext.GetNodeById(nodeId).ExecuteGraphCommand(commandToExecute);
         }
     }
 }

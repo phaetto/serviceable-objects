@@ -25,7 +25,7 @@
         private IList<EventResult> OnContextEventPublished(IEvent eventPublished)
         {
             // Implement DFS on event propagation - because of the dependency in internal event generation
-            return GraphNodeContext.Execute(new ProcessNodeEventLogic(eventPublished, this))
+            return GraphNodeContext.Execute(new ProcessNodeEventLogicOnChildNodes(eventPublished, this))
                 .Where(x => !x.IsIdle)
                 .Select(x => new EventResult // TODO: ExecutionCommandResult to EventResult: f.ex. AsEventResult()
                 {
