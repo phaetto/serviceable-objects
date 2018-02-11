@@ -18,6 +18,8 @@
         private readonly List<GraphNodeContext> nodes = new List<GraphNodeContext>();
         public RuntimeExecutionState RuntimeExecutionState { get; private set; } = RuntimeExecutionState.Paused;
         public bool IsWorking => nodes.Any(x => x.IsWorking);
+        public GraphNodeStatus MaxNodeStatus => nodes != null && nodes.Any() ? nodes.DefaultIfEmpty().Max(x => x.Status) : GraphNodeStatus.Unconfigured;
+        public GraphNodeStatus MinNodeStatus => nodes != null && nodes.Any() ? nodes.DefaultIfEmpty().Min(x => x.Status) : GraphNodeStatus.Unconfigured;
 
         public GraphContext(Container container = null)
         {

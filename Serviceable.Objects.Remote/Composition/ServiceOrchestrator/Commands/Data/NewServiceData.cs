@@ -2,6 +2,7 @@
 {
     public sealed class NewServiceData
     {
+        public string TemplateName { get; set; }
         public string ServiceName { get; set; }
     }
 }

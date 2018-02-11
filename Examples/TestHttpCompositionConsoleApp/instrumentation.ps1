@@ -1,5 +1,4 @@
 ﻿$ErrorActionPreference = "Stop"
-
 $location = Split-Path $MyInvocation.MyCommand.Path;
 
 PowerShell -NoProfile -Command {
@@ -25,7 +24,7 @@ PowerShell -NoProfile -Command {
     echo "Starting service-X...";
     New-Service -ServiceOrchestrator "orchestrator-X" -Data @{ ServiceName='service-X' };
 
-    Start-Sleep -s 2;
+    Watch-ServiceUntilStarts -ServiceOrchestrator "orchestrator-X" -ServiceName "service-X" -TimeoutInMilliseconds 60000;
 
     Write-Host " --- Communication start --- ";
 

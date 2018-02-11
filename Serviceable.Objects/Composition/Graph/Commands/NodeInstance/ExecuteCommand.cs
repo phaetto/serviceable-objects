@@ -1,6 +1,8 @@
 ﻿namespace Serviceable.Objects.Composition.Graph.Commands.NodeInstance
 {
     using System;
+    using System.Reflection;
+    using System.Threading.Tasks;
     using ExecutionData;
     using Microsoft.CSharp.RuntimeBinder;
     using Proxying;
@@ -49,7 +51,7 @@
                     }
                 }
 
-                if (resultObject is AbstractContext)
+                if (resultObject is AbstractContext || IsTaskContext(resultObject))
                 {
                     resultObject = null;
                     // TODO: maybe replace the current hosted context if it is the same type? (respecting immutability)
@@ -90,6 +92,23 @@
             }
 
             return executionCommandResult;
+        }
+
+        private static bool IsTaskContext(object returnedValue)
+        {
+            if (returnedValue == null)
+            {
+                return false;
+            }
+
+            var returnedValueType = returnedValue.GetType();
+            return returnedValueType.GetTypeInfo().IsGenericType &&
+                   returnedValueType.GetGenericTypeDefinition() == typeof(Task<>) &&
+                   returnedValueType.GenericTypeArguments.Length == 1 &&
+                   (
+                       returnedValueType.GenericTypeArguments[0] == typeof(AbstractContext)
+                       || returnedValueType.GenericTypeArguments[0].GetTypeInfo().IsSubclassOf(typeof(AbstractContext))
+                   );
         }
     }
 }
