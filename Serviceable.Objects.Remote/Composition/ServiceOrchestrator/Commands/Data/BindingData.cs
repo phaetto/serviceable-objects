@@ -5,6 +5,7 @@
 
     public sealed class BindingData
     {
+        public string TemplateName { get; set; }
         public string ServiceName { get; set; }
         public IEnumerable<InBinding> InBindings { get; set; }
         public IEnumerable<ExternalBinding> ExternalBindings { get; set; }
