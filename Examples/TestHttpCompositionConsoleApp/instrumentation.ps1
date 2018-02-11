@@ -1,5 +1,4 @@
 ﻿$ErrorActionPreference = "Stop"
-
 $location = Split-Path $MyInvocation.MyCommand.Path;
 
 PowerShell -NoProfile -Command {

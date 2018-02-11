@@ -1,5 +1,4 @@
 ﻿$ErrorActionPreference = "Stop"
-
 $location = Split-Path $MyInvocation.MyCommand.Path;
 
 $appRuntime = "netcoreapp1.0";
@@ -44,7 +43,7 @@ Registrations: [
 $orchTemplateJson = ConvertTo-Json @{
     OrchestratorOverrideTemplate = $serviceOrchestratorGraphTemplate;
     ServiceOrchestratorConfiguration = @{
-        EntryAssemblyFullPath = "C:\sources\serviceable-objects\Examples\TestHttpCompositionConsoleApp\bin\Debug\netcoreapp1.0\TestHttpCompositionConsoleApp.dll";
+        EntryAssemblyFullPath = "$location\bin\Debug\netcoreapp1.0\TestHttpCompositionConsoleApp.dll";
         OrchestratorName = "orchestrator-X";
         # UseChildProcesses = $true; # When this is true if parent process closes, all children are as well
         GraphTemplatesDictionary = @{

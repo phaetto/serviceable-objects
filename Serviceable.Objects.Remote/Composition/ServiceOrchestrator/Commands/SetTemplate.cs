@@ -12,7 +12,7 @@
 
         public override IServiceOrchestrator Execute(IServiceOrchestrator context)
         {
-            context.GraphTemplatesDictionary[Data.Name] = JsonConvert.SerializeObject(Data);
+            context.GraphTemplatesDictionary[Data.ServiceName] = JsonConvert.SerializeObject(Data);
             return context;
         }
     }

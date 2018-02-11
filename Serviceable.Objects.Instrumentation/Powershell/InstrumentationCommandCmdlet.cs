@@ -1,6 +1,7 @@
 ﻿namespace Serviceable.Objects.Instrumentation.Powershell
 {
     using System.Management.Automation;
+    using Newtonsoft.Json;
     using Remote;
     using Remote.Dependencies;
 
@@ -14,11 +15,14 @@
     {
         [ValidateNotNullOrEmpty]
         [Parameter(Mandatory = true, Position = 0, HelpMessage = "The data that you would like to send")]
-        public TDataType Data { get; set; }
+        public object Data { get; set; }
 
         public override TCommand GenerateCommand()
         {
-            return (TCommand)Types.CreateObjectWithParameters(typeof(TCommand), Data);
+            // For easier usage of untyped Object powershell structures we need to transform the input to json and then back to denormalize the types
+            var dataAsJson = JsonConvert.SerializeObject(Data);
+
+            return (TCommand)Types.CreateObjectWithParameters(typeof(TCommand), JsonConvert.DeserializeObject(dataAsJson, typeof(TDataType)));
         }
     }
 }

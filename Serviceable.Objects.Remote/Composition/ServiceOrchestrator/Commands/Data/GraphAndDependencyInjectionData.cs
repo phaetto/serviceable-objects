@@ -6,7 +6,7 @@
 
     public sealed class GraphAndDependencyInjectionData
     {
-        public string Name { get; set; }
+        public string ServiceName { get; set; }
         public IEnumerable<GraphNode> GraphNodes { get; set; }
         public IEnumerable<GraphVertex> GraphVertices { get; set; }
         public IEnumerable<DependencyInjectionRegistration> Registrations { get; set; }

@@ -6,10 +6,12 @@ PowerShell -NoProfile -Command {
         [String] $location
     )
 
-    Set-Location -Path $location;
-
     Import-Module "$location\bin\Debug\netcoreapp1.0\Serviceable.Objects.Instrumentation.dll";
 
-    Start-Sleep -s 2;
-    Close-Orchestrator -ServiceOrchestrator "orchestrator-X";
+    Set-Template -ServiceOrchestrator "orchestrator-X" -Data @{
+        GraphNodes = @();
+        GraphVertices = @();
+        Registrations = @();
+        ServiceName = 'Example-Service';
+    };
 } -args $location;
