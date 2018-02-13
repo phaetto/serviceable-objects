@@ -15,7 +15,7 @@
     using Remote.Serialization;
     using Remote.Serialization.Streaming;
 
-    public sealed class NamedPipeServerContext : ConfigurableContext<NamedPipeServerConfiguration, NamedPipeServerContext>, IInitializeStageFactory, IInitializeStageFactoryWithDeinitSynchronization
+    public sealed class NamedPipeServerContext : ConfigurableContext<NamedPipeServerConfiguration, NamedPipeServerContext>, IInitializeStageFactoryWithDeinitSynchronization
     {
         private readonly StreamSession streamSession = new StreamSession();
         internal Task ServerTask;
@@ -74,8 +74,8 @@
                                     var command = commandSpecificationService.CreateCommandFromSpecification(commandSpecification);
 
                                     var eventResults =
-                                        PublishContextEvent(new GraphFlowEventPushControlEventApplyCommandInsteadOfEvent(command))
-                                            .Where(x => x.ResultObject != null);
+                                        PublishContextEvent(
+                                            new GraphFlowEventPushControlEventApplyCommandInsteadOfEvent(command));
 
                                     var commandResultSpecifications = commandSpecificationService.CreateSpecificationForEventResults(
                                         command.GetType(), eventResults);

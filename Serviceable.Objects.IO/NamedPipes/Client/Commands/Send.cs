@@ -37,7 +37,12 @@
                     {
                         var commandSpecificationService = new CommandSpecificationService();
                         var commandResultSpecification = JsonConvert.DeserializeObject<CommandResultSpecification[]>(replyString);
-                        return commandResultSpecification.Take(1).Select(x => commandSpecificationService.CreateResultDataFromCommandSpecification(x)).FirstOrDefault();
+                        var commandExecutionResultSpecification = commandResultSpecification
+                            .Take(1)
+                            .Select(x => commandSpecificationService.CreateResultDataFromCommandSpecification(x))
+                            .Cast<CommandExecutionResultSpecification>()
+                            .FirstOrDefault();
+                        return commandSpecificationService.CreateResultDataFromCommandSpecification(commandExecutionResultSpecification);
                     }
                 }
 
