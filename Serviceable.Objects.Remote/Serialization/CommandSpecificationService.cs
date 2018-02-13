@@ -7,6 +7,7 @@
     using Dependencies;
     using Exceptions;
     using Newtonsoft.Json;
+    using Objects.Composition.Graph.Commands.NodeInstance.ExecutionData;
     using Objects.Exceptions;
     using Security;
 
@@ -121,6 +122,36 @@
             Check.ArgumentNull(remotableCommandType, nameof(remotableCommandType));
             Check.ArgumentNull(result, nameof(result));
 
+            if (result is ExecutionCommandResult executionCommandResult)
+            {
+                var subdataAsJson = JsonConvert.SerializeObject(new CommandExecutionResultSpecification
+                {
+                    IsPaused = executionCommandResult.IsPaused,
+                    CommandSpecificationExceptionCarrier = executionCommandResult.Exception != null
+                        ? new CommandSpecificationExceptionCarrier
+                            {
+                                Message = executionCommandResult.Exception.Message,
+                                RealExceptionType = executionCommandResult.Exception.GetType().FullName,
+                                StackTrace = executionCommandResult.Exception.StackTrace
+                            }
+                        : null,
+                    IsFaulted = executionCommandResult.IsFaulted,
+                    IsIdle = executionCommandResult.IsIdle,
+                    ResultDataAsJson = executionCommandResult.SingleContextExecutionResultWithInfo.ResultObject != null 
+                        ? JsonConvert.SerializeObject(executionCommandResult.SingleContextExecutionResultWithInfo.ResultObject)
+                        : null,
+                    CommandType = remotableCommandType.AssemblyQualifiedName,
+                });
+
+                return new CommandResultSpecification
+                {
+                    CommandType = remotableCommandType.AssemblyQualifiedName,
+                    ResultDataAsJson = subdataAsJson,
+                    ContainsError = false,
+                    ContainsSubdata = true,
+                };
+            }
+
             if (result is Exception exception)
             {
                 var errorAsJson = JsonConvert.SerializeObject(new CommandSpecificationExceptionCarrier
@@ -134,7 +165,8 @@
                 {
                     CommandType = remotableCommandType.AssemblyQualifiedName,
                     ResultDataAsJson = errorAsJson,
-                    ContainsError = true
+                    ContainsError = true,
+                    ContainsSubdata = false,
                 };
             }
 
@@ -143,7 +175,8 @@
             {
                 CommandType = remotableCommandType.AssemblyQualifiedName,
                 ResultDataAsJson = dataAsJson,
-                ContainsError = false
+                ContainsError = false,
+                ContainsSubdata = false,
             };
         }
 
@@ -156,7 +189,8 @@
             {
                 CommandType = remotableCommandType.AssemblyQualifiedName,
                 ResultDataAsJson = dataAsJson,
-                ContainsError = false
+                ContainsError = false,
+                ContainsSubdata = false,
             };
         }
 
@@ -170,6 +204,11 @@
                     .ResultDataAsJson);
 
                 return new Exception($"{commandSpecificationExceptionCarrier.Message}\n{commandSpecificationExceptionCarrier.RealExceptionType}\n\n{commandSpecificationExceptionCarrier.StackTrace}");
+            }
+
+            if (commandResultSpecification.ContainsSubdata)
+            {
+                return JsonConvert.DeserializeObject<CommandExecutionResultSpecification>(commandResultSpecification.ResultDataAsJson);
             }
 
             Check.ArgumentNullOrWhiteSpace(commandResultSpecification.CommandType, nameof(commandResultSpecification.CommandType));
@@ -189,6 +228,34 @@
         public T CreateResultDataFromCommandSpecification<T>(CommandResultSpecification commandResultSpecification)
         {
             var result = CreateResultDataFromCommandSpecification(commandResultSpecification);
+            return result != null ? (T) result : default(T);
+        }
+
+        public object CreateResultDataFromCommandSpecification(CommandExecutionResultSpecification commandExecutionResultSpecification)
+        {
+            if (commandExecutionResultSpecification.IsFaulted || commandExecutionResultSpecification.IsPaused)
+            {
+                var commandSpecificationExceptionCarrier = commandExecutionResultSpecification.CommandSpecificationExceptionCarrier;
+                return new Exception($"{commandSpecificationExceptionCarrier.Message}\n{commandSpecificationExceptionCarrier.RealExceptionType}\n\n{commandSpecificationExceptionCarrier.StackTrace}");
+            }
+
+            if (commandExecutionResultSpecification.ResultDataAsJson == null)
+            {
+                return null;
+            }
+
+            return CreateResultDataFromCommandSpecification(new CommandResultSpecification
+            {
+                ContainsSubdata = false,
+                ContainsError = false,
+                ResultDataAsJson = commandExecutionResultSpecification.ResultDataAsJson,
+                CommandType = commandExecutionResultSpecification.CommandType,
+            });
+        }
+
+        public T CreateResultDataFromCommandSpecification<T>(CommandExecutionResultSpecification commandExecutionResultSpecification)
+        {
+            var result = CreateResultDataFromCommandSpecification(commandExecutionResultSpecification);
             return result != null ? (T) result : default(T);
         }
     }
