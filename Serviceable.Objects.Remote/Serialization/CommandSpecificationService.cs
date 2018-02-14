@@ -264,11 +264,15 @@
             return result != null ? (T) result : default(T);
         }
 
-
         public object CreateEventFromEventResultSpecification(EventResultSpecification eventResultSpecification)
         {
-            return JsonConvert.DeserializeObject(eventResultSpecification.DataAsJson,
-                Type.GetType(eventResultSpecification.EventType));
+            var type = Types.FindType(eventResultSpecification.EventType);
+
+            Check.ConditionNotSupported(
+                type.GetTypeInfo().ImplementedInterfaces.All(x => x.Name == typeof(IEvent).Name),
+                $"The event should be derived from {typeof(IEvent).FullName} in order to be deserialized.");
+
+            return JsonConvert.DeserializeObject(eventResultSpecification.DataAsJson, type);
         }
 
         public T CreateEventFromEventResultSpecification<T>(EventResultSpecification eventResultSpecification)
