@@ -11,6 +11,6 @@
         public bool IsIdle { get; set; }
         public bool IsPaused { get; set; }
         public CommandSpecificationExceptionCarrier CommandSpecificationExceptionCarrier { get; set; }
-        public List<IEvent> PublishedEvents { get; set; } = new List<IEvent>();
+        public List<EventResultSpecification> PublishedEvents { get; set; } = new List<EventResultSpecification>();
     }
 }
