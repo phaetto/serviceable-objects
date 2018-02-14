@@ -269,7 +269,7 @@
             var type = Types.FindType(eventResultSpecification.EventType);
 
             Check.ConditionNotSupported(
-                type.GetTypeInfo().ImplementedInterfaces.All(x => x.Name == typeof(IEvent).Name),
+                type.GetTypeInfo().ImplementedInterfaces.All(x => x.Name != typeof(IEvent).Name),
                 $"The event should be derived from {typeof(IEvent).FullName} in order to be deserialized.");
 
             return JsonConvert.DeserializeObject(eventResultSpecification.DataAsJson, type);
