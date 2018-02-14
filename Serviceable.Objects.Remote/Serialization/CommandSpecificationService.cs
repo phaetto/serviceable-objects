@@ -141,7 +141,11 @@
                         ? JsonConvert.SerializeObject(executionCommandResult.SingleContextExecutionResultWithInfo.ResultObject)
                         : null,
                     CommandType = remotableCommandType.AssemblyQualifiedName,
-                    PublishedEvents = executionCommandResult.PublishedEvents,
+                    PublishedEvents = executionCommandResult.PublishedEvents.Select(x => new EventResultSpecification
+                        {
+                            DataAsJson = JsonConvert.SerializeObject(x),
+                            EventType = x.GetType().AssemblyQualifiedName,
+                        }).ToList(),
                 });
 
                 return new CommandResultSpecification
@@ -257,6 +261,19 @@
         public T CreateResultDataFromCommandSpecification<T>(CommandExecutionResultSpecification commandExecutionResultSpecification)
         {
             var result = CreateResultDataFromCommandSpecification(commandExecutionResultSpecification);
+            return result != null ? (T) result : default(T);
+        }
+
+
+        public object CreateEventFromEventResultSpecification(EventResultSpecification eventResultSpecification)
+        {
+            return JsonConvert.DeserializeObject(eventResultSpecification.DataAsJson,
+                Type.GetType(eventResultSpecification.EventType));
+        }
+
+        public T CreateEventFromEventResultSpecification<T>(EventResultSpecification eventResultSpecification)
+        {
+            var result = CreateEventFromEventResultSpecification(eventResultSpecification);
             return result != null ? (T) result : default(T);
         }
     }
