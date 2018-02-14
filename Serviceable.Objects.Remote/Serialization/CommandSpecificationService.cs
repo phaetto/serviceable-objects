@@ -141,6 +141,7 @@
                         ? JsonConvert.SerializeObject(executionCommandResult.SingleContextExecutionResultWithInfo.ResultObject)
                         : null,
                     CommandType = remotableCommandType.AssemblyQualifiedName,
+                    PublishedEvents = executionCommandResult.PublishedEvents,
                 });
 
                 return new CommandResultSpecification
