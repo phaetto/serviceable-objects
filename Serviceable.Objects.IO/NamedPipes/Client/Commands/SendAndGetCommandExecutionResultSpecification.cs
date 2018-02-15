@@ -2,21 +2,20 @@
 {
     using System.Collections.Generic;
     using System.IO.Pipes;
-    using System.Linq;
     using Newtonsoft.Json;
     using Remote;
     using Remote.Serialization;
 
-    public sealed class SendAndGetCommandExecutionResultSpecification : ICommand<NamedPipeClientContext, IEnumerable<CommandExecutionResultSpecification>>
+    public sealed class SendAndGetCommandResultSpecification : ICommand<NamedPipeClientContext, IEnumerable<CommandResultSpecification>>
     {
         private readonly IReproducible command;
 
-        public SendAndGetCommandExecutionResultSpecification(IReproducible command)
+        public SendAndGetCommandResultSpecification(IReproducible command)
         {
             this.command = command;
         }
 
-        public IEnumerable<CommandExecutionResultSpecification> Execute(NamedPipeClientContext context)
+        public IEnumerable<CommandResultSpecification> Execute(NamedPipeClientContext context)
         {
             using (var namedPipeClientStream = new NamedPipeClientStream(".", context.NamedPipe, PipeDirection.InOut))
             {
@@ -36,15 +35,11 @@
                 {
                     if (!string.IsNullOrWhiteSpace(replyString))
                     {
-                        var commandSpecificationService = new CommandSpecificationService();
-                        var commandResultSpecification = JsonConvert.DeserializeObject<CommandResultSpecification[]>(replyString);
-                        return commandResultSpecification
-                            .Select(x => commandSpecificationService.CreateResultDataFromCommandSpecification(x))
-                            .Cast<CommandExecutionResultSpecification>();
+                        return JsonConvert.DeserializeObject<CommandResultSpecification[]>(replyString);
                     }
                 }
 
-                return new CommandExecutionResultSpecification[0];
+                return new CommandResultSpecification[0];
             }
         }
     }
