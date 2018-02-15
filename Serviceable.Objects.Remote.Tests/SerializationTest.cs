@@ -2,9 +2,9 @@
 {
     using System;
     using Classes;
-    using Newtonsoft.Json;
     using Objects.Tests.Classes;
     using Serialization;
+    using Serialization.Exceptions;
     using Xunit;
 
     public class SerializationTest
@@ -53,20 +53,26 @@
         [Fact]
         public void CommandSpecification_WhenRemotableDataWithErrorIsDeserialized_ThenTheObjectIsAnException()
         {
+            var exception = new InvalidOperationException("This is so invalid.");
             var serializableSpecificationService = new CommandSpecificationService();
             var commandResultSpecification = new CommandResultSpecification
             {
                 CommandType = typeof(RemotableTestCommand).AssemblyQualifiedName,
                 ContainsError = true,
-                ResultDataAsJson = JsonConvert.SerializeObject(new InvalidOperationException("This is so invalid."))
+                Exception = new CommandSpecificationExceptionCarrier
+                {
+                    Message = exception.Message,
+                    RealExceptionType = exception.GetType().FullName,
+                    StackTrace = exception.StackTrace
+                }
             };
 
             var data = serializableSpecificationService.CreateResultDataFromCommandSpecification(commandResultSpecification);
 
             Assert.IsNotType<ReproducibleTestData>(data);
             Assert.IsType<Exception>(data);
-            var exception = data as Exception;
-            Assert.StartsWith("This is so invalid.", exception.Message);
+            var exceptionReturned = data as Exception;
+            Assert.StartsWith("This is so invalid.", exceptionReturned.Message);
         }
     }
 }

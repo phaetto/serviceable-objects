@@ -2,11 +2,13 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.Linq;
     using System.Reflection;
     using Dependencies;
     using Exceptions;
     using Newtonsoft.Json;
+    using Newtonsoft.Json.Linq;
     using Objects.Composition.Graph.Commands.NodeInstance.ExecutionData;
     using Objects.Exceptions;
     using Security;
@@ -124,64 +126,56 @@
 
             if (result is ExecutionCommandResult executionCommandResult)
             {
-                var subdataAsJson = JsonConvert.SerializeObject(new CommandExecutionResultSpecification
-                {
-                    IsPaused = executionCommandResult.IsPaused,
-                    CommandSpecificationExceptionCarrier = executionCommandResult.Exception != null
-                        ? new CommandSpecificationExceptionCarrier
-                            {
-                                Message = executionCommandResult.Exception.Message,
-                                RealExceptionType = executionCommandResult.Exception.GetType().FullName,
-                                StackTrace = executionCommandResult.Exception.StackTrace
-                            }
-                        : null,
-                    IsFaulted = executionCommandResult.IsFaulted,
-                    IsIdle = executionCommandResult.IsIdle,
-                    ResultDataAsJson = executionCommandResult.SingleContextExecutionResultWithInfo.ResultObject != null 
-                        ? JsonConvert.SerializeObject(executionCommandResult.SingleContextExecutionResultWithInfo.ResultObject)
-                        : null,
-                    CommandType = remotableCommandType.AssemblyQualifiedName,
-                    PublishedEvents = executionCommandResult.PublishedEvents.Select(x => new EventResultSpecification
-                        {
-                            DataAsJson = JsonConvert.SerializeObject(x),
-                            EventType = x.GetType().AssemblyQualifiedName,
-                        }).ToList(),
-                });
-
                 return new CommandResultSpecification
                 {
                     CommandType = remotableCommandType.AssemblyQualifiedName,
-                    ResultDataAsJson = subdataAsJson,
-                    ContainsError = false,
-                    ContainsSubdata = true,
+                    ResultDataObject = executionCommandResult.SingleContextExecutionResultWithInfo.ResultObject,
+                    ContainsError = executionCommandResult.IsFaulted,
+
+                    GraphResultSpecification = new GraphResultSpecification
+                    {
+                        IsFaulted = executionCommandResult.IsFaulted,
+                        IsIdle = executionCommandResult.IsIdle,
+                    },
+
+                    Exception = executionCommandResult.Exception != null
+                        ? new CommandSpecificationExceptionCarrier
+                        {
+                            Message = executionCommandResult.Exception.Message,
+                            RealExceptionType = executionCommandResult.Exception.GetType().FullName,
+                            StackTrace = executionCommandResult.Exception.StackTrace
+                        }
+                        : null,
+
+                    PublishedEvents = executionCommandResult.PublishedEvents.Select(x => new EventResultSpecification
+                    {
+                        EventObject = x,
+                        EventType = x.GetType().AssemblyQualifiedName,
+                    }).ToList(),
                 };
             }
 
             if (result is Exception exception)
             {
-                var errorAsJson = JsonConvert.SerializeObject(new CommandSpecificationExceptionCarrier
-                {
-                    Message = exception.Message,
-                    RealExceptionType = exception.GetType().FullName,
-                    StackTrace = exception.StackTrace
-                });
-
                 return new CommandResultSpecification
                 {
                     CommandType = remotableCommandType.AssemblyQualifiedName,
-                    ResultDataAsJson = errorAsJson,
                     ContainsError = true,
-                    ContainsSubdata = false,
+
+                    Exception = new CommandSpecificationExceptionCarrier
+                    {
+                        Message = exception.Message,
+                        RealExceptionType = exception.GetType().FullName,
+                        StackTrace = exception.StackTrace
+                    },
                 };
             }
 
-            var dataAsJson = JsonConvert.SerializeObject(result);
             return new CommandResultSpecification
             {
                 CommandType = remotableCommandType.AssemblyQualifiedName,
-                ResultDataAsJson = dataAsJson,
+                ResultDataObject = result,
                 ContainsError = false,
-                ContainsSubdata = false,
             };
         }
 
@@ -193,27 +187,21 @@
             return new CommandResultSpecification
             {
                 CommandType = remotableCommandType.AssemblyQualifiedName,
-                ResultDataAsJson = dataAsJson,
+                ResultDataObject = dataAsJson,
                 ContainsError = false,
-                ContainsSubdata = false,
             };
         }
 
         public object CreateResultDataFromCommandSpecification(CommandResultSpecification commandResultSpecification)
         {
-            Check.ArgumentNullOrWhiteSpace(commandResultSpecification.ResultDataAsJson, nameof(commandResultSpecification.ResultDataAsJson));
-
             if (commandResultSpecification.ContainsError)
             {
-                var commandSpecificationExceptionCarrier = JsonConvert.DeserializeObject<CommandSpecificationExceptionCarrier>(commandResultSpecification
-                    .ResultDataAsJson);
-
-                return new Exception($"{commandSpecificationExceptionCarrier.Message}\n{commandSpecificationExceptionCarrier.RealExceptionType}\n\n{commandSpecificationExceptionCarrier.StackTrace}");
+                return new Exception($"{commandResultSpecification.Exception.Message}\n{commandResultSpecification.Exception.RealExceptionType}\n\n{commandResultSpecification.Exception.StackTrace}");
             }
 
-            if (commandResultSpecification.ContainsSubdata)
+            if (commandResultSpecification.ResultDataObject == null)
             {
-                return JsonConvert.DeserializeObject<CommandExecutionResultSpecification>(commandResultSpecification.ResultDataAsJson);
+                return null;
             }
 
             Check.ArgumentNullOrWhiteSpace(commandResultSpecification.CommandType, nameof(commandResultSpecification.CommandType));
@@ -226,42 +214,19 @@
 
             var remotableWithWellknowData = type.GetTypeInfo().ImplementedInterfaces
                 .First(x => x.Name == typeof(IRemotableCommand<,>).Name);
-            return JsonConvert.DeserializeObject(commandResultSpecification.ResultDataAsJson,
-                remotableWithWellknowData.GenericTypeArguments[1]);
+
+            if (commandResultSpecification.ResultDataObject is JObject jObject)
+            {
+                return jObject.ToObject(remotableWithWellknowData.GenericTypeArguments[1]);
+            }
+
+            return commandResultSpecification.ResultDataObject;
         }
 
         public T CreateResultDataFromCommandSpecification<T>(CommandResultSpecification commandResultSpecification)
         {
             var result = CreateResultDataFromCommandSpecification(commandResultSpecification);
-            return result != null ? (T) result : default(T);
-        }
-
-        public object CreateResultDataFromCommandSpecification(CommandExecutionResultSpecification commandExecutionResultSpecification)
-        {
-            if (commandExecutionResultSpecification.IsFaulted || commandExecutionResultSpecification.IsPaused)
-            {
-                var commandSpecificationExceptionCarrier = commandExecutionResultSpecification.CommandSpecificationExceptionCarrier;
-                return new Exception($"{commandSpecificationExceptionCarrier.Message}\n{commandSpecificationExceptionCarrier.RealExceptionType}\n\n{commandSpecificationExceptionCarrier.StackTrace}");
-            }
-
-            if (commandExecutionResultSpecification.ResultDataAsJson == null)
-            {
-                return null;
-            }
-
-            return CreateResultDataFromCommandSpecification(new CommandResultSpecification
-            {
-                ContainsSubdata = false,
-                ContainsError = false,
-                ResultDataAsJson = commandExecutionResultSpecification.ResultDataAsJson,
-                CommandType = commandExecutionResultSpecification.CommandType,
-            });
-        }
-
-        public T CreateResultDataFromCommandSpecification<T>(CommandExecutionResultSpecification commandExecutionResultSpecification)
-        {
-            var result = CreateResultDataFromCommandSpecification(commandExecutionResultSpecification);
-            return result != null ? (T) result : default(T);
+            return (T) result;
         }
 
         public object CreateEventFromEventResultSpecification(EventResultSpecification eventResultSpecification)
@@ -272,13 +237,18 @@
                 type.GetTypeInfo().ImplementedInterfaces.All(x => x.Name != typeof(IEvent).Name),
                 $"The event should be derived from {typeof(IEvent).FullName} in order to be deserialized.");
 
-            return JsonConvert.DeserializeObject(eventResultSpecification.DataAsJson, type);
+            if (eventResultSpecification.EventObject is JObject jObject)
+            {
+                return jObject.ToObject(type);
+            }
+
+            return eventResultSpecification.EventObject;
         }
 
         public T CreateEventFromEventResultSpecification<T>(EventResultSpecification eventResultSpecification)
         {
             var result = CreateEventFromEventResultSpecification(eventResultSpecification);
-            return result != null ? (T) result : default(T);
+            return (T) result;
         }
     }
 }

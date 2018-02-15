@@ -16,13 +16,11 @@
         public object Execute(NamedPipeClientContext context)
         {
             var commandSpecificationService = new CommandSpecificationService();
-            var commandExecutionResultSpecification = context.Execute(new SendAndGetCommandExecutionResultSpecification(command))
+            var commandExecutionResultSpecification = context.Execute(new SendAndGetCommandResultSpecification(command))
                 .Take(1)
                 .FirstOrDefault();
 
-            return commandExecutionResultSpecification == null
-                ? null
-                : commandSpecificationService.CreateResultDataFromCommandSpecification(commandExecutionResultSpecification);
+            return commandSpecificationService.CreateResultDataFromCommandSpecification(commandExecutionResultSpecification);
         }
     }
 }

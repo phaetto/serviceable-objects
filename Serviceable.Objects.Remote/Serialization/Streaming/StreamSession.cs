@@ -126,7 +126,7 @@
 
             streamState.CommandsTextReadyToBeParsedQueue.Enqueue(JsonConvert.SerializeObject(new CommandResultSpecification
             {
-                ResultDataAsJson = JsonConvert.SerializeObject(exception),
+                ResultDataObject = JsonConvert.SerializeObject(exception),
                 CommandType = null,
                 ContainsError = true
             }));
