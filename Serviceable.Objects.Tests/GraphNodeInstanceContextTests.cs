@@ -2,6 +2,7 @@
 {
     using System;
     using System.Linq;
+    using System.Threading.Tasks;
     using Composition.Graph;
     using Composition.Graph.Commands.NodeInstance;
     using Microsoft.CSharp.RuntimeBinder;
@@ -118,6 +119,65 @@
 
         public class EventNotSupportedForTestContext : IEvent
         {
+        }
+
+        [Fact]
+        public void Execute_WhenExecutingAnAsyncGenericTaskReturnCommand_ThenItIsCorrectlyWaitingForIt()
+        {
+            var testContext = new TestContext();
+            var command = new SuccessFullAsyncCommand();
+            var graphContext = new GraphContext();
+            var graphNodeContext = new GraphNodeContext(testContext, graphContext, "test-node");
+            var graphNodeInstanceContext = new GraphNodeInstanceContext(testContext, graphContext, graphNodeContext, "test-node");
+
+            var result = graphNodeInstanceContext.Execute(new ExecuteCommand(command));
+
+            Assert.NotNull(result);
+            Assert.False(result.IsFaulted);
+            Assert.False(result.IsIdle);
+            Assert.Null(result.Exception);
+            Assert.NotNull(result.SingleContextExecutionResultWithInfo);
+            Assert.Equal(typeof(TestContext), result.SingleContextExecutionResultWithInfo.ContextType);
+            Assert.Equal("test-node", result.SingleContextExecutionResultWithInfo.NodeId);
+            Assert.Equal("success", result.SingleContextExecutionResultWithInfo.ResultObject);
+        }
+
+        public class SuccessFullAsyncCommand : ICommand<TestContext, Task<string>>
+        {
+            public async Task<string> Execute(TestContext context)
+            {
+                await Task.Delay(10);
+                return "success";
+            }
+        }
+
+        [Fact]
+        public void Execute_WhenExecutingAnAsyncReturnTaskCommand_ThenItIsCorrectlyWaitingForIt()
+        {
+            var testContext = new TestContext();
+            var command = new SuccessFullAsyncNoResultCommand();
+            var graphContext = new GraphContext();
+            var graphNodeContext = new GraphNodeContext(testContext, graphContext, "test-node");
+            var graphNodeInstanceContext = new GraphNodeInstanceContext(testContext, graphContext, graphNodeContext, "test-node");
+
+            var result = graphNodeInstanceContext.Execute(new ExecuteCommand(command));
+
+            Assert.NotNull(result);
+            Assert.False(result.IsFaulted);
+            Assert.False(result.IsIdle);
+            Assert.Null(result.Exception);
+            Assert.NotNull(result.SingleContextExecutionResultWithInfo);
+            Assert.Equal(typeof(TestContext), result.SingleContextExecutionResultWithInfo.ContextType);
+            Assert.Equal("test-node", result.SingleContextExecutionResultWithInfo.NodeId);
+            Assert.Null(result.SingleContextExecutionResultWithInfo.ResultObject);
+        }
+
+        public class SuccessFullAsyncNoResultCommand : ICommand<TestContext, Task>
+        {
+            public async Task Execute(TestContext context)
+            {
+                await Task.Delay(10);
+            }
         }
     }
 }

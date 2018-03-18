@@ -56,6 +56,19 @@
                     resultObject = null;
                     // TODO: maybe replace the current hosted context if it is the same type? (respecting immutability)
                 }
+                else if (resultObject is Task task)
+                {
+                    Task.WaitAll(task);
+
+                    if (IsGenericTask(resultObject))
+                    {
+                        resultObject = (object) ((dynamic) task).Result;
+                    }
+                    else
+                    {
+                        resultObject = null;
+                    }
+                }
 
                 if (resultObject is Exception exception)
                 {
@@ -109,6 +122,19 @@
                        returnedValueType.GenericTypeArguments[0] == typeof(AbstractContext)
                        || returnedValueType.GenericTypeArguments[0].GetTypeInfo().IsSubclassOf(typeof(AbstractContext))
                    );
+        }
+
+        private static bool IsGenericTask(object returnedValue)
+        {
+            if (returnedValue == null)
+            {
+                return false;
+            }
+
+            var returnedValueType = returnedValue.GetType();
+            return returnedValueType.GetTypeInfo().IsGenericType &&
+                   returnedValueType.GetGenericTypeDefinition() == typeof(Task<>) &&
+                   returnedValueType.GenericTypeArguments[0].GetTypeInfo().IsPublic;
         }
     }
 }
